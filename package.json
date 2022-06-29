@@ -27,5 +27,8 @@
     "types": "dist/index.d.ts",
     "files": [
         "dist/**/*"
-    ]
+    ],
+    "devDependencies": {
+        "@types/node": "^18.0.0"
+    }
 }
