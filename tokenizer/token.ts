@@ -39,24 +39,8 @@ enum TokenType {
 }
 
 interface Token {
-    type: TokenType | IdentToken | NumberToken | StringToken | BooleanToken;
+    type: TokenType;
     literal: string | number | boolean;
-}
-
-interface IdentToken {
-    value: string;
-}
-
-interface NumberToken {
-    value: number;
-}
-
-interface StringToken {
-    value: string;
-}
-
-interface BooleanToken {
-    value: boolean;
 }
 
 const fromLiteral = (literal: string): TokenType => {
@@ -80,12 +64,4 @@ const fromLiteral = (literal: string): TokenType => {
     }
 };
 
-export {
-    TokenType,
-    Token,
-    IdentToken,
-    NumberToken,
-    StringToken,
-    BooleanToken,
-    fromLiteral,
-};
+export { TokenType, Token, fromLiteral };
