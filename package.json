@@ -1,0 +1,31 @@
+{
+    "name": "tiny",
+    "version": "0.0.0",
+    "description": "Tiny interpreter",
+    "main": "dist/index.js",
+    "scripts": {
+        "start": "npm run build && npm run start:node",
+        "start:node": "node .",
+        "build": "if [ -d dist ]; then rm -rf dist; npm run build:tsc; else npm run build:tsc; fi",
+        "build:windows": "@echo off && IF exist dist ( rd dist; npm run build:tsc ) ELSE ( npm run build:tsc ) && @echo on",
+        "build:tsc": "tsc -p tsconfig.json",
+        "test": "npm run build && node dist/test/test.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/tsukiroku/tiny.git"
+    },
+    "keywords": [
+        "typescript"
+    ],
+    "author": "author",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/tsukiroku/tiny"
+    },
+    "homepage": "https://github.com/tsukiroku/tiny",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist/**/*"
+    ]
+}
