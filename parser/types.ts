@@ -4,7 +4,11 @@ interface Program {
     statements: Array<Statement>;
 }
 
-type Statement = LetStatement | ReturnStatement | ExpressionStatement;
+type Statement =
+    | LetStatement
+    | ReturnStatement
+    | ExpressionStatement
+    | BlockStatement;
 
 type Expression =
     | LiteralExpression
@@ -17,7 +21,8 @@ type Expression =
     | IdentExpression
     | ArrayExpression
     | IndexExpression
-    | HashExpression;
+    | HashExpression
+    | null;
 
 interface LetStatement {
     ident: Expression;
@@ -33,7 +38,7 @@ interface ExpressionStatement {
 }
 
 interface LiteralExpression {
-    value: NumberLiteral | StringLiteral | BooleanLiteral | UnitLiteral;
+    value: NumberLiteral | StringLiteral | BooleanLiteral;
 }
 
 interface BlockStatement {
@@ -54,7 +59,7 @@ interface InfixExpression {
 interface IfExpression {
     condition: Expression;
     consequence: Expression;
-    alternative?: Expression;
+    alternative: Expression | null;
 }
 
 interface FunctionExpression {
@@ -101,10 +106,6 @@ interface BooleanLiteral {
     value: boolean;
 }
 
-interface UnitLiteral {
-    value: null;
-}
-
 export {
     Program,
     Statement,
@@ -127,5 +128,4 @@ export {
     NumberLiteral,
     StringLiteral,
     BooleanLiteral,
-    UnitLiteral,
 };
