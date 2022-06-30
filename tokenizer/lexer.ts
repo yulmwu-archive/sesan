@@ -33,7 +33,7 @@ export default class Lexer {
         while (this.isDigit(this.ch)) this.readChar();
         return {
             type: TokenType.NUMBER,
-            literal: Number(this.input.substring(position, this.position)),
+            literal: this.input.substring(position, this.position),
         };
     }
 

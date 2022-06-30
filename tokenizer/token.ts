@@ -40,7 +40,7 @@ enum TokenType {
 
 interface Token {
     type: TokenType;
-    literal: string | number | boolean;
+    literal: string
 }
 
 const fromLiteral = (literal: string): TokenType => {
