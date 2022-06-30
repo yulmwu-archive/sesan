@@ -22,87 +22,91 @@ type Expression =
     | ArrayExpression
     | IndexExpression
     | HashExpression
-    | null;
+    | null | 0;
 
-interface LetStatement {
+interface Debug {
+    debug: string;
+}
+
+interface LetStatement extends Debug {
     ident: Expression;
     value: Expression;
 }
 
-interface ReturnStatement {
+interface ReturnStatement extends Debug {
     value: Expression;
 }
 
-interface ExpressionStatement {
+interface ExpressionStatement extends Debug {
     expression: Expression;
 }
 
-interface LiteralExpression {
+interface LiteralExpression extends Debug {
     value: NumberLiteral | StringLiteral | BooleanLiteral;
 }
 
-interface BlockStatement {
+interface BlockStatement extends Debug {
     statements: Array<Statement>;
 }
 
-interface PrefixExpression {
+interface PrefixExpression extends Debug {
     operator: TokenType;
     right: Expression;
 }
 
-interface InfixExpression {
+interface InfixExpression extends Debug {
     left: Expression;
     right: Expression;
     operator: TokenType;
 }
 
-interface IfExpression {
+interface IfExpression extends Debug {
     condition: Expression;
     consequence: Expression;
     alternative: Expression | null;
 }
 
-interface FunctionExpression {
+interface FunctionExpression extends Debug {
     arguments: Array<Expression>;
     body: Statement;
 }
 
-interface CallExpression {
+interface CallExpression extends Debug {
     function: Expression;
     arguments: Array<Expression>;
 }
 
-interface ArrayExpression {
+interface ArrayExpression extends Debug {
     elements: Array<Expression>;
 }
 
-interface IndexExpression {
+interface IndexExpression extends Debug {
     left: Expression;
     index: Expression;
 }
 
-interface IdentExpression {
+interface IdentExpression extends Debug {
     value: string;
 }
 
-interface HashExpression {
+interface HashExpression extends Debug {
     pairs: Array<HashPair>;
 }
 
-interface HashPair {
+interface HashPair extends Debug {
     key: Expression;
     value: Expression;
 }
 
-interface NumberLiteral {
+interface NumberLiteral extends Debug {
     value: number;
 }
 
-interface StringLiteral {
+interface StringLiteral extends Debug {
     value: string;
 }
 
-interface BooleanLiteral {
+interface BooleanLiteral extends Debug {
     value: boolean;
 }
 
