@@ -71,12 +71,18 @@ export default class Parser {
             this.nextToken();
             return true;
         }
+
         this.peekError(tokenType);
+
         return false;
     }
 
     public peekTokenIs(tokenType: TokenType): boolean {
         return this.peekToken.type === tokenType;
+    }
+
+    public currTokenIs(tokenType: TokenType): boolean {
+        return this.currToken.type === tokenType;
     }
 
     public peekError(tokenType: TokenType) {
@@ -141,6 +147,7 @@ export default class Parser {
 
     public parseExpressionStatement(): ExpressionStatement | null {
         const expression = this.parseExpression(Priority.LOWEST);
+        if (!expression) return null;
 
         if (this.peekTokenIs(TokenType.SEMICOLON)) this.nextToken();
 
@@ -218,12 +225,13 @@ export default class Parser {
                 if (!this.expectPeek(TokenType.LBRACE)) return null;
 
                 const body = this.parseBlockStatement();
-                if (!body) process.exit(1);
+
+                if (!body) return null;
 
                 return {
                     debug: 'parsePrefix>case>function',
                     arguments: parameters,
-                    body: body,
+                    body,
                 };
             }
             case TokenType.LBRACKET:
@@ -240,7 +248,9 @@ export default class Parser {
 
     public prefixParseOps(): PrefixExpression | null {
         const token = this.currToken;
+
         this.nextToken();
+
         return {
             debug: 'prefixParseOps>return',
             operator: token.type,
@@ -280,7 +290,7 @@ export default class Parser {
             }
             default: {
                 const operator = this.currToken;
-                const priority = this.curPriority();
+                const priority = this.currPriority();
                 this.nextToken();
                 const right = this.parseExpression(priority);
                 if (!right) return null;
@@ -296,15 +306,18 @@ export default class Parser {
 
     public parseBlockStatement(): BlockStatement | null {
         let statements: Array<Statement> = [];
+
         this.nextToken();
+
         while (
-            !this.peekTokenIs(TokenType.RBRACE) &&
-            !this.peekTokenIs(TokenType.EOF)
+            !this.currTokenIs(TokenType.RBRACE) &&
+            !this.currTokenIs(TokenType.EOF)
         ) {
             const statement = this.parseStatement();
             if (statement) statements.push(statement);
             this.nextToken();
         }
+
         return {
             debug: 'parseBlockStatement>return',
             statements,
@@ -312,28 +325,30 @@ export default class Parser {
     }
 
     public parseFunctionParameters(): Array<Expression> {
-        const ret: Array<Expression> = [];
+        let parameters: Array<Expression> = [];
 
         if (this.peekTokenIs(TokenType.RPAREN)) {
             this.nextToken();
-            return ret;
+            return [];
         }
+
         this.nextToken();
-        ret.push({
-            debug: 'parseFunctionParameters>res.push',
+
+        parameters.push({
             value: this.currToken.literal,
         });
 
         while (this.peekTokenIs(TokenType.COMMA)) {
             this.nextToken();
             this.nextToken();
-            ret.push({
-                debug: 'parseFunctionParameters>while>res.push',
+            parameters.push({
                 value: this.currToken.literal,
             });
         }
 
-        return ret;
+        if (this.expectPeek(TokenType.RPAREN)) return parameters;
+
+        return parameters;
     }
 
     public parseExpressionArguments(end: TokenType): Array<Expression> {
@@ -368,6 +383,7 @@ export default class Parser {
             if (!this.expectPeek(TokenType.COLON)) return null;
 
             this.nextToken();
+
             const value = this.parseExpression(Priority.LOWEST);
 
             if (
@@ -397,7 +413,7 @@ export default class Parser {
         return this.getPriority(this.peekToken);
     }
 
-    public curPriority(): Priority {
+    public currPriority(): Priority {
         return this.getPriority(this.currToken);
     }
 
