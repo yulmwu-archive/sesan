@@ -22,10 +22,11 @@ type Expression =
     | ArrayExpression
     | IndexExpression
     | HashExpression
-    | null | 0;
+    | null
+    | 0;
 
 interface Debug {
-    debug: string;
+    debug?: string;
 }
 
 interface LetStatement extends Debug {

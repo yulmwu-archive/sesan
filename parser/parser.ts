@@ -51,7 +51,6 @@ export default class Parser {
     }
 
     public parseStatement(): Statement | null {
-        console.log(this.currToken.type);
         switch (this.currToken.type) {
             case TokenType.LET:
                 return this.parseLetStatement();
@@ -87,17 +86,17 @@ export default class Parser {
     }
 
     public parseLetStatement(): LetStatement | null {
-        console.log('parseLetStatement');
-        if (
-            !this.expectPeek(TokenType.IDENT) ||
-            !this.expectPeek(TokenType.ASSIGN)
-        )
-            return null;
+        if (!this.expectPeek(TokenType.IDENT)) return null;
 
         const ident: IdentExpression = {
             debug: 'parseLetStatement>ident',
-            value: this.currToken.literal,
+            value:
+                this.currToken.type === TokenType.IDENT
+                    ? this.currToken.literal
+                    : '',
         };
+
+        if (!this.expectPeek(TokenType.ASSIGN)) return null;
 
         this.nextToken();
 
@@ -113,12 +112,11 @@ export default class Parser {
     }
 
     public parseReturnStatement(): ReturnStatement | null {
-        console.log('parseReturnStatement');
         this.nextToken();
 
         const expression = this.parseExpression(Priority.LOWEST);
 
-        if (!this.peekTokenIs(TokenType.SEMICOLON)) this.nextToken();
+        if (this.peekTokenIs(TokenType.SEMICOLON)) this.nextToken();
 
         return {
             debug: 'parseReturnStatement>return',
@@ -127,9 +125,8 @@ export default class Parser {
     }
 
     public parseExpression(priority: Priority): Expression | null {
-        const pp = this.parsePrefix();
-        if (!pp) return null;
-        let left: Expression = pp;
+        let left: Expression = this.parsePrefix();
+        if (!left) return null;
 
         while (
             !this.peekTokenIs(TokenType.SEMICOLON) &&
@@ -143,10 +140,9 @@ export default class Parser {
     }
 
     public parseExpressionStatement(): ExpressionStatement | null {
-        console.log('parseExpressionStatement');
         const expression = this.parseExpression(Priority.LOWEST);
 
-        if (!this.peekTokenIs(TokenType.SEMICOLON)) this.nextToken();
+        if (this.peekTokenIs(TokenType.SEMICOLON)) this.nextToken();
 
         return {
             debug: 'parseExpressionStatement>return',
@@ -164,12 +160,12 @@ export default class Parser {
             case TokenType.NUMBER:
                 return {
                     debug: 'parsePrefix>case>number',
-                    value: this.currToken.literal,
+                    value: { value: Number(this.currToken.literal) },
                 };
             case TokenType.STRING:
                 return {
                     debug: 'parsePrefix>case>string',
-                    value: this.currToken.literal,
+                    value: { value: this.currToken.literal },
                 };
             case TokenType.BANG:
                 return this.prefixParseOps();
@@ -179,8 +175,7 @@ export default class Parser {
                 return {
                     debug: 'parsePrefix>case>boolean',
                     value: {
-                        debug: 'parsePrefix>case>boolean>value',
-                        value: this.currToken.literal,
+                        value: this.currToken.literal === 'true',
                     },
                 };
             case TokenType.LPAREN: {
@@ -190,14 +185,15 @@ export default class Parser {
                 return expression;
             }
             case TokenType.IF: {
+                if (!this.expectPeek(TokenType.LPAREN)) return null;
+
+                const condition = this.parseExpression(Priority.LOWEST);
+
                 if (
                     !this.expectPeek(TokenType.LPAREN) ||
-                    !this.expectPeek(TokenType.RPAREN) ||
                     !this.expectPeek(TokenType.LBRACE)
                 )
                     return null;
-
-                const condition = this.parseExpression(Priority.LOWEST);
 
                 const consequence = this.parseBlockStatement();
                 let alternative: Expression | null = null;
@@ -215,13 +211,12 @@ export default class Parser {
                 };
             }
             case TokenType.FUNCTION: {
-                if (
-                    !this.expectPeek(TokenType.LPAREN) ||
-                    !this.expectPeek(TokenType.LBRACE)
-                )
-                    return null;
+                if (!this.expectPeek(TokenType.LPAREN)) return null;
 
                 const parameters = this.parseFunctionParameters();
+
+                if (!this.expectPeek(TokenType.LBRACE)) return null;
+
                 const body = this.parseBlockStatement();
                 if (!body) process.exit(1);
 
@@ -244,10 +239,11 @@ export default class Parser {
     }
 
     public prefixParseOps(): PrefixExpression | null {
+        const token = this.currToken;
         this.nextToken();
         return {
             debug: 'prefixParseOps>return',
-            operator: this.currToken.type,
+            operator: token.type,
             right: this.parseExpression(Priority.PREFIX),
         };
     }
@@ -283,12 +279,16 @@ export default class Parser {
                 };
             }
             default: {
+                const operator = this.currToken;
+                const priority = this.curPriority();
                 this.nextToken();
+                const right = this.parseExpression(priority);
+                if (!right) return null;
                 return {
                     debug: 'parseInfixExpression>case>default',
                     left,
-                    right: this.parseExpression(this.curPriority()),
-                    operator: this.currToken.type,
+                    operator: operator.type,
+                    right,
                 };
             }
         }
@@ -344,6 +344,8 @@ export default class Parser {
             return args;
         }
 
+        this.nextToken();
+
         args.push(this.parseExpression(Priority.LOWEST));
 
         while (this.peekTokenIs(TokenType.COMMA)) {
@@ -369,10 +371,12 @@ export default class Parser {
             const value = this.parseExpression(Priority.LOWEST);
 
             if (
-                !this.expectPeek(TokenType.RBRACE) &&
-                !this.expectPeek(TokenType.COMMA)
+                !this.expectPeek(TokenType.COMMA) &&
+                !this.peekTokenIs(TokenType.RBRACE)
             )
                 return null;
+
+            if (key === null || value === null) return null;
 
             pairs.push({
                 debug: 'parseHash>pairs.push',
