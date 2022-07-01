@@ -11,7 +11,7 @@ export default class Lexer {
         this.readChar();
     }
 
-    public readChar() {
+    public readChar(a?: string) {
         if (this.readPosition >= this.input.length) this.ch = '\0';
         else this.ch = this.input[this.readPosition];
         this.position = this.readPosition;
@@ -20,7 +20,7 @@ export default class Lexer {
 
     public readIdentifier(): Token {
         let position = this.position;
-        while (this.isLetter(this.ch)) this.readChar();
+        while (this.isLetter(this.ch)) this.readChar('d');
         const literal = this.input.substring(position, this.position);
         return {
             type: fromLiteral(literal),
@@ -60,6 +60,7 @@ export default class Lexer {
     public nextToken(): Token {
         let token: Token;
         this.skipWhitespace();
+
         switch (this.ch) {
             case '=':
                 if (this.peekChar() === '=') {
@@ -76,6 +77,12 @@ export default class Lexer {
                     };
                 break;
 
+            case '(':
+                token = { type: TokenType.LPAREN, literal: '(' };
+                break;
+            case ')':
+                token = { type: TokenType.RPAREN, literal: ')' };
+                break;
             case ';':
                 token = { type: TokenType.SEMICOLON, literal: ';' };
                 break;
@@ -116,12 +123,6 @@ export default class Lexer {
             case '"':
                 token = this.readString();
                 break;
-            case '(':
-                token = { type: TokenType.LPAREN, literal: '(' };
-                break;
-            case ')':
-                token = { type: TokenType.RPAREN, literal: ')' };
-                break;
             case '{':
                 token = { type: TokenType.LBRACE, literal: '{' };
                 break;
@@ -146,13 +147,14 @@ export default class Lexer {
                 else if (this.isDigit(this.ch)) token = this.readNumber();
                 else token = { type: TokenType.ILLEGAL, literal: this.ch };
         }
-        if (token.type === TokenType.NUMBER) return token;
+        if (token.type === TokenType.NUMBER || token.type === TokenType.IDENT)
+            return token;
         this.readChar();
         return token;
     }
 
     private isLetter(ch: string): boolean {
-        return /[a-zA-Z]/.test(ch);
+        return /[a-zA-Z]/.test(ch) || ch === '_';
     }
 
     private isDigit(ch: string): boolean {
