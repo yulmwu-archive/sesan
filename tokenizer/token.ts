@@ -5,7 +5,6 @@ enum TokenType {
 
     NUMBER = 'NUMBER',
     STRING = 'STRING',
-    BOOLEAN = 'BOOLEAN',
     TRUE = 'TRUE',
     FALSE = 'FALSE',
     FUNCTION = 'FUNCTION',
