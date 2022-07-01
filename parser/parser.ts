@@ -178,12 +178,15 @@ export default class Parser {
                 return this.prefixParseOps();
             case TokenType.MINUS:
                 return this.prefixParseOps();
-            case TokenType.BOOLEAN:
+            case TokenType.TRUE:
                 return {
-                    debug: 'parsePrefix>case>boolean',
-                    value: {
-                        value: this.currToken.literal === 'true',
-                    },
+                    debug: 'parsePrefix>case>true',
+                    value: { value: true },
+                };
+            case TokenType.FALSE:
+                return {
+                    debug: 'parsePrefix>case>false',
+                    value: { value: false },
                 };
             case TokenType.LPAREN: {
                 this.nextToken();
@@ -237,7 +240,7 @@ export default class Parser {
             case TokenType.LBRACKET:
                 return {
                     debug: 'parsePrefix>case>Lbracket',
-                    elements: this.parseExpressionArguments(TokenType.LBRACKET),
+                    elements: this.parseExpressionArguments(TokenType.RBRACKET),
                 };
             case TokenType.LBRACE:
                 return this.parseHash();
@@ -361,13 +364,21 @@ export default class Parser {
 
         this.nextToken();
 
-        args.push(this.parseExpression(Priority.LOWEST));
+        const expression = this.parseExpression(Priority.LOWEST);
+        if (!expression) {
+        }
+        args.push(expression);
 
         while (this.peekTokenIs(TokenType.COMMA)) {
             this.nextToken();
             this.nextToken();
-            args.push(this.parseExpression(Priority.LOWEST));
+            const expression = this.parseExpression(Priority.LOWEST);
+            if (!expression) {
+            }
+            args.push(expression);
         }
+
+        if (this.expectPeek(end)) return args;
 
         return args;
     }
@@ -392,7 +403,7 @@ export default class Parser {
             )
                 return null;
 
-            if (key === null || value === null) return null;
+            if (key === null || value === null) continue;
 
             pairs.push({
                 debug: 'parseHash>pairs.push',
@@ -402,6 +413,8 @@ export default class Parser {
         }
 
         if (!this.expectPeek(TokenType.RBRACE)) return null;
+
+        console.log(pairs);
 
         return {
             debug: 'parseHash>return',
