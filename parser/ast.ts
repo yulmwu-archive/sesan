@@ -156,3 +156,5 @@ const modify_expression = (
             return expression;
     }
 };
+
+export { modify, modify_statement, modify_expression };
