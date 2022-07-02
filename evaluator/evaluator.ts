@@ -165,8 +165,6 @@ const evalExpression = (
 
             const args = evalExpressions(expr.arguments, env);
 
-            console.log(args, expr.arguments);
-
             if (args.length == 1 && args[0]?.kind === ObjectKind.ERROR)
                 return args[0];
 
@@ -196,10 +194,11 @@ const evalExpression = (
             if (index.kind === ObjectKind.ERROR) return null;
             return evalIndex(_expr, index);
         }
-        case ExpressionKind.Hash: {
-            const expr = expression as unknown as HashExpression;
-            return evalHashArguments(expr.pairs, env);
-        }
+        case ExpressionKind.Hash:
+            return evalHashArguments(
+                (expression as unknown as HashExpression).pairs,
+                env
+            );
         default:
             return null;
     }
@@ -284,6 +283,7 @@ const evalHashArguments = (
 
         const value = evalExpression(arg.value, env);
         if (!value) return;
+
         let key_: StringObject | NumberObject | BooleanObject = {
             kind: ObjectKind.STRING,
             value: '',
@@ -314,7 +314,6 @@ const evalHashArguments = (
 
         hash.pairs.set(key_, value);
     });
-
     return hash;
 };
 
@@ -375,16 +374,44 @@ const extendFunctionEnv = (
     return new Enviroment();
 };
 
+const langObjectUtil = (obj: LangObject, strW: boolean = false): string => {
+    if (!obj) return 'null';
+    switch (obj.kind) {
+        case ObjectKind.NUMBER:
+            return obj.value.toString();
+        case ObjectKind.STRING:
+            return strW ? `"${obj.value}"` : obj.value;
+        case ObjectKind.BOOLEAN:
+            return obj.value ? 'true' : 'false';
+        case ObjectKind.ARRAY:
+            return `[${obj.value
+                .map((v) => langObjectUtil(v, true))
+                .join(', ')}]`;
+        case ObjectKind.HASH:
+            return `{${[...obj.pairs.entries()]
+                .map(
+                    ([key, value]) =>
+                        `${langObjectUtil(key)}: ${langObjectUtil(value, true)}`
+                )
+                .join(', ')}}`;
+        case ObjectKind.FUNCTION:
+            return `fn(${obj.parameters.map((m) => m?.kind).join(', ')})`;
+        case ObjectKind.BUILTIN:
+            return `builtin`;
+        case ObjectKind.ERROR:
+            return obj.message;
+        default:
+            return '[Unknown]';
+    }
+};
+
 const builtinFunction = (name: string, env: Enviroment): LangObject => {
     switch (name) {
         case 'print':
             return {
                 kind: ObjectKind.BUILTIN,
                 func: (...args: Array<LangObject>): LangObject => {
-                    console.log('d', args);
-                    console.log(
-                        args.map((f: any) => f.value ?? 'null').join(' ')
-                    );
+                    console.log(...args.map((arg) => langObjectUtil(arg)));
                     return null;
                 },
             };
