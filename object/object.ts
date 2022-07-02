@@ -12,6 +12,7 @@ type LangObject =
     | QuoteObject
     | ReturnValue
     | ErrorObject
+    | Null
     | null;
 
 enum ObjectKind {
@@ -49,7 +50,7 @@ interface ArrayObject {
 }
 
 interface HashObject {
-    pairs: Map<NumberObject | BooleanObject | StringObject, LangObject>;
+    pairs: Map<NumberObject | StringObject, LangObject>;
     kind: ObjectKind.HASH;
 }
 
@@ -80,6 +81,10 @@ interface ErrorObject {
     kind: ObjectKind.ERROR;
 }
 
+interface Null {
+    kind: ObjectKind.NULL;
+}
+
 export {
     LangObject,
     NumberObject,
@@ -92,5 +97,6 @@ export {
     QuoteObject,
     ReturnValue,
     ErrorObject,
+    Null,
     ObjectKind,
 };
