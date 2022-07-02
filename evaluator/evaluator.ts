@@ -33,7 +33,7 @@ import {
 } from '../parser';
 import { TokenType } from '../tokenizer';
 
-const evalProgram = (program: Program, env: Enviroment): LangObject =>
+export default (program: Program, env: Enviroment): LangObject =>
     evalStatements(program.statements, env);
 
 const getFinalVal = (objects: Array<LangObject>): LangObject => {
@@ -150,18 +150,26 @@ const evalExpression = (
                 parameters: expr.arguments,
                 body: expr.body,
                 env,
-                kind: ObjectKind.FUNCTION | ObjectKind.BUILTIN,
+                kind: ObjectKind.FUNCTION,
             };
         }
 
         case ExpressionKind.Call: {
             const expr = expression as unknown as CallExpression;
+
             const name = (expr.function as unknown as StringLiteral).value;
+
             if (name === 'quote') return evalQuote(expr.arguments[0], env);
+
             const functionObject = evalExpression(expr.function, env);
+
             const args = evalExpressions(expr.arguments, env);
+
+            console.log(args, expr.arguments);
+
             if (args.length == 1 && args[0]?.kind === ObjectKind.ERROR)
                 return args[0];
+
             return applyFunction(functionObject, args, env);
         }
         case ExpressionKind.Array: {
@@ -192,6 +200,8 @@ const evalExpression = (
             const expr = expression as unknown as HashExpression;
             return evalHashArguments(expr.pairs, env);
         }
+        default:
+            return null;
     }
 };
 
@@ -339,10 +349,8 @@ const applyFunction = (
         if (res?.kind === ObjectKind.RETURN_VALUE) return res.value;
         return res;
     }
-    if (func?.kind === ObjectKind.BUILTIN) {
-        const f = func as unknown as BuiltinFunction;
-        return f.func(...args);
-    }
+    if (func?.kind === ObjectKind.BUILTIN)
+        return (func as unknown as BuiltinFunction).func(...args);
     return {
         kind: ObjectKind.ERROR,
         message: 'not a function',
@@ -355,9 +363,8 @@ const extendFunctionEnv = (
     env: Enviroment
 ): Enviroment => {
     if (func?.kind === ObjectKind.FUNCTION) {
-        const f = func as unknown as FunctionExpression;
         const newEnv = newEnclosedEnvironment(env);
-        f.arguments.forEach((param: Expression, i: number) => {
+        func.parameters.forEach((param: Expression, i: number) => {
             if (param?.kind === ExpressionKind.Ident) {
                 const ident = param as unknown as StringLiteral;
                 newEnv.set(ident.value, args[i]);
@@ -374,7 +381,10 @@ const builtinFunction = (name: string, env: Enviroment): LangObject => {
             return {
                 kind: ObjectKind.BUILTIN,
                 func: (...args: Array<LangObject>): LangObject => {
-                    args.forEach((arg: LangObject) => console.log(arg));
+                    console.log('d', args);
+                    console.log(
+                        args.map((f: any) => f.value ?? 'null').join(' ')
+                    );
                     return null;
                 },
             };
