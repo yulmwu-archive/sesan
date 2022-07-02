@@ -4,49 +4,43 @@ import { Lexer } from '../tokenizer';
 test('Tokenizer token test', () => {
     const expected = [
         { type: 'LET', literal: 'let' },
-        { type: 'IDENT', literal: 'five' },
-        { type: '=', literal: '=' },
-        { type: 'NUMBER', literal: 5 },
-        { type: ';', literal: ';' },
-        { type: 'LET', literal: 'let' },
-        { type: 'IDENT', literal: 'y' },
-        { type: '=', literal: '=' },
-        { type: 'STRING', literal: 'I am a string' },
-        { type: ';', literal: ';' },
-        { type: '[', literal: '[' },
-        { type: 'NUMBER', literal: 10 },
-        { type: ',', literal: ',' },
-        { type: 'NUMBER', literal: 2 },
-        { type: ',', literal: ',' },
-        { type: 'NUMBER', literal: 3 },
-        { type: ']', literal: ']' },
-        { type: ';', literal: ';' },
-        { type: ';', literal: ';' },
-        { type: ';', literal: ';' },
-        { type: 'LET', literal: 'let' },
-        { type: 'IDENT', literal: 'dict' },
+        { type: 'IDENT', literal: 'x' },
         { type: '=', literal: '=' },
         { type: '{', literal: '{' },
-        { type: 'STRING', literal: 'key' },
+        { type: 'IDENT', literal: 'a' },
         { type: ':', literal: ':' },
-        { type: 'STRING', literal: 'value' },
+        { type: 'NUMBER', literal: '1' },
         { type: ',', literal: ',' },
-        { type: 'STRING', literal: 'key2' },
+        { type: 'IDENT', literal: 'b' },
         { type: ':', literal: ':' },
-        { type: 'STRING', literal: 'value2' },
+        { type: 'FALSE', literal: 'false' },
+        { type: ',', literal: ',' },
+        { type: 'STRING', literal: 'c' },
+        { type: ':', literal: ':' },
+        { type: 'STRING', literal: 'hello' },
+        { type: ',', literal: ',' },
+        { type: 'STRING', literal: 'd' },
+        { type: ':', literal: ':' },
+        { type: '[', literal: '[' },
+        { type: 'NUMBER', literal: '1' },
+        { type: ',', literal: ',' },
+        { type: 'NUMBER', literal: '2' },
+        { type: ',', literal: ',' },
+        { type: 'NUMBER', literal: '3' },
+        { type: ']', literal: ']' },
         { type: ',', literal: ',' },
         { type: '}', literal: '}' },
         { type: ';', literal: ';' },
+        { type: 'EOF', literal: 'EOF' },
     ];
 
     const lexer = new Lexer(`
-        let five = 5;
-        let y = "I am a string";
-        [10, 2, 3];;;
-        let dict = {
-            "key": "value",
-            "key2": "value2",
-        };
+let x = {
+    a: 1,
+    b: false,
+    "c": "hello",
+    "d": [1, 2, 3],
+};
     `);
 
     expected.forEach((expected) => eq(lexer.nextToken(), expected));

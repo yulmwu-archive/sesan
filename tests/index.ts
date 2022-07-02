@@ -1,5 +1,5 @@
 export default (description: string, callback: () => any) => {
-    console.log(`----- ${description} -----\n`);
+    console.log(`\n----- ${description} -----\n`);
     const start = performance.now();
     try {
         console.log(callback() ?? 'No return value');
