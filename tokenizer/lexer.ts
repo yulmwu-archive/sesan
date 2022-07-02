@@ -11,7 +11,7 @@ export default class Lexer {
         this.readChar();
     }
 
-    public readChar(a?: string) {
+    public readChar() {
         if (this.readPosition >= this.input.length) this.ch = '\0';
         else this.ch = this.input[this.readPosition];
         this.position = this.readPosition;
@@ -20,7 +20,7 @@ export default class Lexer {
 
     public readIdentifier(): Token {
         let position = this.position;
-        while (this.isLetter(this.ch)) this.readChar('d');
+        while (this.isLetter(this.ch)) this.readChar();
         const literal = this.input.substring(position, this.position);
         return {
             type: fromLiteral(literal),
@@ -147,7 +147,17 @@ export default class Lexer {
                 else if (this.isDigit(this.ch)) token = this.readNumber();
                 else token = { type: TokenType.ILLEGAL, literal: this.ch };
         }
-        if (token.type === TokenType.NUMBER || token.type === TokenType.IDENT)
+        if (
+            token.type === TokenType.LET ||
+            token.type === TokenType.FUNCTION ||
+            token.type === TokenType.TRUE ||
+            token.type === TokenType.FALSE ||
+            token.type === TokenType.IF ||
+            token.type === TokenType.ELSE ||
+            token.type === TokenType.RETURN ||
+            token.type === TokenType.IDENT ||
+            token.type === TokenType.NUMBER
+        )
             return token;
         this.readChar();
         return token;
