@@ -2,11 +2,14 @@ import { Lexer, Token, TokenType } from '../tokenizer';
 import {
     BlockStatement,
     Expression,
+    ExpressionKind,
     ExpressionStatement,
     HashExpression,
     HashPair,
     IdentExpression,
     LetStatement,
+    LiteralKind,
+    NodeKind,
     PrefixExpression,
     Program,
     ReturnStatement,
@@ -104,6 +107,7 @@ export default class Parser {
                 this.currToken.type === TokenType.IDENT
                     ? this.currToken.literal
                     : '',
+            kind: ExpressionKind.Ident,
         };
 
         if (!this.expectPeek(TokenType.ASSIGN)) return null;
@@ -118,6 +122,7 @@ export default class Parser {
             debug: 'parseLetStatement>return',
             ident,
             value: expression,
+            kind: NodeKind.LetStatement,
         };
     }
 
@@ -131,6 +136,7 @@ export default class Parser {
         return {
             debug: 'parseReturnStatement>return',
             value: expression,
+            kind: NodeKind.ReturnStatement,
         };
     }
 
@@ -158,6 +164,7 @@ export default class Parser {
         return {
             debug: 'parseExpressionStatement>return',
             expression,
+            kind: NodeKind.ExpressionStatement,
         };
     }
 
@@ -167,16 +174,25 @@ export default class Parser {
                 return {
                     debug: 'parsePrefix>case>ident',
                     value: this.currToken.literal,
+                    kind: ExpressionKind.Ident,
                 };
             case TokenType.NUMBER:
                 return {
                     debug: 'parsePrefix>case>number',
-                    value: { value: Number(this.currToken.literal) },
+                    value: {
+                        value: Number(this.currToken.literal),
+                        kind: LiteralKind.Number,
+                    },
+                    kind: ExpressionKind.Literal,
                 };
             case TokenType.STRING:
                 return {
                     debug: 'parsePrefix>case>string',
-                    value: { value: this.currToken.literal },
+                    value: {
+                        value: this.currToken.literal,
+                        kind: LiteralKind.String,
+                    },
+                    kind: ExpressionKind.Literal,
                 };
             case TokenType.BANG:
                 return this.prefixParseOps();
@@ -185,12 +201,14 @@ export default class Parser {
             case TokenType.TRUE:
                 return {
                     debug: 'parsePrefix>case>true',
-                    value: { value: true },
+                    value: { value: true, kind: LiteralKind.Boolean },
+                    kind: ExpressionKind.Literal,
                 };
             case TokenType.FALSE:
                 return {
                     debug: 'parsePrefix>case>false',
-                    value: { value: false },
+                    value: { value: false, kind: LiteralKind.Boolean },
+                    kind: ExpressionKind.Literal,
                 };
             case TokenType.LPAREN: {
                 this.nextToken();
@@ -228,6 +246,7 @@ export default class Parser {
                     condition,
                     consequence,
                     alternative,
+                    kind: ExpressionKind.If,
                 };
             }
             case TokenType.FUNCTION: {
@@ -245,12 +264,14 @@ export default class Parser {
                     debug: 'parsePrefix>case>function',
                     arguments: parameters,
                     body,
+                    kind: ExpressionKind.Function,
                 };
             }
             case TokenType.LBRACKET:
                 return {
                     debug: 'parsePrefix>case>Lbracket',
                     elements: this.parseExpressionArguments(TokenType.RBRACKET),
+                    kind: ExpressionKind.Array,
                 };
             case TokenType.LBRACE:
                 return this.parseHash();
@@ -268,6 +289,7 @@ export default class Parser {
             debug: 'prefixParseOps>return',
             operator: token.type,
             right: this.parseExpression(Priority.PREFIX),
+            kind: ExpressionKind.Prefix,
         };
     }
 
@@ -277,7 +299,8 @@ export default class Parser {
                 return {
                     debug: 'parseInfixExpression>case>Lparen',
                     function: left,
-                    arguments: this.parseExpressionArguments(TokenType.LPAREN),
+                    arguments: this.parseExpressionArguments(TokenType.RPAREN),
+                    kind: ExpressionKind.Call,
                 };
             case TokenType.LBRACKET: {
                 this.nextToken();
@@ -292,13 +315,17 @@ export default class Parser {
                             value: {
                                 debug: 'parseInfixExpression>case>Lbracket>index>value',
                                 value: 0,
+                                kind: LiteralKind.Number,
                             },
+                            kind: ExpressionKind.Literal,
                         },
+                        kind: ExpressionKind.Index,
                     };
                 return {
                     debug: 'parseInfixExpression>case>Lbracket',
                     left,
                     index: expression,
+                    kind: ExpressionKind.Index,
                 };
             }
             default: {
@@ -316,6 +343,7 @@ export default class Parser {
                     left,
                     operator: operator.type,
                     right,
+                    kind: ExpressionKind.Infix,
                 };
             }
         }
@@ -338,6 +366,7 @@ export default class Parser {
         return {
             debug: 'parseBlockStatement>return',
             statements,
+            kind: ExpressionKind.Block,
         };
     }
 
@@ -353,6 +382,7 @@ export default class Parser {
 
         parameters.push({
             value: this.currToken.literal,
+            kind: ExpressionKind.Ident,
         });
 
         while (this.peekTokenIs(TokenType.COMMA)) {
@@ -360,6 +390,7 @@ export default class Parser {
             this.nextToken();
             parameters.push({
                 value: this.currToken.literal,
+                kind: ExpressionKind.Ident,
             });
         }
 
@@ -379,17 +410,13 @@ export default class Parser {
         this.nextToken();
 
         const expression = this.parseExpression(Priority.LOWEST);
-        if (!expression) {
-        }
-        args.push(expression);
+        if (expression) args.push(expression);
 
         while (this.peekTokenIs(TokenType.COMMA)) {
             this.nextToken();
             this.nextToken();
             const expression = this.parseExpression(Priority.LOWEST);
-            if (!expression) {
-            }
-            args.push(expression);
+            if (expression) args.push(expression);
         }
 
         if (this.expectPeek(end, false)) return args;
@@ -431,6 +458,7 @@ export default class Parser {
         return {
             debug: 'parseHash>return',
             pairs,
+            kind: ExpressionKind.Hash,
         };
     }
 

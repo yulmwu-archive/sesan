@@ -25,7 +25,7 @@ type Expression =
     | null;
 
 enum ExpressionKind {
-    Literal,
+    Literal = 0,
     Block,
     Prefix,
     Infix,
@@ -40,14 +40,14 @@ enum ExpressionKind {
 }
 
 enum NodeKind {
-    Program,
+    Program = 100,
     LetStatement,
     ReturnStatement,
     ExpressionStatement,
 }
 
 enum LiteralKind {
-    String,
+    String = 200,
     Number,
     Boolean,
 }
@@ -59,17 +59,17 @@ interface Debug {
 interface LetStatement extends Debug {
     ident: Expression;
     value: Expression;
-    kind?: NodeKind.LetStatement;
+    kind: NodeKind.LetStatement;
 }
 
 interface ReturnStatement extends Debug {
     value: Expression;
-    kind?: NodeKind.ReturnStatement;
+    kind: NodeKind.ReturnStatement;
 }
 
 interface ExpressionStatement extends Debug {
     expression: Expression;
-    kind?: NodeKind.ExpressionStatement;
+    kind: NodeKind.ExpressionStatement;
 }
 
 interface LiteralExpression extends Debug {
