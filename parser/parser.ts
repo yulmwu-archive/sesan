@@ -66,18 +66,22 @@ export default class Parser {
         this.peekToken = this.lexer.nextToken();
     }
 
-    public expectPeek(tokenType: TokenType): boolean {
+    public expectPeek(tokenType: TokenType, err: boolean = true): boolean {
         if (this.peekTokenIs(tokenType)) {
             this.nextToken();
             return true;
         }
 
-        this.peekError(tokenType);
+        if (err) this.peekError(tokenType);
 
         return false;
     }
 
     public peekTokenIs(tokenType: TokenType): boolean {
+        if (tokenType === TokenType.IDENT) {
+            if (this.peekToken.type === TokenType.IDENT) return true;
+            return false;
+        }
         return this.peekToken.type === tokenType;
     }
 
@@ -197,19 +201,25 @@ export default class Parser {
             case TokenType.IF: {
                 if (!this.expectPeek(TokenType.LPAREN)) return null;
 
+                this.nextToken();
+
                 const condition = this.parseExpression(Priority.LOWEST);
 
                 if (
-                    !this.expectPeek(TokenType.LPAREN) ||
+                    !this.expectPeek(TokenType.RPAREN) &&
                     !this.expectPeek(TokenType.LBRACE)
                 )
                     return null;
 
                 const consequence = this.parseBlockStatement();
+
                 let alternative: Expression | null = null;
+
                 if (this.peekTokenIs(TokenType.ELSE)) {
                     this.nextToken();
+
                     if (!this.expectPeek(TokenType.LBRACE)) return null;
+
                     alternative = this.parseBlockStatement();
                 }
 
@@ -293,10 +303,14 @@ export default class Parser {
             }
             default: {
                 const operator = this.currToken;
+
                 const priority = this.currPriority();
+
                 this.nextToken();
+
                 const right = this.parseExpression(priority);
                 if (!right) return null;
+
                 return {
                     debug: 'parseInfixExpression>case>default',
                     left,
@@ -378,7 +392,7 @@ export default class Parser {
             args.push(expression);
         }
 
-        if (this.expectPeek(end)) return args;
+        if (this.expectPeek(end, false)) return args;
 
         return args;
     }
@@ -391,14 +405,15 @@ export default class Parser {
 
             const key = this.parseExpression(Priority.LOWEST);
 
-            if (!this.expectPeek(TokenType.COLON)) return null;
-
-            this.nextToken();
+            if (this.peekTokenIs(TokenType.COLON)) {
+                this.nextToken();
+                this.nextToken();
+            }
 
             const value = this.parseExpression(Priority.LOWEST);
 
             if (
-                !this.expectPeek(TokenType.COMMA) &&
+                !this.expectPeek(TokenType.COMMA, false) &&
                 !this.peekTokenIs(TokenType.RBRACE)
             )
                 return null;
@@ -406,15 +421,12 @@ export default class Parser {
             if (key === null || value === null) continue;
 
             pairs.push({
-                debug: 'parseHash>pairs.push',
                 key,
                 value,
             });
         }
 
         if (!this.expectPeek(TokenType.RBRACE)) return null;
-
-        console.log(pairs);
 
         return {
             debug: 'parseHash>return',
