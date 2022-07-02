@@ -15,7 +15,7 @@ type LangObject =
     | null;
 
 enum ObjectKind {
-    NUMBER,
+    NUMBER = 300,
     STRING,
     BOOLEAN,
     ARRAY,

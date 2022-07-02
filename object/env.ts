@@ -8,8 +8,9 @@ export default class Enviroment {
         const value = this.store.get(name);
         if (!value) {
             if (this.outer) return this.outer.get(name);
+            return null;
         }
-        return null;
+        return value;
     }
 
     public set(name: string, value: LangObject): void {
