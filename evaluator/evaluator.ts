@@ -1,4 +1,14 @@
-import { Enviroment, LangObject, ObjectKind } from '../object';
+import {
+    BooleanObject,
+    BuiltinFunction,
+    Enviroment,
+    HashObject,
+    LangObject,
+    NumberObject,
+    ObjectKind,
+    StringObject,
+} from '../object';
+import { newEnclosedEnvironment } from '../object/env';
 import {
     ArrayExpression,
     BlockStatement,
@@ -8,17 +18,20 @@ import {
     ExpressionStatement,
     FunctionExpression,
     HashExpression,
+    HashPair,
     IfExpression,
     IndexExpression,
     InfixExpression,
     LiteralExpression,
     LiteralKind,
+    modify_expression,
     NodeKind,
     PrefixExpression,
     Program,
     Statement,
     StringLiteral,
 } from '../parser';
+import { TokenType } from '../tokenizer';
 
 const evalProgram = (program: Program, env: Enviroment): LangObject =>
     evalStatements(program.statements, env);
@@ -74,7 +87,7 @@ const evalStatement = (statement: Statement, env: Enviroment): LangObject => {
             return evalExpression(statement.expression, env);
         case NodeKind.LetStatement:
             const value = evalExpression(statement.value, env);
-            if (value.kind === ObjectKind.ERROR) return value;
+            if (value?.kind === ObjectKind.ERROR) return value;
             if (statement.ident)
                 env.set(
                     (statement.ident as unknown as StringLiteral).value,
@@ -92,6 +105,8 @@ const evalStatement = (statement: Statement, env: Enviroment): LangObject => {
                     kind: ObjectKind.RETURN_VALUE,
                 };
             return null;
+        default:
+            return null;
     }
 };
 
@@ -99,9 +114,10 @@ const evalExpression = (
     expression: Expression,
     env: Enviroment
 ): LangObject => {
+    if (!expression) return null;
     switch (expression.kind) {
         case ExpressionKind.Literal:
-            return evalLiteral((expression as LiteralExpression).value, env);
+            return evalLiteral(expression as LiteralExpression, env);
         case ExpressionKind.Prefix: {
             const expr = expression as unknown as PrefixExpression;
             return evalPrefix(expr.operator, expr.right, env);
@@ -134,26 +150,24 @@ const evalExpression = (
                 parameters: expr.arguments,
                 body: expr.body,
                 env,
-                kind: ObjectKind.FUNCTION,
+                kind: ObjectKind.FUNCTION | ObjectKind.BUILTIN,
             };
         }
+
         case ExpressionKind.Call: {
             const expr = expression as unknown as CallExpression;
             const name = (expr.function as unknown as StringLiteral).value;
             if (name === 'quote') return evalQuote(expr.arguments[0], env);
-            const functionObject = evalExpression(
-                expr.function,
-                env
-            ) as unknown as FunctionExpression;
+            const functionObject = evalExpression(expr.function, env);
             const args = evalExpressions(expr.arguments, env);
-            if (args.length == 1 && args[0].kind === ObjectKind.ERROR)
+            if (args.length == 1 && args[0]?.kind === ObjectKind.ERROR)
                 return args[0];
-            return applyFunction(functionObject, args);
+            return applyFunction(functionObject, args, env);
         }
         case ExpressionKind.Array: {
             const expr = expression as unknown as ArrayExpression;
             const args = evalExpressions(expr.elements, env);
-            if (args.length == 1 && args[0].kind === ObjectKind.ERROR)
+            if (args.length == 1 && args[0]?.kind === ObjectKind.ERROR)
                 return args[0];
             const _args: Array<LangObject> = [];
             args.forEach((arg: LangObject) => {
@@ -176,10 +190,7 @@ const evalExpression = (
         }
         case ExpressionKind.Hash: {
             const expr = expression as unknown as HashExpression;
-            return {
-                pairs: evalHashArguments(expr.pairs, env),
-                kind: ObjectKind.HASH,
-            };
+            return evalHashArguments(expr.pairs, env);
         }
     }
 };
@@ -232,4 +243,436 @@ const func = (expression: Expression, env: Enviroment): Expression => {
 };
 
 const evalUnquoteCalls = (quoted: Expression, env: Enviroment): Expression => {
-    const call = ast
+    const call = modify_expression(quoted, env, func);
+    if (!call) return quoted;
+    return call;
+};
+
+const isUnqoteCall = (expression: Expression): boolean => {
+    if (expression?.kind === ExpressionKind.Call) {
+        const call = expression as unknown as CallExpression;
+        if (call.function?.kind === ExpressionKind.Ident) {
+            const ident = call.function as unknown as StringLiteral;
+            return ident.value === 'unquote';
+        }
+    }
+    return false;
+};
+
+const evalHashArguments = (
+    args: Array<HashPair>,
+    env: Enviroment
+): HashObject => {
+    const hash: HashObject = {
+        kind: ObjectKind.HASH,
+        pairs: new Map(),
+    };
+
+    args.forEach((arg: HashPair) => {
+        const key = evalExpression(arg.key, env);
+        if (!key) return;
+
+        const value = evalExpression(arg.value, env);
+        if (!value) return;
+        let key_: StringObject | NumberObject | BooleanObject = {
+            kind: ObjectKind.STRING,
+            value: '',
+        };
+
+        switch (key.kind) {
+            case ObjectKind.NUMBER:
+                key_ = {
+                    kind: ObjectKind.NUMBER,
+                    value: key.value,
+                };
+                break;
+            case ObjectKind.STRING:
+                key_ = {
+                    kind: ObjectKind.STRING,
+                    value: key.value,
+                };
+                break;
+            case ObjectKind.BOOLEAN:
+                key_ = {
+                    kind: ObjectKind.BOOLEAN,
+                    value: key.value,
+                };
+                break;
+            default:
+                return;
+        }
+
+        hash.pairs.set(key_, value);
+    });
+
+    return hash;
+};
+
+const evalExpressions = (
+    expression: Array<Expression>,
+    env: Enviroment
+): Array<LangObject> => {
+    const ret: Array<LangObject> = [];
+
+    expression.forEach((expr: Expression) => {
+        const obj = evalExpression(expr, env);
+        if (obj?.kind === ObjectKind.ERROR) {
+            ret.push(obj);
+            return;
+        }
+        ret.push(obj);
+    });
+
+    return ret;
+};
+
+const applyFunction = (
+    func: LangObject,
+    args: Array<LangObject>,
+    env: Enviroment
+): LangObject => {
+    if (func?.kind === ObjectKind.FUNCTION) {
+        const res = evalExpression(
+            (func as unknown as FunctionExpression).body,
+            extendFunctionEnv(func, args, env)
+        );
+        if (res?.kind === ObjectKind.RETURN_VALUE) return res.value;
+        return res;
+    }
+    if (func?.kind === ObjectKind.BUILTIN) {
+        const f = func as unknown as BuiltinFunction;
+        return f.func(...args);
+    }
+    return {
+        kind: ObjectKind.ERROR,
+        message: 'not a function',
+    };
+};
+
+const extendFunctionEnv = (
+    func: LangObject,
+    args: Array<LangObject>,
+    env: Enviroment
+): Enviroment => {
+    if (func?.kind === ObjectKind.FUNCTION) {
+        const f = func as unknown as FunctionExpression;
+        const newEnv = newEnclosedEnvironment(env);
+        f.arguments.forEach((param: Expression, i: number) => {
+            if (param?.kind === ExpressionKind.Ident) {
+                const ident = param as unknown as StringLiteral;
+                newEnv.set(ident.value, args[i]);
+            }
+        });
+        return newEnv;
+    }
+    return new Enviroment();
+};
+
+const builtinFunction = (name: string, env: Enviroment): LangObject => {
+    switch (name) {
+        case 'print':
+            return {
+                kind: ObjectKind.BUILTIN,
+                func: (...args: Array<LangObject>): LangObject => {
+                    args.forEach((arg: LangObject) => console.log(arg));
+                    return null;
+                },
+            };
+        default:
+            return null;
+    }
+};
+
+const evalIdent = (name: string, env: Enviroment): LangObject => {
+    if (env.get(name)) return env.get(name);
+    return builtinFunction(name, env);
+};
+
+const evalLiteral = (
+    literal: LiteralExpression,
+    env: Enviroment
+): LangObject => {
+    switch (literal.value.kind) {
+        case LiteralKind.Number:
+            return {
+                kind: ObjectKind.NUMBER,
+                value: literal.value.value,
+            };
+        case LiteralKind.String:
+            return {
+                kind: ObjectKind.STRING,
+                value: literal.value.value,
+            };
+        case LiteralKind.Boolean:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value: literal.value.value,
+            };
+        default:
+            return null;
+    }
+};
+
+const evalPrefix = (
+    operator: TokenType,
+    right: Expression,
+    env: Enviroment
+): LangObject => {
+    const expression = evalExpression(right, env);
+
+    if (expression?.kind === ObjectKind.ERROR) return expression;
+
+    switch (operator) {
+        case TokenType.MINUS:
+            return evalMinus(expression);
+        case TokenType.BANG:
+            return evalBang(expression);
+        default:
+            return null;
+    }
+};
+
+const evalInfix = (
+    operator: TokenType,
+    _left: Expression,
+    _right: Expression,
+    env: Enviroment
+): LangObject => {
+    const left = evalExpression(_left, env);
+
+    if (left?.kind === ObjectKind.ERROR) return left;
+
+    const right = evalExpression(_right, env);
+
+    if (right?.kind === ObjectKind.ERROR) return right;
+
+    const error: LangObject = {
+        kind: ObjectKind.ERROR,
+        message: `type missmatch ${left?.kind} ${right?.kind}`,
+    };
+
+    switch (left?.kind) {
+        case ObjectKind.NUMBER:
+            if (right?.kind === ObjectKind.NUMBER)
+                return evalNumberInfix(operator, left, right, env);
+            return error;
+        case ObjectKind.STRING:
+            if (right?.kind === ObjectKind.STRING)
+                return evalStringInfix(operator, left, right, env);
+            return error;
+        case ObjectKind.BOOLEAN:
+            if (right?.kind === ObjectKind.BOOLEAN)
+                return evalBooleanInfix(operator, left, right, env);
+            return error;
+        default:
+            return error;
+    }
+};
+
+const evalNumberInfix = (
+    operator: TokenType,
+    left: LangObject,
+    right: LangObject,
+    env: Enviroment
+): LangObject => {
+    if (left?.kind !== ObjectKind.NUMBER || right?.kind !== ObjectKind.NUMBER) {
+        return {
+            kind: ObjectKind.ERROR,
+            message: 'type missmatch',
+        };
+    }
+    switch (operator) {
+        case TokenType.PLUS:
+            return {
+                kind: ObjectKind.NUMBER,
+                value: left.value + right.value,
+            };
+        case TokenType.MINUS:
+            return {
+                kind: ObjectKind.NUMBER,
+                value: left.value - right.value,
+            };
+        case TokenType.SLASH:
+            return {
+                kind: ObjectKind.NUMBER,
+                value: left.value / right.value,
+            };
+        case TokenType.ASTERISK:
+            return {
+                kind: ObjectKind.NUMBER,
+                value: left.value * right.value,
+            };
+        case TokenType.EQUAL:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value: left.value === right.value,
+            };
+        case TokenType.NOT_EQUAL:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value: left.value !== right.value,
+            };
+        case TokenType.GT:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value: left.value > right.value,
+            };
+        case TokenType.LT:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value: left.value < right.value,
+            };
+        default:
+            return null;
+    }
+};
+
+const evalBooleanInfix = (
+    operator: TokenType,
+    left: LangObject,
+    right: LangObject,
+    env: Enviroment
+): LangObject => {
+    if (
+        left?.kind !== ObjectKind.BOOLEAN ||
+        right?.kind !== ObjectKind.BOOLEAN
+    ) {
+        return {
+            kind: ObjectKind.ERROR,
+            message: 'type missmatch',
+        };
+    }
+    switch (operator) {
+        case TokenType.EQUAL:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value: left.value === right.value,
+            };
+        case TokenType.NOT_EQUAL:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value: left.value !== right.value,
+            };
+        default:
+            return null;
+    }
+};
+
+const evalStringInfix = (
+    operator: TokenType,
+    left: LangObject,
+    right: LangObject,
+    env: Enviroment
+): LangObject => {
+    if (
+        operator !== TokenType.PLUS ||
+        left?.kind !== ObjectKind.STRING ||
+        right?.kind !== ObjectKind.STRING
+    ) {
+        return {
+            kind: ObjectKind.ERROR,
+            message: 'type missmatch',
+        };
+    }
+
+    return {
+        kind: ObjectKind.STRING,
+        value: `${left.value}${right.value}`,
+    };
+};
+
+const evalIfExpression = (
+    condition: Expression,
+    consequence: Expression,
+    alternative: Expression | null,
+    env: Enviroment
+): LangObject => {
+    const conditionExpression = evalExpression(condition, env);
+
+    if (conditionExpression?.kind === ObjectKind.ERROR)
+        return conditionExpression;
+
+    if (conditionExpression?.kind === ObjectKind.BOOLEAN) {
+        if (conditionExpression.value) {
+            return evalExpression(consequence, env);
+        } else if (alternative) {
+            return evalExpression(alternative, env);
+        }
+    }
+
+    return null;
+};
+
+const evalIndex = (left: LangObject, index: LangObject): LangObject | null => {
+    switch (left?.kind) {
+        case ObjectKind.ARRAY:
+            if (index?.kind === ObjectKind.NUMBER)
+                return evalArrayIndex(left, index);
+            return {
+                kind: ObjectKind.ERROR,
+                message: 'not supported',
+            };
+        case ObjectKind.HASH:
+            let key: string | number | boolean = 0;
+            switch (index?.kind) {
+                case ObjectKind.STRING:
+                case ObjectKind.NUMBER:
+                case ObjectKind.BOOLEAN:
+                    key = index.value;
+                    break;
+                default:
+                    return {
+                        kind: ObjectKind.ERROR,
+                        message: 'not supported',
+                    };
+            }
+        default:
+            return null;
+    }
+};
+
+const evalArrayIndex = (left: LangObject, index: LangObject): LangObject => {
+    if (index?.kind !== ObjectKind.NUMBER || left?.kind !== ObjectKind.ARRAY) {
+        return {
+            kind: ObjectKind.ERROR,
+            message: 'not supported',
+        };
+    }
+
+    if (index.value < 0 || index.value >= left.value.length) {
+        return {
+            kind: ObjectKind.ERROR,
+            message: 'index out of range',
+        };
+    }
+    return left.value[index.value];
+};
+
+const isTruthy = (obj: LangObject): boolean => {
+    if (!obj) return false;
+    switch (obj.kind) {
+        case ObjectKind.BOOLEAN:
+            return obj.value;
+        case ObjectKind.NUMBER:
+            return obj.value !== 0;
+        default:
+            return true;
+    }
+};
+
+const evalBang = (obj: LangObject): LangObject => ({
+    kind: ObjectKind.BOOLEAN,
+    value: !isTruthy(obj),
+});
+
+const evalMinus = (obj: LangObject): LangObject => {
+    if (obj?.kind !== ObjectKind.NUMBER)
+        return {
+            kind: ObjectKind.ERROR,
+            message: 'not supported',
+        };
+    return {
+        kind: ObjectKind.NUMBER,
+        value: -obj.value,
+    };
+};
