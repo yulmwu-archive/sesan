@@ -224,7 +224,7 @@ export default class Parser {
                 const condition = this.parseExpression(Priority.LOWEST);
 
                 if (
-                    !this.expectPeek(TokenType.RPAREN) &&
+                    !this.expectPeek(TokenType.RPAREN) ||
                     !this.expectPeek(TokenType.LBRACE)
                 )
                     return null;
@@ -440,7 +440,7 @@ export default class Parser {
             const value = this.parseExpression(Priority.LOWEST);
 
             if (
-                !this.expectPeek(TokenType.COMMA, false) &&
+                !this.expectPeek(TokenType.COMMA) &&
                 !this.peekTokenIs(TokenType.RBRACE)
             )
                 return null;
