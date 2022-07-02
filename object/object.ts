@@ -57,11 +57,11 @@ interface FunctionObject {
     parameters: Array<Expression>;
     body: Expression;
     env: Enviroment;
-    kind: ObjectKind.FUNCTION;
+    kind: ObjectKind.FUNCTION | ObjectKind.BUILTIN;
 }
 
 interface BuiltinFunction {
-    (...args: Array<LangObject>): LangObject;
+    func: (...args: Array<LangObject>) => LangObject;
     kind: ObjectKind.BUILTIN;
 }
 
