@@ -10,12 +10,9 @@ import {
 import { Parser } from '../parser';
 import { Lexer } from '../tokenizer';
 import { readFileSync } from 'fs';
+import { print, printError, readLine } from './io';
 
-import prompt from 'prompt-sync';
-
-const promptSync = prompt({ sigint: true });
-
-type Func = Omit<BuiltinFunction, 'kind'>['func'];
+export type Func = Omit<BuiltinFunction, 'kind'>['func'];
 
 export default (name: string, env: Enviroment): LangObject => {
     const func: Func | undefined = new Map([
@@ -33,40 +30,6 @@ export default (name: string, env: Enviroment): LangObject => {
     return {
         kind: ObjectKind.BUILTIN,
         func: func,
-    };
-};
-
-const print: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length <= 0 || args[0]?.kind !== ObjectKind.ARRAY) return NULL;
-
-    process.stdout.write(
-        `${args[0]?.value
-            .map((arg) => langObjectUtil(arg))
-            .join(' ')}${langObjectUtil(args[1])}`
-    );
-
-    return NULL;
-};
-
-const printError: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length <= 0 || args[0]?.kind !== ObjectKind.ARRAY) return NULL;
-
-    process.stdout.write(
-        `${args[0]?.value
-            .map((arg) => langObjectUtil(arg))
-            .join(' ')}${langObjectUtil(args[1])}`
-    );
-
-    return NULL;
-};
-
-const readLine: Func = (args: Array<LangObject>): LangObject => {
-    if (args[0]?.kind !== ObjectKind.ARRAY) return NULL;
-    return {
-        kind: ObjectKind.STRING,
-        value: promptSync(
-            args[0]?.value.map((arg) => langObjectUtil(arg)).join(' ')
-        ),
     };
 };
 
@@ -94,8 +57,7 @@ const importEnv: Func = (
 
     let fileName = (args[0] as StringObject).value;
 
-    if (fileName.startsWith('@std/'))
-        fileName = fileName.replace('@std/', './stdlib/');
+    if (!fileName.endsWith('.tiny')) fileName += '.tiny';
 
     try {
         return evaluator(
