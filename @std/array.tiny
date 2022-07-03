@@ -1,0 +1,19 @@
+let push = func(arr, value) {
+    __builtin_push(arr, value);
+};
+
+let pop = func(arr) {
+    __builtin_pop(arr);
+};
+
+let shift = func(arr) {
+    __builtin_shift(arr);
+};
+
+let unshift = func(arr, value) {
+    __builtin_unshift(arr, value);
+};
+
+let slice = func(arr, start, end) {
+    __builtin_slice(arr, start, end);
+};

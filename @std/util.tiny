@@ -1,0 +1,3 @@
+let length = func(value) {
+    __builtin_length(value);
+};
