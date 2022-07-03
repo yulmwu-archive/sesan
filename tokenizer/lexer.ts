@@ -39,7 +39,12 @@ export default class Lexer {
 
     public readString(): Token {
         let position = this.position + 1;
-        while (this.peekChar() !== '"' && this.ch !== '\0') this.readChar();
+        while (
+            this.peekChar() !== '"' &&
+            this.peekChar() !== "'" &&
+            this.ch !== '\0'
+        )
+            this.readChar();
         this.readChar();
         return {
             type: TokenType.STRING,
@@ -121,6 +126,7 @@ export default class Lexer {
                 token = { type: TokenType.GT, literal: '>' };
                 break;
             case '"':
+            case "'":
                 token = this.readString();
                 break;
             case '{':

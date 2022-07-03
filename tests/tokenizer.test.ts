@@ -38,7 +38,7 @@ test('Tokenizer token test', () => {
 let x = {
     a: 1,
     b: false,
-    "c": "hello",
+    "c": 'hello',
     "d": [1, 2, 3],
 };
     `);
