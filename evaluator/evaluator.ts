@@ -368,7 +368,7 @@ const applyFunction = (
     env: Enviroment
 ): LangObject => {
     if (name === '@') return NULL;
-    
+
     if (func?.kind === ObjectKind.FUNCTION) {
         const res = evalExpression(
             (func as unknown as FunctionExpression).body,
@@ -740,4 +740,4 @@ const evalMinus = (obj: LangObject): LangObject => {
     };
 };
 
-export { NULL, __builtin__arguments };
+export { NULL, __builtin__arguments, applyFunction };
