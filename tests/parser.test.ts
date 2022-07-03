@@ -12,16 +12,13 @@ test('Parser test', () => {
                 ident: {
                     debug: 'parseLetStatement>ident',
                     value: 'xxxx',
+                    kind: 7,
                 },
                 value: {
                     debug: 'parsePrefix>case>function',
                     arguments: [
-                        {
-                            value: 'x',
-                        },
-                        {
-                            value: 'y',
-                        },
+                        { value: 'x', kind: 7 },
+                        { value: 'y', kind: 7 },
                     ],
                     body: {
                         debug: 'parseBlockStatement>return',
@@ -35,24 +32,27 @@ test('Parser test', () => {
                                             key: {
                                                 debug: 'parsePrefix>case>ident',
                                                 value: 'a',
+                                                kind: 7,
                                             },
                                             value: {
                                                 debug: 'parsePrefix>case>number',
-                                                value: {
-                                                    value: 1,
-                                                },
+                                                value: { value: 1, kind: 201 },
+                                                kind: 0,
                                             },
                                         },
                                         {
                                             key: {
                                                 debug: 'parsePrefix>case>ident',
                                                 value: 'b',
+                                                kind: 7,
                                             },
                                             value: {
                                                 debug: 'parsePrefix>case>false',
                                                 value: {
                                                     value: false,
+                                                    kind: 202,
                                                 },
+                                                kind: 0,
                                             },
                                         },
                                         {
@@ -60,13 +60,17 @@ test('Parser test', () => {
                                                 debug: 'parsePrefix>case>string',
                                                 value: {
                                                     value: 'c',
+                                                    kind: 200,
                                                 },
+                                                kind: 0,
                                             },
                                             value: {
                                                 debug: 'parsePrefix>case>string',
                                                 value: {
                                                     value: 'hello',
+                                                    kind: 200,
                                                 },
+                                                kind: 0,
                                             },
                                         },
                                         {
@@ -74,7 +78,9 @@ test('Parser test', () => {
                                                 debug: 'parsePrefix>case>string',
                                                 value: {
                                                     value: 'd',
+                                                    kind: 200,
                                                 },
+                                                kind: 0,
                                             },
                                             value: {
                                                 debug: 'parsePrefix>case>Lbracket',
@@ -83,35 +89,43 @@ test('Parser test', () => {
                                                         debug: 'parsePrefix>case>number',
                                                         value: {
                                                             value: 1,
+                                                            kind: 201,
                                                         },
+                                                        kind: 0,
                                                     },
                                                     {
                                                         debug: 'parsePrefix>case>number',
                                                         value: {
                                                             value: 2,
+                                                            kind: 201,
                                                         },
+                                                        kind: 0,
                                                     },
                                                     {
                                                         debug: 'parsePrefix>case>number',
                                                         value: {
                                                             value: 3,
+                                                            kind: 201,
                                                         },
+                                                        kind: 0,
                                                     },
                                                 ],
+                                                kind: 8,
                                             },
                                         },
                                         {
                                             key: {
                                                 debug: 'parsePrefix>case>number',
-                                                value: {
-                                                    value: 10,
-                                                },
+                                                value: { value: 10, kind: 201 },
+                                                kind: 0,
                                             },
                                             value: {
                                                 debug: 'parsePrefix>case>string',
                                                 value: {
                                                     value: 'ten',
+                                                    kind: 200,
                                                 },
+                                                kind: 0,
                                             },
                                         },
                                         {
@@ -119,7 +133,9 @@ test('Parser test', () => {
                                                 debug: 'parsePrefix>case>string',
                                                 value: {
                                                     value: 'e',
+                                                    kind: 200,
                                                 },
+                                                kind: 0,
                                             },
                                             value: {
                                                 debug: 'parseHash>return',
@@ -128,6 +144,7 @@ test('Parser test', () => {
                                                         key: {
                                                             debug: 'parsePrefix>case>ident',
                                                             value: 'f',
+                                                            kind: 7,
                                                         },
                                                         value: {
                                                             debug: 'parsePrefix>case>Lbracket',
@@ -136,68 +153,82 @@ test('Parser test', () => {
                                                                     debug: 'parsePrefix>case>string',
                                                                     value: {
                                                                         value: 'hello',
+                                                                        kind: 200,
                                                                     },
+                                                                    kind: 0,
                                                                 },
                                                                 {
                                                                     debug: 'parsePrefix>case>string',
                                                                     value: {
                                                                         value: 'world',
+                                                                        kind: 200,
                                                                     },
+                                                                    kind: 0,
                                                                 },
                                                             ],
+                                                            kind: 8,
                                                         },
                                                     },
                                                     {
                                                         key: {
                                                             debug: 'parsePrefix>case>ident',
                                                             value: 'g',
+                                                            kind: 7,
                                                         },
                                                         value: {
                                                             debug: 'parsePrefix>case>true',
                                                             value: {
                                                                 value: true,
+                                                                kind: 202,
                                                             },
+                                                            kind: 0,
                                                         },
                                                     },
                                                 ],
+                                                kind: 10,
                                             },
                                         },
                                     ],
+                                    kind: 10,
                                 },
+                                kind: 102,
                             },
                         ],
+                        kind: 1,
                     },
+                    kind: 5,
                 },
+                kind: 101,
             },
             {
                 debug: 'parseLetStatement>return',
                 ident: {
                     debug: 'parseLetStatement>ident',
                     value: 'x',
+                    kind: 7,
                 },
                 value: {
                     debug: 'parsePrefix>case>Lbracket',
                     elements: [
                         {
                             debug: 'parsePrefix>case>number',
-                            value: {
-                                value: 1,
-                            },
+                            value: { value: 1, kind: 201 },
+                            kind: 0,
                         },
                         {
                             debug: 'parsePrefix>case>number',
-                            value: {
-                                value: 2,
-                            },
+                            value: { value: 2, kind: 201 },
+                            kind: 0,
                         },
                         {
                             debug: 'parsePrefix>case>number',
-                            value: {
-                                value: 3,
-                            },
+                            value: { value: 3, kind: 201 },
+                            kind: 0,
                         },
                     ],
+                    kind: 8,
                 },
+                kind: 101,
             },
             {
                 debug: 'parseExpressionStatement>return',
@@ -208,14 +239,15 @@ test('Parser test', () => {
                         left: {
                             debug: 'parsePrefix>case>ident',
                             value: 'x',
+                            kind: 7,
                         },
                         operator: '<',
                         right: {
                             debug: 'parsePrefix>case>number',
-                            value: {
-                                value: 10,
-                            },
+                            value: { value: 10, kind: 201 },
+                            kind: 0,
                         },
+                        kind: 3,
                     },
                     consequence: {
                         debug: 'parseBlockStatement>return',
@@ -223,13 +255,23 @@ test('Parser test', () => {
                             {
                                 debug: 'parseExpressionStatement>return',
                                 expression: {
-                                    debug: 'parsePrefix>case>string',
-                                    value: {
-                                        value: 'hello',
-                                    },
+                                    debug: 'parsePrefix>case>ident',
+                                    value: 'x',
+                                    kind: 7,
                                 },
+                                kind: 103,
+                            },
+                            {
+                                debug: 'parseExpressionStatement>return',
+                                expression: {
+                                    debug: 'parsePrefix>case>string',
+                                    value: { value: 'hello', kind: 200 },
+                                    kind: 0,
+                                },
+                                kind: 103,
                             },
                         ],
+                        kind: 1,
                     },
                     alternative: {
                         debug: 'parseBlockStatement>return',
@@ -239,16 +281,18 @@ test('Parser test', () => {
                                 expression: {
                                     debug: 'parsePrefix>case>ident',
                                     value: 'x',
+                                    kind: 7,
                                 },
+                                kind: 103,
                             },
                             {
                                 debug: 'parseExpressionStatement>return',
                                 expression: {
                                     debug: 'parsePrefix>case>false',
-                                    value: {
-                                        value: false,
-                                    },
+                                    value: { value: false, kind: 202 },
+                                    kind: 0,
                                 },
+                                kind: 103,
                             },
                             {
                                 debug: 'parseExpressionStatement>return',
@@ -257,31 +301,37 @@ test('Parser test', () => {
                                     function: {
                                         debug: 'parsePrefix>case>ident',
                                         value: 'aaa',
+                                        kind: 7,
                                     },
                                     arguments: [
                                         {
                                             debug: 'parsePrefix>case>ident',
                                             value: 'a',
+                                            kind: 7,
                                         },
                                         {
                                             debug: 'parsePrefix>case>number',
-                                            value: {
-                                                value: 10,
-                                            },
+                                            value: { value: 10, kind: 201 },
+                                            kind: 0,
                                         },
                                     ],
+                                    kind: 6,
                                 },
+                                kind: 103,
                             },
                         ],
+                        kind: 1,
                     },
+                    kind: 4,
                 },
+                kind: 103,
             },
         ],
     };
 
     eq(
         parse(`
-let xxxx = fn (x, y) {
+let xxxx = func (x, y) {
     return {
         a: 1,
         b: false,
