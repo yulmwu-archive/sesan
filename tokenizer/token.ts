@@ -35,6 +35,7 @@ enum TokenType {
     IF = 'IF',
     ELSE = 'ELSE',
     RETURN = 'RETURN',
+    WHILE = 'WHILE',
 }
 
 interface Token {
@@ -58,6 +59,8 @@ const fromLiteral = (literal: string): TokenType => {
             return TokenType.ELSE;
         case 'return':
             return TokenType.RETURN;
+        case 'while':
+            return TokenType.WHILE;
         default:
             return TokenType.IDENT;
     }
