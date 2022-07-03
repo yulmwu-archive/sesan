@@ -18,7 +18,7 @@
     "keywords": [
         "typescript"
     ],
-    "author": "author",
+    "author": "tsukiroku",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/tsukiroku/tiny"
@@ -29,6 +29,11 @@
         "dist/**/*"
     ],
     "devDependencies": {
-        "@types/node": "^18.0.0"
+        "@types/node": "^18.0.0",
+        "@types/prompt-sync": "^4.1.1"
+    },
+    "dependencies": {
+        "colors": "^1.4.0",
+        "prompt-sync": "^4.2.0"
     }
 }
