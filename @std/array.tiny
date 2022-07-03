@@ -17,3 +17,7 @@ let unshift = func(arr, value) {
 let slice = func(arr, start, end) {
     __builtin_slice(arr, start, end);
 };
+
+let forEach = func(arr, callback) {
+    __builtin_forEach(arr, callback);
+};
