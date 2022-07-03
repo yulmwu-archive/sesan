@@ -1,8 +1,8 @@
 import prompt from 'prompt-sync';
 import colors from 'colors';
 
-import { evaluator, langObjectUtil } from './evaluator';
-import { Enviroment, LangObject } from './object';
+import { evaluator } from './evaluator';
+import { Enviroment, LangObject, langObjectUtil } from './object';
 import { Parser, Program } from './parser';
 import { Lexer, Token, TokenType } from './tokenizer';
 
