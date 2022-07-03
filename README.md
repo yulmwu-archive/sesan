@@ -36,11 +36,11 @@ npm run test
 
 # Syntax
 
-| keyword | Syntax                                                                   |
-| ------- | ------------------------------------------------------------------------ |
-| `let`   | `let [identifier] = [expression];`                                       |
-| `if`    | `if ([condition]) [consequence (Block)] [alternative? (Block)];`         |
-| `fn`    | `fn [identifier] ([parameters]) [body (Block) ([expression (return)])];` |
+| keyword | Syntax                                                                     |
+| ------- | -------------------------------------------------------------------------- |
+| `let`   | `let [identifier] = [expression];`                                         |
+| `if`    | `if ([condition]) [consequence (Block)] [alternative? (Block)];`           |
+| `func`  | `func [identifier] ([parameters]) [body (Block) ([expression (return)])];` |
 
 <br>
 
@@ -57,11 +57,12 @@ npm run test
 
 # Built-in Functions
 
-| Function | Description | Arguments |
-| -------- | ----------- | --------- |
-| `print`  | print       | `*`       |
+| Function | Description     | Arguments                |
+| -------- | --------------- | ------------------------ |
+| `import` | Import a module | `[module_name (string)]` |
+| `@`      | Ignore          | `*`                      |
 
-`...more`
+> stdlib: [#stdlib](#stdlib)
 
 <br>
 
@@ -91,3 +92,19 @@ npm run test
 | `parser json` | <img src="https://cdn.discordapp.com/attachments/959736817773609003/992994398235271199/unknown.png" width=300></img> |
 | `lexer`       | <img src="https://cdn.discordapp.com/attachments/959736817773609003/992995609449607208/unknown.png" width=300></img> |
 | `env`         | <img src="https://cdn.discordapp.com/attachments/959736817773609003/992995354687586394/unknown.png" width=300></img> |
+
+<br>
+
+# stdlib
+
+```ts
+import('@std/lib');
+```
+
+| Function        | Description                           |
+| --------------- | ------------------------------------- |
+| `print`         | Print a value                         |
+| `println`       | Print a value and a new line          |
+| `print_error`   | Print a value (stderr)                |
+| `print_errorln` | Print a value (stderr) and a new line |
+| `readline`      | Read a value                          |
