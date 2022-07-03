@@ -53,7 +53,7 @@ export default class Parser {
         return program;
     }
 
-    public parseStatement(): Statement | null {
+    private parseStatement(): Statement | null {
         switch (this.currToken.type) {
             case TokenType.LET:
                 return this.parseLetStatement();
@@ -64,12 +64,12 @@ export default class Parser {
         }
     }
 
-    public nextToken() {
+    private nextToken() {
         this.currToken = this.peekToken;
         this.peekToken = this.lexer.nextToken();
     }
 
-    public expectPeek(tokenType: TokenType, err: boolean = true): boolean {
+    private expectPeek(tokenType: TokenType, err: boolean = true): boolean {
         if (this.peekTokenIs(tokenType)) {
             this.nextToken();
             return true;
@@ -80,7 +80,7 @@ export default class Parser {
         return false;
     }
 
-    public peekTokenIs(tokenType: TokenType): boolean {
+    private peekTokenIs(tokenType: TokenType): boolean {
         if (tokenType === TokenType.IDENT) {
             if (this.peekToken.type === TokenType.IDENT) return true;
             return false;
@@ -88,17 +88,17 @@ export default class Parser {
         return this.peekToken.type === tokenType;
     }
 
-    public currTokenIs(tokenType: TokenType): boolean {
+    private currTokenIs(tokenType: TokenType): boolean {
         return this.currToken.type === tokenType;
     }
 
-    public peekError(tokenType: TokenType) {
+    private peekError(tokenType: TokenType) {
         this.errors.push(
             `Expected next token to be ${tokenType}, got ${this.peekToken.type} instead.`
         );
     }
 
-    public parseLetStatement(): LetStatement | null {
+    private parseLetStatement(): LetStatement | null {
         if (!this.expectPeek(TokenType.IDENT)) return null;
 
         const ident: IdentExpression = {
@@ -126,7 +126,7 @@ export default class Parser {
         };
     }
 
-    public parseReturnStatement(): ReturnStatement | null {
+    private parseReturnStatement(): ReturnStatement | null {
         this.nextToken();
 
         const expression = this.parseExpression(Priority.LOWEST);
@@ -140,7 +140,7 @@ export default class Parser {
         };
     }
 
-    public parseExpression(priority: Priority): Expression | null {
+    private parseExpression(priority: Priority): Expression | null {
         let left: Expression = this.parsePrefix();
         if (!left) return null;
 
@@ -155,7 +155,7 @@ export default class Parser {
         return left;
     }
 
-    public parseExpressionStatement(): ExpressionStatement | null {
+    private parseExpressionStatement(): ExpressionStatement | null {
         const expression = this.parseExpression(Priority.LOWEST);
         if (!expression) return null;
 
@@ -168,7 +168,7 @@ export default class Parser {
         };
     }
 
-    public parsePrefix(): Expression | null {
+    private parsePrefix(): Expression | null {
         switch (this.currToken.type) {
             case TokenType.IDENT:
                 return {
@@ -280,7 +280,7 @@ export default class Parser {
         }
     }
 
-    public prefixParseOps(): PrefixExpression | null {
+    private prefixParseOps(): PrefixExpression | null {
         const token = this.currToken;
 
         this.nextToken();
@@ -293,7 +293,7 @@ export default class Parser {
         };
     }
 
-    public parseInfixExpression(left: Expression): Expression | null {
+    private parseInfixExpression(left: Expression): Expression | null {
         switch (this.currToken.type) {
             case TokenType.LPAREN:
                 return {
@@ -349,7 +349,7 @@ export default class Parser {
         }
     }
 
-    public parseBlockStatement(): BlockStatement | null {
+    private parseBlockStatement(): BlockStatement | null {
         let statements: Array<Statement> = [];
 
         this.nextToken();
@@ -370,7 +370,7 @@ export default class Parser {
         };
     }
 
-    public parseFunctionParameters(): Array<Expression> {
+    private parseFunctionParameters(): Array<Expression> {
         let parameters: Array<Expression> = [];
 
         if (this.peekTokenIs(TokenType.RPAREN)) {
@@ -399,7 +399,7 @@ export default class Parser {
         return parameters;
     }
 
-    public parseExpressionArguments(end: TokenType): Array<Expression> {
+    private parseExpressionArguments(end: TokenType): Array<Expression> {
         const args: Array<Expression> = [];
 
         if (this.peekTokenIs(end)) {
@@ -424,7 +424,7 @@ export default class Parser {
         return args;
     }
 
-    public parseHash(): HashExpression | null {
+    private parseHash(): HashExpression | null {
         const pairs: Array<HashPair> = [];
 
         while (!this.peekTokenIs(TokenType.RBRACE)) {
@@ -462,15 +462,15 @@ export default class Parser {
         };
     }
 
-    public peekPriority(): Priority {
+    private peekPriority(): Priority {
         return this.getPriority(this.peekToken);
     }
 
-    public currPriority(): Priority {
+    private currPriority(): Priority {
         return this.getPriority(this.currToken);
     }
 
-    public getPriority(token: Token): Priority {
+    private getPriority(token: Token): Priority {
         switch (token.type) {
             case TokenType.EQUAL:
             case TokenType.NOT_EQUAL:
