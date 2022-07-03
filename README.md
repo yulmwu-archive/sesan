@@ -65,7 +65,7 @@ npm run test
 
 | type      | syntax                                    |
 | --------- | ----------------------------------------- |
-| `string`  | `"string"`                                |
+| `string`  | `"string"`, `'string'`                    |
 | `number`  | `[-?]Number`                              |
 | `boolean` | `true`, `false`                           |
 | `dict`    | `{ [key (string, number)]: [value (*)] }` |
@@ -78,8 +78,6 @@ npm run test
 | -------- | --------------- | ------------------------ |
 | `import` | Import a module | `[module_name (string)]` |
 | `@`      | Ignore          | `*`                      |
-
-> stdlib: [#stdlib](#stdlib)
 
 <br>
 
@@ -112,10 +110,10 @@ npm run test
 
 <br>
 
-# stdlib
+# @std/io
 
 ```ts
-import('@std/lib');
+import('@std/io');
 ```
 
 | Function        | Description                           |
@@ -125,3 +123,5 @@ import('@std/lib');
 | `print_error`   | Print a value (stderr)                |
 | `print_errorln` | Print a value (stderr) and a new line |
 | `readline`      | Read a value                          |
+
+#
