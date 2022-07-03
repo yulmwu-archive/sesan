@@ -1,0 +1,21 @@
+let nl = __new_line();
+
+let print = func() {
+    __builtin_print(__builtin__arguments("print"), "");
+};
+
+let println = func() {
+    __builtin_print(__builtin__arguments("println"), nl);
+};
+
+let print_error = func() {
+    __builtin_print_error(__builtin__arguments("print_error"));
+};
+
+let println_error = func() {
+    __builtin_print_error(__builtin__arguments("println_error"), nl);
+};
+
+let readline = func() {
+    __builtin_readline(__builtin__arguments("readline"));
+};
