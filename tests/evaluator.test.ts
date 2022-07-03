@@ -26,10 +26,22 @@ let arr = [1, 2, 3, -4, -5];
 print(arr[3] + arr[4]);
 
 if (arr[3] + arr[4] == -9) { print("Y"); }
+
+let test = fn (x) {
+    print(x);
+    if (x == 1) {
+        1;
+    } else {
+        2; 
+    };
+};
+
+print(test(3));
 `);
 
     const parser = new Parser(lexer);
     const env = new Enviroment();
 
     eq(evaluator(parser.parseProgram(), env), null);
+    // console.log(JSON.stringify(parser.parseProgram(), null, 2));
 });
