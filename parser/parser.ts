@@ -14,7 +14,7 @@ import {
     Program,
     ReturnStatement,
     Statement,
-} from './types';
+} from '.';
 
 enum Priority {
     LOWEST = 1,
