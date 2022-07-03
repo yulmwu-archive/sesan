@@ -164,7 +164,7 @@ export default class Lexer {
     }
 
     private isLetter(ch: string): boolean {
-        return /[a-zA-Z]/.test(ch) || ch === '_';
+        return /[a-zA-Z]/.test(ch) || ch === '_' || ch === '@';
     }
 
     private isDigit(ch: string): boolean {

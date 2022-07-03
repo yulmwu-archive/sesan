@@ -46,7 +46,7 @@ const fromLiteral = (literal: string): TokenType => {
     switch (literal) {
         case 'let':
             return TokenType.LET;
-        case 'fn':
+        case 'func':
             return TokenType.FUNCTION;
         case 'true':
             return TokenType.TRUE;
