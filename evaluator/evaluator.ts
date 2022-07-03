@@ -1,3 +1,4 @@
+import builtinFunction from '../builtin';
 import {
     BooleanObject,
     BuiltinFunction,
@@ -36,6 +37,8 @@ import { TokenType } from '../tokenizer';
 const NULL: LangObject = {
     kind: ObjectKind.NULL,
 };
+
+let __builtin__arguments: Map<string, Array<LangObject>> = new Map();
 
 export default (program: Program, env: Enviroment): LangObject =>
     evalStatements(program.statements, env);
@@ -177,10 +180,12 @@ const evalExpression = (
 
             const args = evalExpressions(expr.arguments, env);
 
+            __builtin__arguments.set(name, args);
+
             if (args.length == 1 && args[0]?.kind === ObjectKind.ERROR)
                 return args[0];
 
-            return applyFunction(functionObject, args, env);
+            return applyFunction(functionObject, name, args, env);
         }
 
         case ExpressionKind.Array: {
@@ -358,9 +363,12 @@ const evalExpressions = (
 
 const applyFunction = (
     func: LangObject,
+    name: string,
     args: Array<LangObject>,
     env: Enviroment
 ): LangObject => {
+    if (name === '@') return NULL;
+    
     if (func?.kind === ObjectKind.FUNCTION) {
         const res = evalExpression(
             (func as unknown as FunctionExpression).body,
@@ -373,11 +381,11 @@ const applyFunction = (
     }
 
     if (func?.kind === ObjectKind.BUILTIN)
-        return (func as unknown as BuiltinFunction).func(...args);
+        return (func as unknown as BuiltinFunction).func(args, env);
 
     return {
         kind: ObjectKind.ERROR,
-        message: 'not a function',
+        message: `'${name}' is not a function.`,
     };
 };
 
@@ -400,64 +408,6 @@ const extendFunctionEnv = (
     }
 
     return new Enviroment();
-};
-
-const langObjectUtil = (obj: LangObject, strW: boolean = false): string => {
-    if (!obj) return 'NULL';
-    switch (obj.kind) {
-        case ObjectKind.NUMBER:
-            return obj.value.toString();
-
-        case ObjectKind.STRING:
-            return strW ? `"${obj.value}"` : obj.value;
-
-        case ObjectKind.BOOLEAN:
-            return obj.value ? 'true' : 'false';
-
-        case ObjectKind.ARRAY:
-            return `[${obj.value
-                .map((v) => langObjectUtil(v, true))
-                .join(', ')}]`;
-
-        case ObjectKind.HASH:
-            return `{ ${[...obj.pairs.entries()]
-                .map(
-                    ([key, value]) =>
-                        `${langObjectUtil(key)}: ${langObjectUtil(value, true)}`
-                )
-                .join(', ')} }`;
-
-        case ObjectKind.FUNCTION:
-            return `fn(${obj.parameters.map((m) => m?.kind).join(', ')})`;
-
-        case ObjectKind.BUILTIN:
-            return `builtin`;
-
-        case ObjectKind.NULL:
-            return 'NULL';
-
-        case ObjectKind.ERROR:
-            return obj.message;
-
-        default:
-            return `[Unknown]`;
-    }
-};
-
-const builtinFunction = (name: string, env: Enviroment): LangObject => {
-    switch (name) {
-        case 'print':
-            return {
-                kind: ObjectKind.BUILTIN,
-                func: (...args: Array<LangObject>): LangObject => {
-                    console.log(...args.map((arg) => langObjectUtil(arg)));
-                    return null;
-                },
-            };
-
-        default:
-            return null;
-    }
 };
 
 const evalIdent = (name: string, env: Enviroment): LangObject => {
@@ -531,7 +481,7 @@ const evalInfix = (
 
     const error: LangObject = {
         kind: ObjectKind.ERROR,
-        message: `type missmatch ${left?.kind} ${right?.kind}`,
+        message: `type missmatch [${left?.kind}] [${right?.kind}]`,
     };
 
     switch (left?.kind) {
@@ -790,4 +740,4 @@ const evalMinus = (obj: LangObject): LangObject => {
     };
 };
 
-export { langObjectUtil, NULL };
+export { NULL, __builtin__arguments };
