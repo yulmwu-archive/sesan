@@ -1,6 +1,13 @@
 import { Func } from '.';
 import { NULL } from '../evaluator';
-import { ArrayObject, LangObject, ObjectKind } from '../object';
+import { applyFunction } from '../evaluator/evaluator';
+import {
+    ArrayObject,
+    Enviroment,
+    FunctionObject,
+    LangObject,
+    ObjectKind,
+} from '../object';
 
 const push: Func = (args: Array<LangObject>): LangObject => {
     if (args.length < 2 || args[0]?.kind !== ObjectKind.ARRAY) return NULL;
@@ -56,4 +63,36 @@ const slice: Func = (args: Array<LangObject>): LangObject => {
     };
 };
 
-export { push, pop, shift, unshift, slice };
+const forEach: Func = (
+    args: Array<LangObject>,
+    env: Enviroment
+): LangObject => {
+    if (
+        args.length < 2 ||
+        args[0]?.kind !== ObjectKind.ARRAY ||
+        args[1]?.kind !== ObjectKind.FUNCTION
+    )
+        return NULL;
+
+    const array = args[0] as ArrayObject;
+    const func = args[1] as FunctionObject;
+
+    array.value.forEach((value, index) =>
+        applyFunction(
+            func,
+            '',
+            [
+                value,
+                {
+                    kind: ObjectKind.NUMBER,
+                    value: index,
+                },
+            ],
+            env
+        )
+    );
+
+    return NULL;
+};
+
+export { push, pop, shift, unshift, slice, forEach };

@@ -1,10 +1,8 @@
 import { evaluator, NULL, __builtin__arguments } from '../evaluator';
 import {
     ArrayObject,
-    BooleanObject,
     BuiltinFunction,
     Enviroment,
-    FunctionObject,
     HashObject,
     LangObject,
     ObjectKind,
@@ -14,8 +12,7 @@ import { Parser } from '../parser';
 import { Lexer } from '../tokenizer';
 import { readFileSync } from 'fs';
 import { print, printError, readLine } from './io';
-import { push, pop, shift, unshift, slice } from './array';
-import { applyFunction } from '../evaluator/evaluator';
+import { push, pop, shift, unshift, slice, forEach } from './array';
 
 export type Func = Omit<BuiltinFunction, 'kind'>['func'];
 
@@ -33,6 +30,7 @@ export default (name: string, env: Enviroment): LangObject => {
         ['__builtin_readline', readLine],
         ['__builtin__arguments', getArguments],
         ['__new_line', newLine],
+        ['__builtin_forEach', forEach],
         ['@', () => NULL],
     ]).get(name);
 
@@ -50,6 +48,7 @@ const getArguments: Func = (args: Array<LangObject>): LangObject => {
             kind: ObjectKind.ERROR,
             message: 'Arguments must be passed to __builtin__arguments',
         };
+
     return {
         kind: ObjectKind.ARRAY,
         value: __builtin__arguments.get((args[0] as StringObject).value) ?? [],
@@ -96,7 +95,8 @@ const length: Func = (args: Array<LangObject>): LangObject => {
     if (
         args.length < 1 ||
         (args[0]?.kind !== ObjectKind.ARRAY &&
-            args[0]?.kind !== ObjectKind.HASH)
+            args[0]?.kind !== ObjectKind.HASH &&
+            args[0]?.kind !== ObjectKind.STRING)
     )
         return NULL;
 
@@ -104,6 +104,12 @@ const length: Func = (args: Array<LangObject>): LangObject => {
         return {
             kind: ObjectKind.NUMBER,
             value: (args[0] as ArrayObject).value.length,
+        };
+
+    if (args[0]?.kind === ObjectKind.STRING)
+        return {
+            kind: ObjectKind.NUMBER,
+            value: (args[0] as StringObject).value.length,
         };
 
     return {
