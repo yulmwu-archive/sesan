@@ -789,3 +789,5 @@ const evalMinus = (obj: LangObject): LangObject => {
         value: -obj.value,
     };
 };
+
+export { langObjectUtil, NULL };
