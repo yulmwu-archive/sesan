@@ -15,22 +15,39 @@ npm run test
 
 <br>
 
-# Expression
+---
 
-|           |         |            |
-| --------- | ------- | ---------- |
-| `Literal` | `Block` | `Prefix`   |
-| `Infix`   | `If`    | `Function` |
-| `Call`    | `Ident` | `Array`    |
-| `Index`   | `Hash`  |            |
+> **Expression**
+>
+> `Literal`, `Block`, `Prefix`, `Infix`, `If`, `Function`, `Call`, `Ident`, `Array`, `Index`, `Hash`
 
 <br>
 
-# Statement
+> **Statement**
+>
+> `Let`, `ExpressionStatement`, `Return`, `Block`
 
-|       |                       |          |         |
-| ----- | --------------------- | -------- | ------- |
-| `Let` | `ExpressionStatement` | `Return` | `Block` |
+<br>
+
+> **Priority**
+>
+> `LOWEST`
+>
+> `EQUAL`
+>
+> `LESSGREATER`
+>
+> `SUM`
+>
+> `PRODUCT`
+>
+> `PREFIX`
+>
+> `CALL`
+>
+> `INDEX`
+
+---
 
 <br>
 
