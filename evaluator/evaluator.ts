@@ -125,6 +125,7 @@ const evalExpression = (
     env: Enviroment
 ): LangObject => {
     if (!expression) return null;
+
     switch (expression.kind) {
         case ExpressionKind.Literal:
             return evalLiteral(expression as LiteralExpression, env);
@@ -190,13 +191,16 @@ const evalExpression = (
 
         case ExpressionKind.Array: {
             const expr = expression as unknown as ArrayExpression;
+
             const args = evalExpressions(expr.elements, env);
+
             if (args.length == 1 && args[0]?.kind === ObjectKind.ERROR)
                 return args[0];
+
             const _args: Array<LangObject> = [];
-            args.forEach((arg: LangObject) => {
-                _args.push(arg);
-            });
+
+            args.forEach((arg: LangObject) => _args.push(arg));
+
             return {
                 value: _args,
                 kind: ObjectKind.ARRAY,
@@ -205,12 +209,17 @@ const evalExpression = (
 
         case ExpressionKind.Index: {
             const expr = expression as unknown as IndexExpression;
+
             const _expr = evalExpression(expr.left, env);
             if (!_expr) return null;
+
             if (_expr.kind === ObjectKind.ERROR) return NULL;
+
             const index = evalExpression(expr.index, env);
             if (!index) return null;
+
             if (index.kind === ObjectKind.ERROR) return NULL;
+
             return evalIndex(_expr, index);
         }
         case ExpressionKind.Hash:
