@@ -110,18 +110,14 @@ npm run test
 
 <br>
 
-# @std/io
+# std
 
 ```ts
-import('@std/io');
+import('@std/[name]');
 ```
 
-| Function        | Description                           |
-| --------------- | ------------------------------------- |
-| `print`         | Print a value                         |
-| `println`       | Print a value and a new line          |
-| `print_error`   | Print a value (stderr)                |
-| `print_errorln` | Print a value (stderr) and a new line |
-| `readline`      | Read a value                          |
-
-#
+| Name    | path            |
+| ------- | --------------- |
+| `io`    | `@std/io`       |
+| `array` | `@std/array` |
+| `util`  | `@std/util`  |
