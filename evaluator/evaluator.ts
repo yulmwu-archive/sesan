@@ -604,18 +604,32 @@ const evalStringInfix = (
     right: LangObject,
     env: Enviroment
 ): LangObject => {
-    if (
-        operator !== TokenType.PLUS ||
-        left?.kind !== ObjectKind.STRING ||
-        right?.kind !== ObjectKind.STRING
-    ) {
+    if (left?.kind !== ObjectKind.STRING || right?.kind !== ObjectKind.STRING) {
         return error('type missmatch');
     }
 
-    return {
-        kind: ObjectKind.STRING,
-        value: `${left.value}${right.value}`,
-    };
+    switch (operator) {
+        case TokenType.PLUS:
+            return {
+                kind: ObjectKind.STRING,
+                value: `${left.value}${right.value}`,
+            };
+
+        case TokenType.EQUAL:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value: left.value === right.value,
+            };
+
+        case TokenType.NOT_EQUAL:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value: left.value !== right.value,
+            };
+
+        default:
+            return null;
+    }
 };
 
 const evalIfExpression = (

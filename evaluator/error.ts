@@ -6,7 +6,7 @@ const error = (message: string): LangObject => ({
 });
 
 const printError = (message: string) =>
-    console.error(`${`[Error]`.bgRed} ${message.red}`, '\n');
+    console.error(`${`[Error]`.bgRed} ${message.red}`);
 
 export default error;
 export { printError };
