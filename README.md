@@ -7,7 +7,7 @@
 ```sh
 npm i
 
-npm run start # repl
+npm run repl # repl
 
 export TEST=NAME
 npm run test
