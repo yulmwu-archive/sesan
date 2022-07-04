@@ -1,8 +1,8 @@
 import prompt from 'prompt-sync';
 import colors from 'colors';
 
-import { evaluator } from './evaluator';
-import { Enviroment, LangObject, langObjectUtil } from './object';
+import { evaluator, printError } from './evaluator';
+import { Enviroment, LangObject, langObjectUtil, ObjectKind } from './object';
 import { Parser, Program } from './parser';
 import { Lexer, Token, TokenType } from './tokenizer';
 
@@ -12,7 +12,7 @@ const promptSync = prompt({ sigint: true });
 
 const env = new Enviroment();
 
-type Mode = 'repl' | 'parser' | 'parserJson' | 'lexer' | 'env';
+type Mode = 'repl' | 'parser' | 'parser_Json' | 'lexer' | 'env';
 
 let mode: Mode = 'repl';
 
@@ -39,7 +39,7 @@ const executeCommand = (
                     args[0] === 'parser' &&
                     (args.length >= 2 && args[1].toLowerCase()) === 'json'
                 )
-                    mode = 'parserJson';
+                    mode = 'parser_Json';
                 else mode = args[0] as Mode;
 
                 return `Switched to '${mode}' mode`;
@@ -52,14 +52,20 @@ const executeCommand = (
 
     const result = evaluator(parsed, env);
 
+    if (result?.kind === ObjectKind.ERROR) {
+        printError(result.message);
+        return '';
+    }
+
     switch (mode) {
         case 'repl':
             return langObjectUtil(result).gray;
 
         case 'parser':
-        case 'parserJson':
-            if (mode === 'parserJson') return JSON.stringify(parsed, null, 2);
             return parsed;
+
+        case 'parser_Json':
+            return JSON.stringify(parsed, null, 2);
 
         case 'lexer':
             const tokens: Array<Token> = [];
@@ -82,13 +88,15 @@ while (true) {
             `${env.store.size} Env(s)`.gray
         } ${'➜'.red} `
     );
-    console.log(
-        executeCommand(
-            input,
-            new Lexer(input),
-            new Parser(new Lexer(input)).parseProgram(),
-            env
-        ),
-        '\n'
-    );
+
+    const lexer = new Lexer(input);
+    const parser = new Parser(lexer);
+
+    const executed = executeCommand(input, lexer, parser.parseProgram(), env);
+
+    if (executed)
+        if (parser.errors.length > 0)
+            parser.errors.forEach((error) => printError(error));
+
+    console.log(executed, '\n');
 }
