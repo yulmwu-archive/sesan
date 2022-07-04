@@ -6,7 +6,7 @@ import { Lexer } from '../tokenizer';
 
 test('Tokenizer token test', () => {
     const lexer = new Lexer(`
-import("@std/lib");
+import("@std/io");
 
 let f = func (x, y) { 
     let res = x + 2 * y; 
