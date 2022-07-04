@@ -1,11 +1,10 @@
 {
     "name": "@tsukiroku/tiny",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "description": "Tiny interpreter",
     "main": "dist/index.js",
     "scripts": {
         "start": "npm run build && node .",
-        "repl": "npm run build && node ./dist/repl.js",
         "build": "if [ -d dist ]; then rm -rf dist; npm run build:tsc; else npm run build:tsc; fi",
         "build:windows": "@echo off && IF exist dist ( rd dist; npm run build:tsc ) ELSE ( npm run build:tsc ) && @echo on",
         "build:tsc": "tsc -p tsconfig.json",
@@ -35,5 +34,8 @@
     "dependencies": {
         "colors": "^1.4.0",
         "prompt-sync": "^4.2.0"
+    },
+    "publishConfig": {
+        "access": "public"
     }
 }

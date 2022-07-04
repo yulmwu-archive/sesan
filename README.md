@@ -7,10 +7,8 @@
 ```sh
 npm i
 
-npm run repl # repl
-
-export TEST=NAME
-npm run test
+npm run start [file]
+npm run start # start repl
 ```
 
 <br>
@@ -116,16 +114,15 @@ npm run test
 import('@std/[name]');
 ```
 
-| Name    | path            |
-| ------- | --------------- |
-| `io`    | `@std/io`       |
+| Name    | path         |
+| ------- | ------------ |
+| `io`    | `@std/io`    |
 | `array` | `@std/array` |
 | `util`  | `@std/util`  |
 
 # Todo List
 
-- [x] Tokenizer (Token + Lexer)
-- [x] Parser + AST (Abstract Syntax Tree)
-- [x] Evaluator
-- [x] REPL
-- [ ] Interpreter in the browser
+-   [x] Tokenizer (Token + Lexer)
+-   [x] Parser + AST (Abstract Syntax Tree)
+-   [x] Evaluator
+-   [x] REPL
