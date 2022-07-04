@@ -37,7 +37,5 @@ let slice = func(arr, start, end) {
 };
 
 let forEach = func(arr, callback) {
-    __expect_array(arr, 'forEach', func() {
-        __builtin_forEach(arr, callback);
-    });
+    __builtin_forEach(arr, callback);
 };
