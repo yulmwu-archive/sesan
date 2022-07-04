@@ -81,7 +81,7 @@ npm run start # start repl
 
 # Repl
 
-![image](https://cdn.discordapp.com/attachments/959736817773609003/992993217467387984/unknown.png)
+![image](https://cdn.discordapp.com/attachments/978977061878251565/993498532856201216/unknown.png)
 
 <br>
 
@@ -89,22 +89,109 @@ npm run start # start repl
 
 > **prefix:** `#`
 
-| Command | Description                      |
-| ------- | -------------------------------- |
-| `exit`  | Exit the repl                    |
-| `mode`  | Change the mode ([#Mode](#Mode)) |
+| Command | Description     |
+| ------- | --------------- |
+| `exit`  | Exit the repl   |
+| `mode`  | Change the mode |
 
-<br>
+---
 
-### Mode
+> [**REPL**](#repl)
 
-| Mode          |                                                                                                                      |
-| ------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `repl`        | [#Repl](#Repl)                                                                                                       |
-| `parser`      | <img src="https://cdn.discordapp.com/attachments/959736817773609003/992994841015361586/unknown.png" width=300></img> |
-| `parser json` | <img src="https://cdn.discordapp.com/attachments/959736817773609003/992994398235271199/unknown.png" width=300></img> |
-| `lexer`       | <img src="https://cdn.discordapp.com/attachments/959736817773609003/992995609449607208/unknown.png" width=300></img> |
-| `env`         | <img src="https://cdn.discordapp.com/attachments/959736817773609003/992995354687586394/unknown.png" width=300></img> |
+---
+
+```js
+[REPL] 0 Env(s) ➜ #mode parser
+Switched to 'parser' mode
+
+[PARSER] 0 Env(s) ➜ let x = 10;
+{
+  statements: [
+    {
+      debug: 'parseLetStatement>return',
+      ident: [Object],
+      value: [Object],
+      kind: 101
+    }
+  ]
+}
+
+[PARSER] 1 Env(s) ➜ _
+```
+
+---
+
+```js
+[REPL] 0 Env(s) ➜ #mode parser json
+Switched to 'parser_Json' mode
+
+[PARSER_JSON] 0 Env(s) ➜ let x = 10;
+{
+  "statements": [
+    {
+      "debug": "parseLetStatement>return",
+      "ident": {
+        "debug": "parseLetStatement>ident",
+        "value": "x",
+        "kind": 7
+      },
+      "value": {
+        "debug": "parsePrefix>case>number",
+        "value": {
+          "value": 10,
+          "kind": 201
+        },
+        "kind": 0
+      },
+      "kind": 101
+    }
+  ]
+}
+
+[PARSER_JSON] 1 Env(s) ➜ _
+```
+
+---
+
+```js
+[REPL] 0 Env(s) ➜ #mode lexer
+Switched to 'lexer' mode
+
+[LEXER] 0 Env(s) ➜ let a = 10;
+[
+  { type: 'LET', literal: 'let' },
+  { type: 'IDENT', literal: 'a' },
+  { type: '=', literal: '=' },
+  { type: 'NUMBER', literal: '10' },
+  { type: ';', literal: ';' }
+]
+
+[LEXER] 1 Env(s) ➜ _
+```
+
+---
+
+```js
+[REPL] 0 Env(s) ➜ #mode env
+Switched to 'env' mode
+
+[ENV] 0 Env(s) ➜ let x = 10;
+Enviroment {
+  store: Map(1) { 'x' => { kind: 300, value: 10 } },
+  outer: null
+}
+
+[ENV] 1 Env(s) ➜ let b = 20;
+Enviroment {
+  store: Map(2) {
+    'x' => { kind: 300, value: 10 },
+    'b' => { kind: 300, value: 20 }
+  },
+  outer: null
+}
+
+[ENV] 2 Env(s) ➜ _
+```
 
 <br>
 
