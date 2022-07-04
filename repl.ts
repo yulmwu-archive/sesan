@@ -87,7 +87,7 @@ export default class {
             case 'lexer':
                 const tokens: Array<Token> = [];
 
-                let peekToken: Token = { type: TokenType.EOF, literal: 'EOF' };
+                let peekToken: Token;
 
                 while ((peekToken = lexer.nextToken()).type !== TokenType.EOF)
                     tokens.push(peekToken);
@@ -107,12 +107,11 @@ export default class {
                 } ${'➜'.red} `
             );
 
-            const lexer = new Lexer(input);
-            const parser = new Parser(lexer);
+            const parser = new Parser(new Lexer(input));
 
             const executed = this.executeCommand(
                 input,
-                lexer,
+                new Lexer(input),
                 parser.parseProgram(),
                 this.env
             );
