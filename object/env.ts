@@ -1,4 +1,4 @@
-import { LangObject } from "./object";
+import { LangObject } from './object';
 
 export default class Enviroment {
     public store: Map<string, LangObject> = new Map<string, LangObject>();
@@ -13,8 +13,20 @@ export default class Enviroment {
         return value;
     }
 
-    public set(name: string, value: LangObject): void {
+    public set(name: string, value: LangObject) {
         this.store.set(name, value);
+    }
+
+    public delete(name: string) {
+        this.store.delete(name);
+    }
+
+    public update(name: string, value: LangObject) {
+        if (this.store.has(name)) {
+            this.store.set(name, value);
+        } else {
+            if (this.outer) this.outer.update(name, value);
+        }
     }
 }
 

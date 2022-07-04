@@ -29,6 +29,35 @@ enum ObjectKind {
     NULL,
 }
 
+const ObjectKindToString = (kind: ObjectKind): string => {
+    switch (kind) {
+        case ObjectKind.NUMBER:
+            return 'NUMBER';
+        case ObjectKind.STRING:
+            return 'STRING';
+        case ObjectKind.BOOLEAN:
+            return 'BOOLEAN';
+        case ObjectKind.ARRAY:
+            return 'ARRAY';
+        case ObjectKind.HASH:
+            return 'HASH';
+        case ObjectKind.FUNCTION:
+            return 'FUNCTION';
+        case ObjectKind.BUILTIN:
+            return 'BUILTIN';
+        case ObjectKind.QUOTE:
+            return 'QUOTE';
+        case ObjectKind.RETURN_VALUE:
+            return 'RETURN_VALUE';
+        case ObjectKind.ERROR:
+            return 'ERROR';
+        case ObjectKind.NULL:
+            return 'NULL';
+        default:
+            return 'UNKNOWN';
+    }
+};
+
 interface NumberObject {
     value: number;
     kind: ObjectKind.NUMBER;
@@ -142,4 +171,5 @@ export {
     Null,
     ObjectKind,
     langObjectUtil,
+    ObjectKindToString,
 };
