@@ -121,3 +121,11 @@ import('@std/[name]');
 | `io`    | `@std/io`       |
 | `array` | `@std/array` |
 | `util`  | `@std/util`  |
+
+# Todo List
+
+- [x] Tokenizer (Token + Lexer)
+- [x] Parser + AST (Abstract Syntax Tree)
+- [x] Evaluator
+- [x] REPL
+- [ ] interpreter in the browser
