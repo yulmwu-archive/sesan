@@ -1,4 +1,4 @@
-import { Func } from '.';
+import { Func, invalidArgument } from '.';
 import { NULL } from '../evaluator';
 import { applyFunction } from '../evaluator/evaluator';
 import {
@@ -10,7 +10,8 @@ import {
 } from '../object';
 
 const push: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length < 2 || args[0]?.kind !== ObjectKind.ARRAY) return NULL;
+    if (args.length < 2 || args[0]?.kind !== ObjectKind.ARRAY)
+        return invalidArgument;
 
     return {
         kind: ObjectKind.ARRAY,
@@ -19,7 +20,8 @@ const push: Func = (args: Array<LangObject>): LangObject => {
 };
 
 const pop: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length < 1 || args[0]?.kind !== ObjectKind.ARRAY) return NULL;
+    if (args.length < 1 || args[0]?.kind !== ObjectKind.ARRAY)
+        return invalidArgument;
 
     return {
         kind: ObjectKind.ARRAY,
@@ -28,7 +30,8 @@ const pop: Func = (args: Array<LangObject>): LangObject => {
 };
 
 const shift: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length < 1 || args[0]?.kind !== ObjectKind.ARRAY) return NULL;
+    if (args.length < 1 || args[0]?.kind !== ObjectKind.ARRAY)
+        return invalidArgument;
 
     return {
         kind: ObjectKind.ARRAY,
@@ -37,7 +40,8 @@ const shift: Func = (args: Array<LangObject>): LangObject => {
 };
 
 const unshift: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length < 2 || args[0]?.kind !== ObjectKind.ARRAY) return NULL;
+    if (args.length < 2 || args[0]?.kind !== ObjectKind.ARRAY)
+        return invalidArgument;
 
     return {
         kind: ObjectKind.ARRAY,
@@ -52,7 +56,7 @@ const slice: Func = (args: Array<LangObject>): LangObject => {
         args[1]?.kind !== ObjectKind.NUMBER ||
         args[2]?.kind !== ObjectKind.NUMBER
     )
-        return NULL;
+        return invalidArgument;
 
     return {
         kind: ObjectKind.ARRAY,
@@ -72,7 +76,7 @@ const forEach: Func = (
         args[0]?.kind !== ObjectKind.ARRAY ||
         args[1]?.kind !== ObjectKind.FUNCTION
     )
-        return NULL;
+        return invalidArgument;
 
     const array = args[0] as ArrayObject;
     const func = args[1] as FunctionObject;

@@ -6,19 +6,29 @@ import {
     HashObject,
     LangObject,
     ObjectKind,
+    ObjectKindToString,
     StringObject,
 } from '../object';
 import { Parser } from '../parser';
 import { Lexer } from '../tokenizer';
 import { readFileSync } from 'fs';
-import { print, printError, readLine } from './io';
+import { print, printError, readLine, throwError } from './io';
 import { push, pop, shift, unshift, slice, forEach } from './array';
 
-export type Func = Omit<BuiltinFunction, 'kind'>['func'];
+type Func = Omit<BuiltinFunction, 'kind'>['func'];
+
+const invalidArgument: LangObject = {
+    kind: ObjectKind.ERROR,
+    message: 'Invalid arguments',
+};
 
 export default (name: string, env: Enviroment): LangObject => {
     const func: Func | undefined = new Map([
         ['import', importEnv],
+        ['typeof', typeofObject],
+        ['throw', throwError],
+        ['delete', deleteEnv],
+        ['update', updateEnv],
         ['__builtin_push', push],
         ['__builtin_length', length],
         ['__builtin_pop', pop],
@@ -43,11 +53,7 @@ export default (name: string, env: Enviroment): LangObject => {
 };
 
 const getArguments: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length <= 0)
-        return {
-            kind: ObjectKind.ERROR,
-            message: 'Arguments must be passed to __builtin__arguments',
-        };
+    if (args.length <= 0) return invalidArgument;
 
     return {
         kind: ObjectKind.ARRAY,
@@ -60,10 +66,7 @@ const importEnv: Func = (
     env: Enviroment
 ): LangObject => {
     if (args.length <= 0 || args[0]?.kind !== ObjectKind.STRING)
-        return {
-            kind: ObjectKind.ERROR,
-            message: 'Invalid arguments',
-        };
+        return invalidArgument;
 
     try {
         let fileName = (args[0] as StringObject).value;
@@ -86,10 +89,14 @@ const importEnv: Func = (
     }
 };
 
-const newLine: Func = (args: Array<LangObject>): LangObject => ({
-    kind: ObjectKind.STRING,
-    value: '\n',
-});
+const typeofObject: Func = (args: Array<LangObject>): LangObject => {
+    if (args.length <= 0) return invalidArgument;
+
+    return {
+        kind: ObjectKind.STRING,
+        value: ObjectKindToString(args[0]?.kind ?? ObjectKind.NULL),
+    };
+};
 
 const length: Func = (args: Array<LangObject>): LangObject => {
     if (
@@ -117,3 +124,34 @@ const length: Func = (args: Array<LangObject>): LangObject => {
         value: (args[0] as HashObject).pairs.size,
     };
 };
+
+const deleteEnv: Func = (
+    args: Array<LangObject>,
+    env: Enviroment
+): LangObject => {
+    if (args.length <= 0 || args[0]?.kind !== ObjectKind.STRING)
+        return invalidArgument;
+
+    env.delete(args[0].value);
+
+    return NULL;
+};
+
+const updateEnv: Func = (
+    args: Array<LangObject>,
+    env: Enviroment
+): LangObject => {
+    if (args.length <= 1 || args[0]?.kind !== ObjectKind.STRING)
+        return invalidArgument;
+
+    env.update(args[0].value, args[1]);
+
+    return args[1];
+};
+
+const newLine: Func = (args: Array<LangObject>): LangObject => ({
+    kind: ObjectKind.STRING,
+    value: '\n',
+});
+
+export { Func, invalidArgument };

@@ -1,7 +1,7 @@
 import prompt from 'prompt-sync';
-import { Func } from '.';
-import { NULL } from '../evaluator';
-import { LangObject, langObjectUtil, ObjectKind } from '../object';
+import { Func, invalidArgument } from '.';
+import { NULL, printError as printError_ } from '../evaluator';
+import { Enviroment, LangObject, langObjectUtil, ObjectKind } from '../object';
 
 const promptSync = prompt({ sigint: true });
 
@@ -39,8 +39,13 @@ const readLine: Func = (args: Array<LangObject>): LangObject => {
     };
 };
 
-export {
-    print,
-    printError,
-    readLine,
-}
+const throwError: Func = (args: Array<LangObject>): LangObject => {
+    if (args.length <= 0 || args[0]?.kind !== ObjectKind.STRING)
+        return invalidArgument;
+
+    printError_(args[0].value);
+
+    return NULL;
+};
+
+export { print, printError, readLine, throwError };
