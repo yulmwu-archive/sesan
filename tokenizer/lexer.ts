@@ -1,3 +1,4 @@
+import { printError } from '../evaluator';
 import { fromLiteral, Token, TokenType } from './token';
 
 export default class Lexer {
@@ -48,7 +49,18 @@ export default class Lexer {
 
         while (this.peekChar() !== tok && this.ch !== '\0') this.readChar();
 
-        if (this.ch === '\0') return { type: TokenType.EOF, literal: 'EOF' }; //! 에러 처리
+        if (this.ch === '\0') {
+            printError(
+                `[Lexer] Unterminated string: ${this.input.substring(
+                    position - 1,
+                    this.position
+                )}`
+            );
+            return {
+                type: TokenType.EOF,
+                literal: 'EOF',
+            };
+        }
 
         this.readChar();
 
