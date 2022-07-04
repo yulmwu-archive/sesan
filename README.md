@@ -128,4 +128,4 @@ import('@std/[name]');
 - [x] Parser + AST (Abstract Syntax Tree)
 - [x] Evaluator
 - [x] REPL
-- [ ] interpreter in the browser
+- [ ] Interpreter in the browser
