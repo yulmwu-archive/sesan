@@ -14,14 +14,18 @@ export default class Lexer {
     public readChar() {
         if (this.readPosition >= this.input.length) this.ch = '\0';
         else this.ch = this.input[this.readPosition];
+
         this.position = this.readPosition;
         this.readPosition += 1;
     }
 
     public readIdentifier(): Token {
         let position = this.position;
+
         while (this.isLetter(this.ch)) this.readChar();
+
         const literal = this.input.substring(position, this.position);
+
         return {
             type: fromLiteral(literal),
             literal: literal,
@@ -30,22 +34,24 @@ export default class Lexer {
 
     public readNumber(): Token {
         const position = this.position;
+
         while (this.isDigit(this.ch)) this.readChar();
+
         return {
             type: TokenType.NUMBER,
             literal: this.input.substring(position, this.position),
         };
     }
 
-    public readString(): Token {
+    public readString(tok: '"' | "'"): Token {
         let position = this.position + 1;
-        while (
-            this.peekChar() !== '"' &&
-            this.peekChar() !== "'" &&
-            this.ch !== '\0'
-        )
-            this.readChar();
+
+        while (this.peekChar() !== tok && this.ch !== '\0') this.readChar();
+
+        if (this.ch === '\0') return { type: TokenType.EOF, literal: 'EOF' }; //! 에러 처리
+
         this.readChar();
+
         return {
             type: TokenType.STRING,
             literal: this.input.substring(position, this.position),
@@ -59,6 +65,7 @@ export default class Lexer {
 
     public peekChar(): string {
         if (this.readPosition >= this.input.length) return '\0';
+
         return this.input[this.readPosition];
     }
 
@@ -126,8 +133,10 @@ export default class Lexer {
                 token = { type: TokenType.GT, literal: '>' };
                 break;
             case '"':
+                token = this.readString('"');
+                break;
             case "'":
-                token = this.readString();
+                token = this.readString("'");
                 break;
             case '{':
                 token = { type: TokenType.LBRACE, literal: '{' };
