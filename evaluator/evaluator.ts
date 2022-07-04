@@ -33,6 +33,7 @@ import {
     StringLiteral,
 } from '../parser';
 import { TokenType } from '../tokenizer';
+import { error } from '.';
 
 const NULL: LangObject = {
     kind: ObjectKind.NULL,
@@ -392,10 +393,7 @@ const applyFunction = (
     if (func?.kind === ObjectKind.BUILTIN)
         return (func as unknown as BuiltinFunction).func(args, env);
 
-    return {
-        kind: ObjectKind.ERROR,
-        message: `'${name}' is not a function.`,
-    };
+    return error(`'${name}' is not a function.`);
 };
 
 const extendFunctionEnv = (
@@ -487,30 +485,26 @@ const evalInfix = (
     const right = evalExpression(_right, env);
 
     if (right?.kind === ObjectKind.ERROR) return right;
-
-    const error: LangObject = {
-        kind: ObjectKind.ERROR,
-        message: `type missmatch [${left?.kind}] [${right?.kind}]`,
-    };
+    const error_ = error(`type missmatch [${left?.kind}] [${right?.kind}]`);
 
     switch (left?.kind) {
         case ObjectKind.NUMBER:
             if (right?.kind === ObjectKind.NUMBER)
                 return evalNumberInfix(operator, left, right, env);
-            return error;
+            return error_;
 
         case ObjectKind.STRING:
             if (right?.kind === ObjectKind.STRING)
                 return evalStringInfix(operator, left, right, env);
-            return error;
+            return error_;
 
         case ObjectKind.BOOLEAN:
             if (right?.kind === ObjectKind.BOOLEAN)
                 return evalBooleanInfix(operator, left, right, env);
-            return error;
+            return error_;
 
         default:
-            return error;
+            return error_;
     }
 };
 
@@ -520,12 +514,8 @@ const evalNumberInfix = (
     right: LangObject,
     env: Enviroment
 ): LangObject => {
-    if (left?.kind !== ObjectKind.NUMBER || right?.kind !== ObjectKind.NUMBER) {
-        return {
-            kind: ObjectKind.ERROR,
-            message: 'type missmatch',
-        };
-    }
+    if (left?.kind !== ObjectKind.NUMBER || right?.kind !== ObjectKind.NUMBER)
+        return error('type missmatch');
 
     switch (operator) {
         case TokenType.PLUS:
@@ -587,15 +577,8 @@ const evalBooleanInfix = (
     right: LangObject,
     env: Enviroment
 ): LangObject => {
-    if (
-        left?.kind !== ObjectKind.BOOLEAN ||
-        right?.kind !== ObjectKind.BOOLEAN
-    ) {
-        return {
-            kind: ObjectKind.ERROR,
-            message: 'type missmatch',
-        };
-    }
+    if (left?.kind !== ObjectKind.BOOLEAN || right?.kind !== ObjectKind.BOOLEAN)
+        return error('type missmatch');
 
     switch (operator) {
         case TokenType.EQUAL:
@@ -626,10 +609,7 @@ const evalStringInfix = (
         left?.kind !== ObjectKind.STRING ||
         right?.kind !== ObjectKind.STRING
     ) {
-        return {
-            kind: ObjectKind.ERROR,
-            message: 'type missmatch',
-        };
+        return error('type missmatch');
     }
 
     return {
@@ -665,10 +645,8 @@ const evalIndex = (left: LangObject, index: LangObject): LangObject => {
         case ObjectKind.ARRAY:
             if (index?.kind === ObjectKind.NUMBER)
                 return evalArrayIndex(left, index);
-            return {
-                kind: ObjectKind.ERROR,
-                message: 'not supported',
-            };
+
+            return error('type missmatch');
 
         case ObjectKind.HASH:
             let key: string | number;
@@ -678,10 +656,7 @@ const evalIndex = (left: LangObject, index: LangObject): LangObject => {
                     key = index.value;
                     break;
                 default:
-                    return {
-                        kind: ObjectKind.ERROR,
-                        message: 'not supported',
-                    };
+                    return error('type missmatch');
             }
 
             const newMap: Map<string | number, LangObject> = new Map();
@@ -696,19 +671,11 @@ const evalIndex = (left: LangObject, index: LangObject): LangObject => {
 };
 
 const evalArrayIndex = (left: LangObject, index: LangObject): LangObject => {
-    if (index?.kind !== ObjectKind.NUMBER || left?.kind !== ObjectKind.ARRAY) {
-        return {
-            kind: ObjectKind.ERROR,
-            message: 'not supported',
-        };
-    }
+    if (index?.kind !== ObjectKind.NUMBER || left?.kind !== ObjectKind.ARRAY)
+        return error('type missmatch');
 
-    if (index.value < 0 || index.value >= left.value.length) {
-        return {
-            kind: ObjectKind.ERROR,
-            message: 'index out of range',
-        };
-    }
+    if (index.value < 0 || index.value >= left.value.length)
+        return error('index out of range');
 
     return left.value[index.value];
 };
@@ -737,11 +704,7 @@ const evalBang = (obj: LangObject): LangObject => ({
 });
 
 const evalMinus = (obj: LangObject): LangObject => {
-    if (obj?.kind !== ObjectKind.NUMBER)
-        return {
-            kind: ObjectKind.ERROR,
-            message: 'not supported',
-        };
+    if (obj?.kind !== ObjectKind.NUMBER) return error('type missmatch');
 
     return {
         kind: ObjectKind.NUMBER,
