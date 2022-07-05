@@ -6,36 +6,65 @@ let __expect_array = func(arr, name, callback) {
     }
 };
 
+// Example:
+//
+// let arr = [1, 2, 3];
+// push(arr, 4); // [1, 2, 3, 4];
 let push = func(arr, value) {
     __expect_array(arr, 'push', func() {
         __builtin_push(arr, value)
     });
 };
 
+// Example:
+//
+// let arr = [1, 2, 3];
+// pop(arr); // [1, 2];
 let pop = func(arr) {
     __expect_array(arr, 'pop', func() {
         __builtin_pop(arr);
     });
 };
 
+// Example:
+//
+// let arr = [1, 2, 3];
+// shift(arr); // [2, 3];
 let shift = func(arr) {
     __expect_array(arr, 'shift', func() {
         __builtin_shift(arr);
     });
 };
 
+// Example:
+//
+// let arr = [1, 2, 3];
+// unshift(arr, 0); // [0, 1, 2, 3];
 let unshift = func(arr, value) {
     __expect_array(arr, 'unshift', func() {
         __builtin_unshift(arr, value);
     });
 };
 
+// Example:
+//
+// let arr = [1, 2, 3];
+// slice(arr, 1, 2); // [2];
 let slice = func(arr, start, end) {
     __expect_array(arr, 'slice', func() {
         __builtin_slice(arr, start, end);
     });
 };
 
+// Example:
+//
+// import('@std/io');
+//
+// let arr = [1, 2, 3];
+// forEach(arr, func(value, index) {
+//     println(index, value);
+// });
 let forEach = func(arr, callback) {
     __builtin_forEach(arr, callback);
 };
+
