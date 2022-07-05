@@ -23,7 +23,7 @@ npm run start # start repl
 
 > **Statement**
 >
-> `Let`, `ExpressionStatement`, `Return`, `Block`
+> `Let`, `Assign`, `ExpressionStatement`, `Return`, `Block`
 
 <br>
 
@@ -51,22 +51,24 @@ npm run start # start repl
 
 # Syntax
 
-| keyword | Syntax                                                                     |
-| ------- | -------------------------------------------------------------------------- |
-| `let`   | `let [identifier] = [expression];`                                         |
-| `if`    | `if ([condition]) [consequence (Block)] [alternative? (Block)];`           |
-| `func`  | `func [identifier] ([parameters]) [body (Block) ([expression (return)])];` |
+| keyword        | Syntax                                                                     |
+| -------------- | -------------------------------------------------------------------------- |
+| `let`          | `let [identifier] = [expression];`                                         |
+| `assign` (`=`) | `[identifier] = [expression];`                                             |
+| `if`           | `if ([condition]) [consequence (Block)] [alternative? (Block)];`           |
+| `func`         | `func [identifier] ([parameters]) [body (Block) ([expression (return)])];` |
 
 <br>
 
 # Literal
 
-| type      | syntax                                    |
-| --------- | ----------------------------------------- |
-| `string`  | `"string"`, `'string'`                    |
-| `number`  | `[-?]Number`                              |
-| `boolean` | `true`, `false`                           |
-| `dict`    | `{ [key (string, number)]: [value (*)] }` |
+| type      | syntax                                     |
+| --------- | ------------------------------------------ |
+| `string`  | `"string"`, `'string'`                     |
+| `number`  | `[-?]Number`                               |
+| `boolean` | `true`, `false`                            |
+| `dict`    | `{ [key (string, number)]: [value (*)], }` |
+| `array`   | `[value (*)]`                              |
 
 <br>
 
