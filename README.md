@@ -60,6 +60,7 @@ npm run start # start repl
 | `call` (`func(args)`) | `[identifier]([arguments]);`                                               |
 | `index` (`[]`)        | `[identifier][[expression]];`                                              |
 | `while`               | `while ([condition]) [body (Block)];`                                      |
+| comment               | `// [comment]`                                                             |
 
 <br>
 
