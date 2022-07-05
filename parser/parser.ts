@@ -29,11 +29,9 @@ enum Priority {
     INDEX,
 }
 
-const defaultToken = { type: TokenType.ILLEGAL, literal: '' };
-
 export default class Parser {
-    public currToken: Token = defaultToken;
-    public peekToken: Token = defaultToken;
+    public currToken!: Token;
+    public peekToken!: Token;
     public errors: Array<string> = [];
 
     constructor(public lexer: Lexer) {
@@ -66,6 +64,9 @@ export default class Parser {
 
             case TokenType.WHILE:
                 return this.parseWhileStatement();
+
+            case TokenType.COMMENT:
+                return null;
 
             default:
                 if (this.peekTokenIs(TokenType.ASSIGN))
