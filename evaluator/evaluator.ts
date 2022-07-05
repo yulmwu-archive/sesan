@@ -31,6 +31,7 @@ import {
     Program,
     Statement,
     StringLiteral,
+    WhileStatement,
 } from '../parser';
 import { TokenType } from '../tokenizer';
 import { error } from '.';
@@ -132,6 +133,37 @@ const evalStatement = (statement: Statement, env: Enviroment): LangObject => {
                     value: expression,
                     kind: ObjectKind.RETURN_VALUE,
                 };
+
+            return NULL;
+        }
+
+        case NodeKind.WhileStatement: {
+            let condition = evalExpression(
+                (statement as unknown as WhileStatement).condition,
+                env
+            );
+
+            if (condition?.kind === ObjectKind.ERROR) return condition;
+
+            const res: Array<LangObject> = [];
+
+            while (isTruthy(condition)) {
+                const result = evalExpression(
+                    (statement as unknown as WhileStatement).body,
+                    env
+                );
+
+                if (result?.kind === ObjectKind.ERROR) return result;
+
+                condition = evalExpression(
+                    (statement as unknown as WhileStatement).condition,
+                    env
+                );
+
+                if (condition?.kind === ObjectKind.ERROR) return condition;
+
+                res.push(result);
+            }
 
             return NULL;
         }
