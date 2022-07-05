@@ -23,7 +23,7 @@ npm run start # start repl
 
 > **Statement**
 >
-> `Let`, `Assign`, `ExpressionStatement`, `Return`, `Block`
+> `Let`, `Assign`, `ExpressionStatement`, `Return`, `Block`, `While`
 
 <br>
 
@@ -51,12 +51,15 @@ npm run start # start repl
 
 # Syntax
 
-| keyword        | Syntax                                                                     |
-| -------------- | -------------------------------------------------------------------------- |
-| `let`          | `let [identifier] = [expression];`                                         |
-| `assign` (`=`) | `[identifier] = [expression];`                                             |
-| `if`           | `if ([condition]) [consequence (Block)] [alternative? (Block)];`           |
-| `func`         | `func [identifier] ([parameters]) [body (Block) ([expression (return)])];` |
+| keyword               | Syntax                                                                     |
+| --------------------- | -------------------------------------------------------------------------- |
+| `let`                 | `let [identifier] = [expression];`                                         |
+| `assign` (`=`)        | `[identifier] = [expression];`                                             |
+| `if`                  | `if ([condition]) [consequence (Block)] [alternative? (Block)];`           |
+| `func`                | `func [identifier] ([parameters]) [body (Block) ([expression (return)])];` |
+| `call` (`func(args)`) | `[identifier]([arguments]);`                                               |
+| `index` (`[]`)        | `[identifier][[expression]];`                                              |
+| `while`               | `while ([condition]) [body (Block)];`                                      |
 
 <br>
 
