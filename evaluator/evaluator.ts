@@ -94,27 +94,47 @@ const evalStatement = (statement: Statement, env: Enviroment): LangObject => {
         case NodeKind.ExpressionStatement:
             return evalExpression(statement.expression, env);
 
-        case NodeKind.LetStatement:
+        case NodeKind.LetStatement: {
             const value = evalExpression(statement.value, env);
             if (value?.kind === ObjectKind.ERROR) return value;
+
             if (statement.ident)
                 env.set(
                     (statement.ident as unknown as StringLiteral).value,
                     value
                 );
-            return null;
 
-        case NodeKind.ReturnStatement:
+            return null;
+        }
+
+        case NodeKind.AssignStatement: {
+            const value = evalExpression(statement.value, env);
+
+            if (value?.kind === ObjectKind.ERROR) return value;
+
+            if (statement.ident)
+                env.update(
+                    (statement.ident as unknown as StringLiteral).value,
+                    value
+                );
+
+            return null;
+        }
+
+        case NodeKind.ReturnStatement: {
             const expression = evalExpression(
                 (statement as unknown as ExpressionStatement).expression,
                 env
             );
+
             if (expression)
                 return {
                     value: expression,
                     kind: ObjectKind.RETURN_VALUE,
                 };
+
             return NULL;
+        }
 
         default:
             return NULL;
