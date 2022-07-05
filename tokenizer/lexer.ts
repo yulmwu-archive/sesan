@@ -81,6 +81,17 @@ export default class Lexer {
         return this.input[this.readPosition];
     }
 
+    public readComment(): Token {
+        let position = this.position;
+
+        while (this.ch !== '\0' && this.ch !== '\n') this.readChar();
+
+        return {
+            type: TokenType.COMMENT,
+            literal: this.input.substring(position, this.position),
+        };
+    }
+
     public nextToken(): Token {
         let token: Token;
         this.skipWhitespace();
@@ -123,7 +134,14 @@ export default class Lexer {
                 token = { type: TokenType.ASTERISK, literal: '*' };
                 break;
             case '/':
-                token = { type: TokenType.SLASH, literal: '/' };
+                if (this.peekChar() === '/') {
+                    this.readChar();
+                    this.readComment();
+                    token = {
+                        type: TokenType.COMMENT,
+                        literal: '',
+                    };
+                } else token = { type: TokenType.SLASH, literal: '/' };
                 break;
             case '!':
                 if (this.peekChar() === '=') {

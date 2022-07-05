@@ -8,6 +8,7 @@ enum TokenType {
     TRUE = 'TRUE',
     FALSE = 'FALSE',
     FUNCTION = 'FUNCTION',
+    COMMENT = 'COMMENT',
 
     ASSIGN = '=',
     PLUS = '+',
@@ -40,7 +41,7 @@ enum TokenType {
 
 interface Token {
     type: TokenType;
-    literal: string
+    literal: string;
 }
 
 const fromLiteral = (literal: string): TokenType => {
