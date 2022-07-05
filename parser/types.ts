@@ -6,6 +6,7 @@ interface Program {
 
 type Statement =
     | LetStatement
+    | AssignStatement
     | ReturnStatement
     | ExpressionStatement
     | BlockStatement;
@@ -44,6 +45,7 @@ enum NodeKind {
     LetStatement,
     ReturnStatement,
     ExpressionStatement,
+    AssignStatement,
 }
 
 enum LiteralKind {
@@ -60,6 +62,12 @@ interface LetStatement extends Debug {
     ident: Expression;
     value: Expression;
     kind: NodeKind.LetStatement;
+}
+
+interface AssignStatement extends Debug {
+    ident: Expression;
+    value: Expression;
+    kind: NodeKind.AssignStatement;
 }
 
 interface ReturnStatement extends Debug {
@@ -163,6 +171,7 @@ export {
     NodeKind,
     ExpressionKind,
     LetStatement,
+    AssignStatement,
     ReturnStatement,
     ExpressionStatement,
     LiteralExpression,

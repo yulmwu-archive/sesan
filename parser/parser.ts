@@ -1,5 +1,6 @@
 import { Lexer, Token, TokenType } from '../tokenizer';
 import {
+    AssignStatement,
     BlockStatement,
     Expression,
     ExpressionKind,
@@ -47,6 +48,7 @@ export default class Parser {
         while (this.currToken.type !== TokenType.EOF) {
             const statement = this.parseStatement();
             if (statement) program.statements.push(statement);
+
             this.nextToken();
         }
 
@@ -57,9 +59,14 @@ export default class Parser {
         switch (this.currToken.type) {
             case TokenType.LET:
                 return this.parseLetStatement();
+
             case TokenType.RETURN:
                 return this.parseReturnStatement();
+
             default:
+                if (this.peekTokenIs(TokenType.ASSIGN)) {
+                    return this.parseAssignmentStatement();
+                }
                 return this.parseExpressionStatement();
         }
     }
@@ -126,6 +133,32 @@ export default class Parser {
         };
     }
 
+    private parseAssignmentStatement(): AssignStatement | null {
+        const ident: IdentExpression = {
+            debug: 'parseAssignStatement>ident',
+            value:
+                this.currToken.type === TokenType.IDENT
+                    ? this.currToken.literal
+                    : '',
+            kind: ExpressionKind.Ident,
+        };
+
+        if (!this.expectPeek(TokenType.ASSIGN)) return null;
+
+        this.nextToken();
+
+        const expression = this.parseExpression(Priority.LOWEST);
+
+        if (!this.peekTokenIs(TokenType.SEMICOLON)) this.nextToken();
+
+        return {
+            debug: 'parseAssignStatement>return',
+            ident,
+            value: expression,
+            kind: NodeKind.AssignStatement,
+        };
+    }
+
     private parseReturnStatement(): ReturnStatement | null {
         this.nextToken();
 
@@ -176,6 +209,7 @@ export default class Parser {
                     value: this.currToken.literal,
                     kind: ExpressionKind.Ident,
                 };
+
             case TokenType.NUMBER:
                 return {
                     debug: 'parsePrefix>case>number',
@@ -185,6 +219,7 @@ export default class Parser {
                     },
                     kind: ExpressionKind.Literal,
                 };
+
             case TokenType.STRING:
                 return {
                     debug: 'parsePrefix>case>string',
@@ -194,28 +229,37 @@ export default class Parser {
                     },
                     kind: ExpressionKind.Literal,
                 };
+
             case TokenType.BANG:
                 return this.prefixParseOps();
+
             case TokenType.MINUS:
                 return this.prefixParseOps();
+
             case TokenType.TRUE:
                 return {
                     debug: 'parsePrefix>case>true',
                     value: { value: true, kind: LiteralKind.Boolean },
                     kind: ExpressionKind.Literal,
                 };
+
             case TokenType.FALSE:
                 return {
                     debug: 'parsePrefix>case>false',
                     value: { value: false, kind: LiteralKind.Boolean },
                     kind: ExpressionKind.Literal,
                 };
+
             case TokenType.LPAREN: {
                 this.nextToken();
+
                 const expression = this.parseExpression(Priority.LOWEST);
+
                 if (!this.expectPeek(TokenType.RPAREN)) return null;
+
                 return expression;
             }
+
             case TokenType.IF: {
                 if (!this.expectPeek(TokenType.LPAREN)) return null;
 
@@ -249,6 +293,7 @@ export default class Parser {
                     kind: ExpressionKind.If,
                 };
             }
+
             case TokenType.FUNCTION: {
                 if (!this.expectPeek(TokenType.LPAREN)) return null;
 
@@ -267,14 +312,17 @@ export default class Parser {
                     kind: ExpressionKind.Function,
                 };
             }
+
             case TokenType.LBRACKET:
                 return {
                     debug: 'parsePrefix>case>Lbracket',
                     elements: this.parseExpressionArguments(TokenType.RBRACKET),
                     kind: ExpressionKind.Array,
                 };
+
             case TokenType.LBRACE:
                 return this.parseHash();
+
             default:
                 return null;
         }
