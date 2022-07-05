@@ -15,6 +15,7 @@ import {
     Program,
     ReturnStatement,
     Statement,
+    WhileStatement,
 } from '.';
 
 enum Priority {
@@ -63,10 +64,12 @@ export default class Parser {
             case TokenType.RETURN:
                 return this.parseReturnStatement();
 
+            case TokenType.WHILE:
+                return this.parseWhileStatement();
+
             default:
-                if (this.peekTokenIs(TokenType.ASSIGN)) {
+                if (this.peekTokenIs(TokenType.ASSIGN))
                     return this.parseAssignmentStatement();
-                }
                 return this.parseExpressionStatement();
         }
     }
@@ -170,6 +173,23 @@ export default class Parser {
             debug: 'parseReturnStatement>return',
             value: expression,
             kind: NodeKind.ReturnStatement,
+        };
+    }
+
+    private parseWhileStatement(): WhileStatement | null {
+        if (!this.expectPeek(TokenType.LPAREN)) return null;
+
+        const condition = this.parseExpression(Priority.LOWEST);
+
+        if (!this.expectPeek(TokenType.LBRACE)) return null;
+
+        const body = this.parseBlockStatement();
+
+        return {
+            debug: 'parseWhileStatement>return',
+            condition,
+            body,
+            kind: NodeKind.WhileStatement,
         };
     }
 
