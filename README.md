@@ -51,7 +51,7 @@ npm run start # start repl
 
 # Syntax
 
-| keyword               | Syntax                                                                     |
+| Keyword               | Syntax                                                                     |
 | --------------------- | -------------------------------------------------------------------------- |
 | `let`                 | `let [identifier] = [expression];`                                         |
 | `assign` (`=`)        | `[identifier] = [expression];`                                             |
@@ -66,13 +66,28 @@ npm run start # start repl
 
 # Literal
 
-| type      | syntax                                     |
-| --------- | ------------------------------------------ |
-| `string`  | `"string"`, `'string'`                     |
-| `number`  | `[-?]Number`                               |
-| `boolean` | `true`, `false`                            |
-| `dict`    | `{ [key (string, number)]: [value (*)], }` |
-| `array`   | `[value (*)]`                              |
+| Type      | Syntax                                       |
+| --------- | -------------------------------------------- |
+| `string`  | `"string"`, `'string'`                       |
+| `number`  | `[-?]Number`                                 |
+| `boolean` | `true`, `false`                              |
+| `dict`    | `{ [key (string, number)]: [value (any)], }` |
+| `array`   | `[value (any)]`                              |
+
+<br>
+
+# Operators
+
+| Operator | Syntax               | Literal Type                           |
+| -------- | -------------------- | -------------------------------------- |
+| `+`      | `Literal + Literal`  | `number`, `array`, `string`            |
+| `-`      | `Literal - Literal`  | `number`                               |
+| `*`      | `Literal * Literal`  | `number`                               |
+| `/`      | `Literal / Literal`  | `number`                               |
+| `==`     | `Literal == Literal` | `number, string, boolean, array, hash` |
+| `!=`     | `Literal != Literal` | `number, string, boolean, array, hash` |
+| `<`      | `Literal < Literal`  | `number`                               |
+| `>`      | `Literal > Literal`  | `number`                               |
 
 <br>
 
@@ -81,7 +96,7 @@ npm run start # start repl
 | Function | Description     | Arguments                |
 | -------- | --------------- | ------------------------ |
 | `import` | Import a module | `[module_name (string)]` |
-| `@`      | Ignore          | `*`                      |
+| `@`      | Ignore          | `[any]`                  |
 
 <br>
 
