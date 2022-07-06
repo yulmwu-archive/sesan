@@ -9,6 +9,7 @@ import {
     ObjectKind,
     StringObject,
     newEnclosedEnvironment,
+    ObjectKindToString,
 } from '../object';
 import {
     ArrayExpression,
@@ -537,26 +538,25 @@ const evalInfix = (
     const right = evalExpression(_right, env);
 
     if (right?.kind === ObjectKind.ERROR) return right;
-    const error_ = error(`type missmatch [${left?.kind}] [${right?.kind}]`);
 
     switch (left?.kind) {
         case ObjectKind.NUMBER:
-            if (right?.kind === ObjectKind.NUMBER)
-                return evalNumberInfix(operator, left, right, env);
-            return error_;
+            return evalNumberInfix(operator, left, right, env);
 
         case ObjectKind.STRING:
-            if (right?.kind === ObjectKind.STRING)
-                return evalStringInfix(operator, left, right, env);
-            return error_;
+            return evalStringInfix(operator, left, right, env);
 
         case ObjectKind.BOOLEAN:
-            if (right?.kind === ObjectKind.BOOLEAN)
-                return evalBooleanInfix(operator, left, right, env);
-            return error_;
+            return evalBooleanInfix(operator, left, right, env);
+
+        case ObjectKind.HASH:
+            return evalHashInfix(operator, left, right, env);
+
+        case ObjectKind.ARRAY:
+            return evalArrayInfix(operator, left, right, env);
 
         default:
-            return error_;
+            return error(`type missmatch [${left?.kind}] [${right?.kind}]`);
     }
 };
 
@@ -567,7 +567,11 @@ const evalNumberInfix = (
     env: Enviroment
 ): LangObject => {
     if (left?.kind !== ObjectKind.NUMBER || right?.kind !== ObjectKind.NUMBER)
-        return error('type missmatch');
+        return error(`type missmatch [
+            ${ObjectKindToString(left?.kind ?? ObjectKind.NULL)}
+        ] [
+            ${ObjectKindToString(right?.kind ?? ObjectKind.NULL)}
+        ]`);
 
     switch (operator) {
         case TokenType.PLUS:
@@ -630,7 +634,11 @@ const evalBooleanInfix = (
     env: Enviroment
 ): LangObject => {
     if (left?.kind !== ObjectKind.BOOLEAN || right?.kind !== ObjectKind.BOOLEAN)
-        return error('type missmatch');
+        return error(
+            `type missmatch [
+                ${ObjectKindToString(left?.kind ?? ObjectKind.NULL)}
+            ] [${ObjectKindToString(right?.kind ?? ObjectKind.NULL)}]`
+        );
 
     switch (operator) {
         case TokenType.EQUAL:
@@ -656,9 +664,12 @@ const evalStringInfix = (
     right: LangObject,
     env: Enviroment
 ): LangObject => {
-    if (left?.kind !== ObjectKind.STRING || right?.kind !== ObjectKind.STRING) {
-        return error('type missmatch');
-    }
+    if (left?.kind !== ObjectKind.STRING || right?.kind !== ObjectKind.STRING)
+        return error(
+            `type missmatch [
+                ${ObjectKindToString(left?.kind ?? ObjectKind.NULL)}
+            ] [${ObjectKindToString(right?.kind ?? ObjectKind.NULL)}]`
+        );
 
     switch (operator) {
         case TokenType.PLUS:
@@ -677,6 +688,79 @@ const evalStringInfix = (
             return {
                 kind: ObjectKind.BOOLEAN,
                 value: left.value !== right.value,
+            };
+
+        default:
+            return null;
+    }
+};
+
+const evalHashInfix = (
+    operator: TokenType,
+    left: LangObject,
+    right: LangObject,
+    env: Enviroment
+): LangObject => {
+    if (left?.kind !== ObjectKind.HASH || right?.kind !== ObjectKind.HASH)
+        return error(
+            `type missmatch [
+                ${ObjectKindToString(left?.kind ?? ObjectKind.NULL)}
+            ] [
+                ${ObjectKindToString(right?.kind ?? ObjectKind.NULL)}]`
+        );
+
+    switch (operator) {
+        case TokenType.EQUAL:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value:
+                    JSON.stringify(left.pairs) === JSON.stringify(right.pairs),
+            };
+
+        case TokenType.NOT_EQUAL:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value:
+                    JSON.stringify(left.pairs) !== JSON.stringify(right.pairs),
+            };
+
+        default:
+            return null;
+    }
+};
+
+const evalArrayInfix = (
+    operator: TokenType,
+    left: LangObject,
+    right: LangObject,
+    env: Enviroment
+): LangObject => {
+    if (left?.kind !== ObjectKind.ARRAY || right?.kind !== ObjectKind.ARRAY)
+        return error(
+            `type missmatch [${ObjectKindToString(
+                left?.kind ?? ObjectKind.NULL
+            )}] [${ObjectKindToString(right?.kind ?? ObjectKind.NULL)}]`
+        );
+
+    switch (operator) {
+        case TokenType.PLUS:
+            return {
+                kind: ObjectKind.ARRAY,
+                value: [...left.value, ...right.value],
+            };
+
+        case TokenType.EQUAL:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value:
+                    JSON.stringify(left.value) === JSON.stringify(right.value),
+            };
+
+        case TokenType.NOT_EQUAL:
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value:
+                    JSON.stringify(left.value) !== JSON.stringify(right.value),
             };
 
         default:
