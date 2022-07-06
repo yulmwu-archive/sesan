@@ -555,6 +555,7 @@ export default class Parser {
 
             case TokenType.SLASH:
             case TokenType.ASTERISK:
+            case TokenType.PERCENT:
                 return Priority.PRODUCT;
 
             case TokenType.LPAREN:
