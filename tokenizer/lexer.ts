@@ -36,7 +36,21 @@ export default class Lexer {
     public readNumber(): Token {
         const position = this.position;
 
-        while (this.isDigit(this.ch)) this.readChar();
+        let dot = false;
+
+        while (this.isDigit(this.ch)) {
+            if (this.ch === '.') {
+                if (dot) {
+                    printError(`[Lexer] Invalid number`);
+                    return {
+                        type: TokenType.EOF,
+                        literal: 'EOF',
+                    };
+                }
+                dot = true;
+            }
+            this.readChar();
+        }
 
         return {
             type: TokenType.NUMBER,
@@ -118,21 +132,27 @@ export default class Lexer {
             case ')':
                 token = { type: TokenType.RPAREN, literal: ')' };
                 break;
+
             case ';':
                 token = { type: TokenType.SEMICOLON, literal: ';' };
                 break;
+
             case ',':
                 token = { type: TokenType.COMMA, literal: ',' };
                 break;
+
             case '+':
                 token = { type: TokenType.PLUS, literal: '+' };
                 break;
+
             case '-':
                 token = { type: TokenType.MINUS, literal: '-' };
                 break;
+
             case '*':
                 token = { type: TokenType.ASTERISK, literal: '*' };
                 break;
+
             case '/':
                 if (this.peekChar() === '/') {
                     this.readChar();
@@ -143,6 +163,11 @@ export default class Lexer {
                     };
                 } else token = { type: TokenType.SLASH, literal: '/' };
                 break;
+
+            case '%':
+                token = { type: TokenType.PERCENT, literal: '%' };
+                break;
+
             case '!':
                 if (this.peekChar() === '=') {
                     this.readChar();
@@ -156,33 +181,42 @@ export default class Lexer {
                         literal: '!',
                     };
                 break;
+
             case '<':
                 token = { type: TokenType.LT, literal: '<' };
                 break;
             case '>':
                 token = { type: TokenType.GT, literal: '>' };
                 break;
+
             case '"':
                 token = this.readString('"');
                 break;
+
             case "'":
                 token = this.readString("'");
                 break;
+
             case '{':
                 token = { type: TokenType.LBRACE, literal: '{' };
                 break;
+
             case '}':
                 token = { type: TokenType.RBRACE, literal: '}' };
                 break;
+
             case '[':
                 token = { type: TokenType.LBRACKET, literal: '[' };
                 break;
+
             case ']':
                 token = { type: TokenType.RBRACKET, literal: ']' };
                 break;
+
             case ':':
                 token = { type: TokenType.COLON, literal: ':' };
                 break;
+
             case '\0':
                 token = { type: TokenType.EOF, literal: 'EOF' };
                 break;
@@ -213,6 +247,6 @@ export default class Lexer {
     }
 
     private isDigit(ch: string): boolean {
-        return /[0-9]/.test(ch);
+        return /[0-9]/.test(ch) || ch === '.';
     }
 }

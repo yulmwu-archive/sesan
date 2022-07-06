@@ -16,6 +16,7 @@ enum TokenType {
     BANG = '!',
     ASTERISK = '*',
     SLASH = '/',
+    PERCENT = '%',
 
     LT = '<',
     GT = '>',
