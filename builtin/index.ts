@@ -5,6 +5,7 @@ import {
     Enviroment,
     HashObject,
     LangObject,
+    NumberObject,
     ObjectKind,
     ObjectKindToString,
     StringObject,

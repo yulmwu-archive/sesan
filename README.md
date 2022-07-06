@@ -235,3 +235,7 @@ import('@std/[name]');
 -   [x] Parser + AST (Abstract Syntax Tree)
 -   [x] Evaluator
 -   [x] REPL
+
+---
+
+-   [ ] Class

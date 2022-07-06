@@ -12,7 +12,7 @@ let __expect_array = func(arr, name, callback) {
 // push(arr, 4); // [1, 2, 3, 4];
 let push = func(arr, value) {
     __expect_array(arr, 'push', func() {
-        __builtin_push(arr, value)
+        __builtin_push(arr, value);
     });
 };
 

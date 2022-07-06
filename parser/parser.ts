@@ -71,6 +71,7 @@ export default class Parser {
             default:
                 if (this.peekTokenIs(TokenType.ASSIGN))
                     return this.parseAssignmentStatement();
+
                 return this.parseExpressionStatement();
         }
     }
@@ -83,6 +84,7 @@ export default class Parser {
     private expectPeek(tokenType: TokenType, err: boolean = true): boolean {
         if (this.peekTokenIs(tokenType)) {
             this.nextToken();
+
             return true;
         }
 
@@ -94,8 +96,10 @@ export default class Parser {
     private peekTokenIs(tokenType: TokenType): boolean {
         if (tokenType === TokenType.IDENT) {
             if (this.peekToken.type === TokenType.IDENT) return true;
+
             return false;
         }
+
         return this.peekToken.type === tokenType;
     }
 
@@ -371,6 +375,7 @@ export default class Parser {
                     arguments: this.parseExpressionArguments(TokenType.RPAREN),
                     kind: ExpressionKind.Call,
                 };
+
             case TokenType.LBRACKET: {
                 this.nextToken();
                 const expression = this.parseExpression(Priority.LOWEST);
@@ -390,6 +395,7 @@ export default class Parser {
                         },
                         kind: ExpressionKind.Index,
                     };
+
                 return {
                     debug: 'parseInfixExpression>case>Lbracket',
                     left,
@@ -397,6 +403,7 @@ export default class Parser {
                     kind: ExpressionKind.Index,
                 };
             }
+
             default: {
                 const operator = this.currToken;
 
@@ -457,6 +464,7 @@ export default class Parser {
         while (this.peekTokenIs(TokenType.COMMA)) {
             this.nextToken();
             this.nextToken();
+
             parameters.push({
                 value: this.currToken.literal,
                 kind: ExpressionKind.Ident,
@@ -473,6 +481,7 @@ export default class Parser {
 
         if (this.peekTokenIs(end)) {
             this.nextToken();
+
             return args;
         }
 
@@ -484,6 +493,7 @@ export default class Parser {
         while (this.peekTokenIs(TokenType.COMMA)) {
             this.nextToken();
             this.nextToken();
+
             const expression = this.parseExpression(Priority.LOWEST);
             if (expression) args.push(expression);
         }
