@@ -597,6 +597,12 @@ const evalNumberInfix = (
                 kind: ObjectKind.NUMBER,
                 value: left.value * right.value,
             };
+        
+        case TokenType.PERCENT:
+            return {
+                kind: ObjectKind.NUMBER,
+                value: left.value % right.value,
+            };
 
         case TokenType.EQUAL:
             return {
