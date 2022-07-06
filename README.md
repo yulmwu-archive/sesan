@@ -54,7 +54,7 @@ npm run start # start repl
 | Keyword               | Syntax                                                                     |
 | --------------------- | -------------------------------------------------------------------------- |
 | `let`                 | `let [identifier] = [expression];`                                         |
-| `assign` (`=`)        | `[identifier] = [expression];`                                             |
+| assign (`=`)          | `[identifier] = [expression];`                                             |
 | `if`                  | `if ([condition]) [consequence (Block)] [alternative? (Block)];`           |
 | `func`                | `func [identifier] ([parameters]) [body (Block) ([expression (return)])];` |
 | `call` (`func(args)`) | `[identifier]([arguments]);`                                               |
@@ -69,7 +69,7 @@ npm run start # start repl
 | Type      | Syntax                                       |
 | --------- | -------------------------------------------- |
 | `string`  | `"string"`, `'string'`                       |
-| `number`  | `[-?]Number`                                 |
+| `number`  | `[-?]Number.[Number?]`                       |
 | `boolean` | `true`, `false`                              |
 | `dict`    | `{ [key (string, number)]: [value (any)], }` |
 | `array`   | `[value (any)]`                              |
@@ -84,6 +84,7 @@ npm run start # start repl
 | `-`      | `Literal - Literal`  | `number`                               |
 | `*`      | `Literal * Literal`  | `number`                               |
 | `/`      | `Literal / Literal`  | `number`                               |
+| `%`      | `Literal % Literal`  | `number`                               |
 | `==`     | `Literal == Literal` | `number, string, boolean, array, hash` |
 | `!=`     | `Literal != Literal` | `number, string, boolean, array, hash` |
 | `<`      | `Literal < Literal`  | `number`                               |
@@ -121,7 +122,7 @@ npm run start # start repl
 
 ---
 
-```js
+```
 [REPL] 0 Env(s) ➜ #mode parser
 Switched to 'parser' mode
 
@@ -142,7 +143,7 @@ Switched to 'parser' mode
 
 ---
 
-```js
+```
 [REPL] 0 Env(s) ➜ #mode parser json
 Switched to 'parser_Json' mode
 
@@ -174,7 +175,7 @@ Switched to 'parser_Json' mode
 
 ---
 
-```js
+```
 [REPL] 0 Env(s) ➜ #mode lexer
 Switched to 'lexer' mode
 
@@ -192,7 +193,7 @@ Switched to 'lexer' mode
 
 ---
 
-```js
+```
 [REPL] 0 Env(s) ➜ #mode env
 Switched to 'env' mode
 
