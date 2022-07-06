@@ -51,16 +51,17 @@ npm run start # start repl
 
 # Syntax
 
-| Keyword               | Syntax                                                                     |
-| --------------------- | -------------------------------------------------------------------------- |
-| `let`                 | `let [identifier] = [expression];`                                         |
-| assign (`=`)          | `[identifier] = [expression];`                                             |
-| `if`                  | `if ([condition]) [consequence (Block)] [alternative? (Block)];`           |
-| `func`                | `func [identifier] ([parameters]) [body (Block) ([expression (return)])];` |
-| `call` (`func(args)`) | `[identifier]([arguments]);`                                               |
-| `index` (`[]`)        | `[identifier][[expression]];`                                              |
-| `while`               | `while ([condition]) [body (Block)];`                                      |
-| comment               | `// [comment]`                                                             |
+| Keyword               | Syntax                                                                                            |
+| --------------------- | ------------------------------------------------------------------------------------------------- |
+| `let`                 | `let [identifier] = [expression];`                                                                |
+| assign (`=`)          | `[identifier] = [expression];`                                                                    |
+| `if`                  | `if ([condition]) [consequence (Block)] [alternative? (Block)];`                                  |
+| `func`                | `func [identifier] ([parameters]) [body (Block) ([expression (return)])];`                        |
+| `call` (`func(args)`) | `[identifier]([arguments]);`                                                                      |
+| `index` (`[]`)        | `[identifier][[expression]];`                                                                     |
+| `while`               | `while ([condition]) [body (Block)];`                                                             |
+| `class`               | `class [identifier] { init() { [body (Block)] }; [identifier]([parameters]) { [body (Block)] } };` |
+| comment               | `// [comment]`                                                                                    |
 
 <br>
 
