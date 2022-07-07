@@ -1,83 +1,126 @@
+-   [**Introduce**](#Introduce)
+    -   [How it works?](#how-it-works)
+    -   [Start REPL](#start-repl)
+        -   [REPL commands](#repl-commands)
+        -   [REPL mode](#repl-mode)
+-   [**Interpreter**](#Interpreter)
+    -   Tokenizer
+        -   [Tokens](#tokens)
+    -   Parser
+        -   [Expressions](#expressions)
+        -   [Statements](#statements)
+        -   [Priority](#priority)
+        -   [Operators](#operators)
+-   [**Built-in functions**](#Built-in-functions)
+-   [**Standard library**](#Standard-library)
+-   [**Examples**](#Examples)
+-   [**ToDo**](#Todo)
+
+<br>
+
+# Introduce
+
+## How it works?
+
 ```
 [Token + Lexer] (Tokenizer) -> Parser + AST (Abstract Syntax Tree) -> Evaluator -> [Repl]
 ```
 
----
+<br>
+
+## Start REPL
 
 ```sh
+# Install dependencies
 npm i
 
+# REPL
+npm run start
+
+# You can also from a file.
 npm run start [file]
-npm run start # start repl
 ```
 
 <br>
 
----
+## REPL commands
 
-> **Expression**
->
-> `Literal`, `Block`, `Prefix`, `Infix`, `If`, `Function`, `Call`, `Ident`, `Array`, `Index`, `Hash`
+> `#command args1 args2 args3`
 
-<br>
-
-> **Statement**
->
-> `Let`, `Assign`, `ExpressionStatement`, `Return`, `Block`, `While`
+| Command | Description     |
+| ------- | --------------- |
+| `exit`  | Exit the repl   |
+| `mode`  | Change the mode |
 
 <br>
 
-> **Priority**
->
-> `LOWEST`
->
-> `EQUAL`
->
-> `LESSGREATER`
->
-> `SUM`
->
-> `PRODUCT`
->
-> `PREFIX`
->
-> `CALL`
->
-> `INDEX`
+## REPL mode
 
----
+| Mode          | Description                  |
+| ------------- | ---------------------------- |
+| `repl`        | REPL mode                    |
+| `lexer`       | Lexer mode                   |
+| `parser`      | Parser mode                  |
+| `parser json` | Parser mode with JSON output |
+| `env`         | Environment mode             |
 
 <br>
 
-# Syntax
+# Interpreter
 
-| Keyword               | Syntax                                                                                            |
-| --------------------- | ------------------------------------------------------------------------------------------------- |
-| `let`                 | `let [identifier] = [expression];`                                                                |
-| assign (`=`)          | `[identifier] = [expression];`                                                                    |
-| `if`                  | `if ([condition]) [consequence (Block)] [alternative? (Block)];`                                  |
-| `func`                | `func [identifier] ([parameters]) [body (Block) ([expression (return)])];`                        |
-| `call` (`func(args)`) | `[identifier]([arguments]);`                                                                      |
-| `index` (`[]`)        | `[identifier][[expression]];`                                                                     |
-| `while`               | `while ([condition]) [body (Block)];`                                                             |
-| `class`               | `class [identifier] { init() { [body (Block)] }; [identifier]([parameters]) { [body (Block)] } };` |
-| comment               | `// [comment]`                                                                                    |
+## Tokens
 
-<br>
-
-# Literal
-
-| Type      | Syntax                                       |
-| --------- | -------------------------------------------- |
-| `string`  | `"string"`, `'string'`                       |
-| `number`  | `[-?]Number.[Number?]`                       |
-| `boolean` | `true`, `false`                              |
-| `dict`    | `{ [key (string, number)]: [value (any)], }` |
-| `array`   | `[value (any)]`                              |
+| Token       | Identifier | Token       | Identifier |
+| ----------- | ---------- | ----------- | ---------- |
+| `EOF`       | `EOF`      | `ILLEGAL`   | `ILLEGAL`  |
+| `NUMBER`    | `NUMBER`   | `IDENT`     | `IDENT`    |
+| `TRUE`      | `TRUE`     | `STRING`    | `STRING`   |
+| `FUNCTION`  | `FUNCTION` | `FALSE`     | `FALSE`    |
+| `ASSIGN`    | `=`        | `COMMENT`   | `COMMENT`  |
+| `MINUS`     | `-`        | `PLUS`      | `+`        |
+| `ASTERISK`  | `*`        | `BANG`      | `!`        |
+| `PERCENT`   | `%`        | `SLASH`     | `/`        |
+| `GT`        | `>`        | `LT`        | `<`        |
+| `NOT_EQUAL` | `!=`       | `EQUAL`     | `==`       |
+| `COLON`     | `:`        | `COMMA`     | `,`        |
+| `LPAREN`    | `(`        | `SEMICOLON` | `;`        |
+| `LBRACE`    | `{`        | `RPAREN`    | `)`        |
+| `LBRACKET`  | `[`        | `RBRACE`    | `}`        |
+| `LET`       | `LET`      | `RBRACKET`  | `]`        |
+| `ELSE`      | `ELSE`     | `IF`        | `IF`       |
+| `WHILE`     | `WHILE`    | `RETURN`    | `RETURN`   |
 
 <br>
 
-# Operators
+## Expressions
+
+| Expression | Syntax                              | Expression | Syntax                 |
+| ---------- | ----------------------------------- | ---------- | ---------------------- |
+| `Literal`  |                                     | `Block`    | `{ [expr] }`           |
+| `If`       | `if ([expr]) [block] else [block];` | `Function` | `func([args]) [block]` |
+| `Call`     | `[ident]([args])`                   | `Ident`    |                        |
+| `Array`    | `[[expr], ...]`                     | `Index`    | `[ident][number]`      |
+| `Hash`     | `{ string: expression, ... }`       | `Class`    | Todo                   |
+
+<br>
+
+## Statements
+
+| Statement | Syntax                  | Statement             | Syntax                    |
+| --------- | ----------------------- | --------------------- | ------------------------- |
+| `Let`     | `let [ident] = [expr];` | `Assign`              | `[ident] = [expr];`       |
+| `Return`  | `[expr]`                | `ExpressionStatement` | `[expr]`                  |
+| `Block`   | `{ [statement] }`       | `While`               | `while ([expr]) [block];` |
+
+<br>
+
+## Priority
+
+`LOWEST` > `EQUAL` > `LESSGREATER` > `SUM` > `PRODUCT` > `PREFIX` > `CALL` > `INDEX`
+
+<br>
+
+## Operators
 
 | Operator | Syntax               | Literal Type                           |
 | -------- | -------------------- | -------------------------------------- |
@@ -93,150 +136,59 @@ npm run start # start repl
 
 <br>
 
-# Built-in Functions
+## Literal
 
-| Function | Description     | Arguments                |
-| -------- | --------------- | ------------------------ |
-| `import` | Import a module | `[module_name (string)]` |
-| `@`      | Ignore          | `[any]`                  |
-
-<br>
-
-# Repl
-
-![image](https://cdn.discordapp.com/attachments/978977061878251565/993498532856201216/unknown.png)
+| Type      | Syntax                                       |
+| --------- | -------------------------------------------- |
+| `string`  | `"String"`, `'String'`                       |
+| `number`  | `[-?]Number.[Number?]`                       |
+| `boolean` | `true`, `false`                              |
+| `dict`    | `{ [key (String, Number)]: [value (Any)], }` |
+| `array`   | `[value (Any)]`                              |
 
 <br>
 
-## Commands
+# Built-in functions
 
-> **prefix:** `#`
-
-| Command | Description     |
-| ------- | --------------- |
-| `exit`  | Exit the repl   |
-| `mode`  | Change the mode |
-
----
-
-> [**REPL**](#repl)
-
----
-
-```
-[REPL] 0 Env(s) ➜ #mode parser
-Switched to 'parser' mode
-
-[PARSER] 0 Env(s) ➜ let x = 10;
-{
-  statements: [
-    {
-      debug: 'parseLetStatement>return',
-      ident: [Object],
-      value: [Object],
-      kind: 101
-    }
-  ]
-}
-
-[PARSER] 1 Env(s) ➜ _
-```
-
----
-
-```
-[REPL] 0 Env(s) ➜ #mode parser json
-Switched to 'parser_Json' mode
-
-[PARSER_JSON] 0 Env(s) ➜ let x = 10;
-{
-  "statements": [
-    {
-      "debug": "parseLetStatement>return",
-      "ident": {
-        "debug": "parseLetStatement>ident",
-        "value": "x",
-        "kind": 7
-      },
-      "value": {
-        "debug": "parsePrefix>case>number",
-        "value": {
-          "value": 10,
-          "kind": 201
-        },
-        "kind": 0
-      },
-      "kind": 101
-    }
-  ]
-}
-
-[PARSER_JSON] 1 Env(s) ➜ _
-```
-
----
-
-```
-[REPL] 0 Env(s) ➜ #mode lexer
-Switched to 'lexer' mode
-
-[LEXER] 0 Env(s) ➜ let a = 10;
-[
-  { type: 'LET', literal: 'let' },
-  { type: 'IDENT', literal: 'a' },
-  { type: '=', literal: '=' },
-  { type: 'NUMBER', literal: '10' },
-  { type: ';', literal: ';' }
-]
-
-[LEXER] 1 Env(s) ➜ _
-```
-
----
-
-```
-[REPL] 0 Env(s) ➜ #mode env
-Switched to 'env' mode
-
-[ENV] 0 Env(s) ➜ let x = 10;
-Enviroment {
-  store: Map(1) { 'x' => { kind: 300, value: 10 } },
-  outer: null
-}
-
-[ENV] 1 Env(s) ➜ let b = 20;
-Enviroment {
-  store: Map(2) {
-    'x' => { kind: 300, value: 10 },
-    'b' => { kind: 300, value: 20 }
-  },
-  outer: null
-}
-
-[ENV] 2 Env(s) ➜ _
-```
+| Function | Arguments |
+| -------- | --------- |
+| `import` | `string`  |
+| `typeof` | `object`  |
+| `throw`  | `string`  |
+| `delete` | `string`  |
+| `update` | `string`  |
 
 <br>
 
-# std
+# Standard library
 
-```ts
-import('@std/[name]');
-```
+-   [**`@std/`**](./@std/)
+    -   [`lib`](./@std/lib.tiny)
+    -   [`io`](./@std/io.tiny)
+        -   `print`
+        -   `println`
+        -   `print_error`
+        -   `println_error`
+        -   `readline`
+    -   [`array`](./@std/array.tiny)
+        -   `push`
+        -   `pop`
+        -   `shift`
+        -   `unshift`
+        -   `slice`
+        -   `forEach`
+    -   [`util`](./@std/util.tiny)
+        -   `length`
 
-| Name    | path         |
-| ------- | ------------ |
-| `io`    | `@std/io`    |
-| `array` | `@std/array` |
-| `util`  | `@std/util`  |
+<br>
 
-# Todo List
+# Examples
 
--   [x] Tokenizer (Token + Lexer)
--   [x] Parser + AST (Abstract Syntax Tree)
--   [x] Evaluator
--   [x] REPL
+ToDo
 
----
+<br>
+
+# Todo
 
 -   [ ] Class
+-   [ ] Examples
