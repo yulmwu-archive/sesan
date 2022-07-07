@@ -29,7 +29,53 @@ enum ObjectKind {
     NULL,
 }
 
-const ObjectKindToString = (kind: ObjectKind): string => {
+const objectStringify = (obj: LangObject, strW: boolean = false): string => {
+    if (!obj) return 'NULL';
+
+    switch (obj.kind) {
+        case ObjectKind.NUMBER:
+            return obj.value.toString();
+
+        case ObjectKind.STRING:
+            return strW ? `"${obj.value}"` : obj.value;
+
+        case ObjectKind.BOOLEAN:
+            return obj.value ? 'true' : 'false';
+
+        case ObjectKind.ARRAY:
+            return `[${obj.value
+                .map((v) => objectStringify(v, true))
+                .join(', ')}]`;
+
+        case ObjectKind.HASH:
+            return `{ ${[...obj.pairs.entries()]
+                .map(
+                    ([key, value]) =>
+                        `${objectStringify(key)}: ${objectStringify(
+                            value,
+                            true
+                        )}`
+                )
+                .join(', ')} }`;
+
+        case ObjectKind.FUNCTION:
+            return `func([${obj.parameters.map((m) => m?.kind).join(', ')}])`;
+
+        case ObjectKind.BUILTIN:
+            return `builtin`;
+
+        case ObjectKind.NULL:
+            return 'NULL';
+
+        case ObjectKind.ERROR:
+            return `Error: ${obj.message}`;
+
+        default:
+            return `[Unknown]`;
+    }
+};
+
+const objectKindStringify = (kind: ObjectKind): string => {
     switch (kind) {
         case ObjectKind.NUMBER:
             return 'NUMBER';
@@ -125,49 +171,6 @@ interface Null {
     kind: ObjectKind.NULL;
 }
 
-const langObjectUtil = (obj: LangObject, strW: boolean = false): string => {
-    if (!obj) return 'NULL';
-
-    switch (obj.kind) {
-        case ObjectKind.NUMBER:
-            return obj.value.toString();
-
-        case ObjectKind.STRING:
-            return strW ? `"${obj.value}"` : obj.value;
-
-        case ObjectKind.BOOLEAN:
-            return obj.value ? 'true' : 'false';
-
-        case ObjectKind.ARRAY:
-            return `[${obj.value
-                .map((v) => langObjectUtil(v, true))
-                .join(', ')}]`;
-
-        case ObjectKind.HASH:
-            return `{ ${[...obj.pairs.entries()]
-                .map(
-                    ([key, value]) =>
-                        `${langObjectUtil(key)}: ${langObjectUtil(value, true)}`
-                )
-                .join(', ')} }`;
-
-        case ObjectKind.FUNCTION:
-            return `func([${obj.parameters.map((m) => m?.kind).join(', ')}])`;
-
-        case ObjectKind.BUILTIN:
-            return `builtin`;
-
-        case ObjectKind.NULL:
-            return 'NULL';
-
-        case ObjectKind.ERROR:
-            return `Error: ${obj.message}`;
-
-        default:
-            return `[Unknown]`;
-    }
-};
-
 export {
     LangObject,
     NumberObject,
@@ -182,6 +185,6 @@ export {
     ErrorObject,
     Null,
     ObjectKind,
-    langObjectUtil,
-    ObjectKindToString,
+    objectStringify,
+    objectKindStringify,
 };
