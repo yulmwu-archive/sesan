@@ -282,6 +282,8 @@ export default class Parser {
 
                 if (!this.expectPeek(TokenType.RPAREN)) return null;
 
+                if (!expression) return null;
+
                 return expression;
             }
 
@@ -553,10 +555,14 @@ export default class Parser {
         switch (token.type) {
             case TokenType.EQUAL:
             case TokenType.NOT_EQUAL:
+            case TokenType.AND:
+            case TokenType.OR:
                 return Priority.EQUAL;
 
             case TokenType.LT:
             case TokenType.GT:
+            case TokenType.LTE:
+            case TokenType.GTE:
                 return Priority.LESSGREATER;
 
             case TokenType.PLUS:
