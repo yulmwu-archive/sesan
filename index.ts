@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import { evaluator, printError } from './evaluator';
-import { Enviroment, ObjectKind } from './object';
+import { Enviroment, ObjectKind, objectStringify } from './object';
 import { Parser } from './parser';
 import { Lexer } from './tokenizer';
 import Repl from './repl';
@@ -22,7 +22,6 @@ else {
             parser.errors.forEach((error) => printError(error));
 
         if (result?.kind === ObjectKind.ERROR) printError(result.message);
-        else console.log(result);
     } catch (e) {
         console.error('Cannot open file: ' + args[0]);
     }
