@@ -1,0 +1,7 @@
+import('@std/lib');
+
+let hello = func(name) {
+    println('Hello, ' + name + '!');
+};
+
+hello('World');
