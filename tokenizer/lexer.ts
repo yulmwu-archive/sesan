@@ -129,6 +129,7 @@ export default class Lexer {
             case '(':
                 token = { type: TokenType.LPAREN, literal: '(' };
                 break;
+
             case ')':
                 token = { type: TokenType.RPAREN, literal: ')' };
                 break;
@@ -183,10 +184,43 @@ export default class Lexer {
                 break;
 
             case '<':
-                token = { type: TokenType.LT, literal: '<' };
+                if (this.peekChar() === '=') {
+                    this.readChar();
+                    token = {
+                        type: TokenType.LTE,
+                        literal: '<=',
+                    };
+                } else token = { type: TokenType.LT, literal: '<' };
                 break;
+
             case '>':
-                token = { type: TokenType.GT, literal: '>' };
+                if (this.peekChar() === '=') {
+                    this.readChar();
+                    token = {
+                        type: TokenType.GTE,
+                        literal: '>=',
+                    };
+                } else token = { type: TokenType.GT, literal: '>' };
+                break;
+
+            case '&':
+                if (this.peekChar() === '&') {
+                    this.readChar();
+                    token = {
+                        type: TokenType.AND,
+                        literal: '&&',
+                    };
+                } else token = { type: TokenType.ILLEGAL, literal: this.ch };
+                break;
+
+            case '|':
+                if (this.peekChar() === '|') {
+                    this.readChar();
+                    token = {
+                        type: TokenType.OR,
+                        literal: '||',
+                    };
+                } else token = { type: TokenType.ILLEGAL, literal: this.ch };
                 break;
 
             case '"':

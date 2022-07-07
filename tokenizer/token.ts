@@ -20,8 +20,12 @@ enum TokenType {
 
     LT = '<',
     GT = '>',
+    LTE = '<=',
+    GTE = '>=',
     EQUAL = '==',
     NOT_EQUAL = '!=',
+    AND = '&&',
+    OR = '||',
 
     COMMA = ',',
     COLON = ':',
@@ -49,20 +53,28 @@ const fromLiteral = (literal: string): TokenType => {
     switch (literal) {
         case 'let':
             return TokenType.LET;
+
         case 'func':
             return TokenType.FUNCTION;
+
         case 'true':
             return TokenType.TRUE;
+
         case 'false':
             return TokenType.FALSE;
+
         case 'if':
             return TokenType.IF;
+
         case 'else':
             return TokenType.ELSE;
+
         case 'return':
             return TokenType.RETURN;
+
         case 'while':
             return TokenType.WHILE;
+
         default:
             return TokenType.IDENT;
     }
