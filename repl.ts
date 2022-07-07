@@ -2,7 +2,7 @@ import prompt from 'prompt-sync';
 import colors from 'colors';
 
 import { evaluator, printError } from './evaluator';
-import { Enviroment, LangObject, langObjectUtil, ObjectKind } from './object';
+import { Enviroment, LangObject, objectStringify, ObjectKind } from './object';
 import { Parser, Program } from './parser';
 import { Lexer, Token, TokenType } from './tokenizer';
 
@@ -50,11 +50,7 @@ export default class {
                 () => {
                     evaluator(
                         new Parser(
-                            new Lexer(`
-                import('@std/io');
-                import('@std/array');
-                import('@std/util');
-                `)
+                            new Lexer(`import('@std/lib');`)
                         ).parseProgram(),
                         env
                     );
@@ -76,7 +72,7 @@ export default class {
 
         switch (this.mode) {
             case 'repl':
-                return langObjectUtil(result).gray;
+                return objectStringify(result).gray;
 
             case 'parser':
                 return parsed;
