@@ -184,11 +184,17 @@ npm run start [file]
 
 # Examples
 
-ToDo
+> **tests**: [`./test`](./tests/)
+
+-   [**`examples`**](./examples/)
+    -   [`Hello, World!`](./examples/hello_world.tiny)
+    -   [`fibonacci`](./examples/fibonacci.tiny)
 
 <br>
 
 # Todo
 
 -   [ ] Class
+-   [ ] else if
+-   [ ] More exception handling
 -   [ ] Examples
