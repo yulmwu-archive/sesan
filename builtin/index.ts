@@ -7,7 +7,7 @@ import {
     LangObject,
     NumberObject,
     ObjectKind,
-    ObjectKindToString,
+    objectKindStringify,
     StringObject,
 } from '../object';
 import { Parser } from '../parser';
@@ -95,7 +95,7 @@ const typeofObject: Func = (args: Array<LangObject>): LangObject => {
 
     return {
         kind: ObjectKind.STRING,
-        value: ObjectKindToString(args[0]?.kind ?? ObjectKind.NULL),
+        value: objectKindStringify(args[0]?.kind ?? ObjectKind.NULL),
     };
 };
 
