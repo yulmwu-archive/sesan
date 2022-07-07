@@ -162,33 +162,33 @@ npm run start [file]
 
 # Standard library
 
--   [**`@std/`**](./@std/)
-    -   [`lib`](./@std/lib.tiny)
-    -   [`io`](./@std/io.tiny)
+-   [**`@std/`**](https://github.com/tsukiroku/tiny/blob/main/@std/)
+    -   [`lib`](https://github.com/tsukiroku/tiny/blob/main/@std/lib.tiny)
+    -   [`io`](https://github.com/tsukiroku/tiny/blob/main/@std/io.tiny)
         -   `print`
         -   `println`
         -   `print_error`
         -   `println_error`
         -   `readline`
-    -   [`array`](./@std/array.tiny)
+    -   [`array`](https://github.com/tsukiroku/tiny/blob/main/@std/array.tiny)
         -   `push`
         -   `pop`
         -   `shift`
         -   `unshift`
         -   `slice`
         -   `forEach`
-    -   [`util`](./@std/util.tiny)
+    -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
         -   `length`
 
 <br>
 
 # Examples
 
-> **tests**: [`./test`](./tests/)
+> **tests**: [`./test`](https://github.com/tsukiroku/tiny/tree/main/tests)
 
--   [**`examples`**](./examples/)
-    -   [`Hello, World!`](./examples/hello_world.tiny)
-    -   [`fibonacci`](./examples/fibonacci.tiny)
+-   [**`./examples`**](https://github.com/tsukiroku/tiny/tree/main/examples)
+    -   [`Hello, World!`](https://github.com/tsukiroku/tiny/blob/main/examples/hello_world.tiny)
+    -   [`fibonacci`](https://github.com/tsukiroku/tiny/blob/main/examples/fibonacci.tiny)
 
 <br>
 
