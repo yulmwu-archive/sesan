@@ -36,6 +36,7 @@ import {
 } from '../parser';
 import { TokenType } from '../tokenizer';
 import { error } from '.';
+import { Options } from '../options';
 
 const NULL: LangObject = {
     kind: ObjectKind.NULL,
@@ -43,8 +44,11 @@ const NULL: LangObject = {
 
 let __builtin__arguments: Map<string, Array<LangObject>> = new Map();
 
-export default (program: Program, env: Enviroment): LangObject =>
-    evalStatements(program.statements, env);
+export default (
+    program: Program,
+    env: Enviroment,
+    option: Options
+): LangObject => evalStatements(program.statements, env, option);
 
 const getFinalVal = (objects: Array<LangObject>): LangObject => {
     if (objects.length === 0) return NULL;
@@ -53,12 +57,13 @@ const getFinalVal = (objects: Array<LangObject>): LangObject => {
 
 const evalStatements = (
     statements: Array<Statement>,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
     let results: Array<LangObject> = [];
 
     statements.forEach((statement) => {
-        const result = evalStatement(statement, env);
+        const result = evalStatement(statement, env, option);
 
         results.push(result);
 
@@ -73,12 +78,13 @@ const evalStatements = (
 
 const evalBlockStatements = (
     statements: Array<Statement>,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
     let results: Array<LangObject> = [];
 
     statements.forEach((statement) => {
-        const result = evalStatement(statement, env);
+        const result = evalStatement(statement, env, option);
 
         results.push(result);
 
@@ -91,26 +97,31 @@ const evalBlockStatements = (
     return getFinalVal(results);
 };
 
-const evalStatement = (statement: Statement, env: Enviroment): LangObject => {
+const evalStatement = (
+    statement: Statement,
+    env: Enviroment,
+    option: Options
+): LangObject => {
     switch (statement.kind) {
         case NodeKind.ExpressionStatement:
-            return evalExpression(statement.expression, env);
+            return evalExpression(statement.expression, env, option);
 
         case NodeKind.LetStatement: {
-            const value = evalExpression(statement.value, env);
+            const value = evalExpression(statement.value, env, option);
             if (value?.kind === ObjectKind.ERROR) return value;
 
-            if (statement.ident)
-                env.set(
-                    (statement.ident as unknown as StringLiteral).value,
-                    value
-                );
+            const name = (statement.ident as unknown as StringLiteral).value;
+
+            if (env.get(name))
+                return error(`identifier '${name}' already defined`);
+
+            if (statement.ident) env.set(name, value);
 
             return null;
         }
 
         case NodeKind.AssignStatement: {
-            const value = evalExpression(statement.value, env);
+            const value = evalExpression(statement.value, env, option);
 
             if (value?.kind === ObjectKind.ERROR) return value;
 
@@ -126,7 +137,8 @@ const evalStatement = (statement: Statement, env: Enviroment): LangObject => {
         case NodeKind.ReturnStatement: {
             const expression = evalExpression(
                 (statement as unknown as ExpressionStatement).expression,
-                env
+                env,
+                option
             );
 
             if (expression)
@@ -141,7 +153,8 @@ const evalStatement = (statement: Statement, env: Enviroment): LangObject => {
         case NodeKind.WhileStatement: {
             let condition = evalExpression(
                 (statement as unknown as WhileStatement).condition,
-                env
+                env,
+                option
             );
 
             if (condition?.kind === ObjectKind.ERROR) return condition;
@@ -151,14 +164,16 @@ const evalStatement = (statement: Statement, env: Enviroment): LangObject => {
             while (isTruthy(condition)) {
                 const result = evalExpression(
                     (statement as unknown as WhileStatement).body,
-                    env
+                    env,
+                    option
                 );
 
                 if (result?.kind === ObjectKind.ERROR) return result;
 
                 condition = evalExpression(
                     (statement as unknown as WhileStatement).condition,
-                    env
+                    env,
+                    option
                 );
 
                 if (condition?.kind === ObjectKind.ERROR) return condition;
@@ -176,26 +191,34 @@ const evalStatement = (statement: Statement, env: Enviroment): LangObject => {
 
 const evalExpression = (
     expression: Expression,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
     if (!expression) return null;
 
     switch (expression.kind) {
         case ExpressionKind.Literal:
-            return evalLiteral(expression as LiteralExpression, env);
+            return evalLiteral(expression as LiteralExpression, env, option);
 
         case ExpressionKind.Prefix: {
             const expr = expression as unknown as PrefixExpression;
-            return evalPrefix(expr.operator, expr.right, env);
+            return evalPrefix(expr.operator, expr.right, env, option);
         }
         case ExpressionKind.Infix:
             const infix = expression as unknown as InfixExpression;
-            return evalInfix(infix.operator, infix.left, infix.right, env);
+            return evalInfix(
+                infix.operator,
+                infix.left,
+                infix.right,
+                env,
+                option
+            );
 
         case ExpressionKind.Block:
             return evalBlockStatements(
                 (expression as unknown as BlockStatement).statements,
-                env
+                env,
+                option
             );
 
         case ExpressionKind.If: {
@@ -204,14 +227,16 @@ const evalExpression = (
                 expr.condition,
                 expr.consequence,
                 expr.alternative,
-                env
+                env,
+                option
             );
         }
 
         case ExpressionKind.Ident:
             return evalIdent(
                 (expression as unknown as StringLiteral).value,
-                env
+                env,
+                option
             );
 
         case ExpressionKind.Function: {
@@ -220,6 +245,7 @@ const evalExpression = (
                 parameters: expr.arguments,
                 body: expr.body,
                 env,
+                option,
                 kind: ObjectKind.FUNCTION,
             };
         }
@@ -229,24 +255,25 @@ const evalExpression = (
 
             const name = (expr.function as unknown as StringLiteral).value;
 
-            if (name === 'quote') return evalQuote(expr.arguments[0], env);
+            if (name === 'quote')
+                return evalQuote(expr.arguments[0], env, option);
 
-            const functionObject = evalExpression(expr.function, env);
+            const functionObject = evalExpression(expr.function, env, option);
 
-            const args = evalExpressions(expr.arguments, env);
+            const args = evalExpressions(expr.arguments, env, option);
 
             __builtin__arguments.set(name, args);
 
             if (args.length == 1 && args[0]?.kind === ObjectKind.ERROR)
                 return args[0];
 
-            return applyFunction(functionObject, name, args, env);
+            return applyFunction(functionObject, name, args, env, option);
         }
 
         case ExpressionKind.Array: {
             const expr = expression as unknown as ArrayExpression;
 
-            const args = evalExpressions(expr.elements, env);
+            const args = evalExpressions(expr.elements, env, option);
 
             if (args.length == 1 && args[0]?.kind === ObjectKind.ERROR)
                 return args[0];
@@ -264,12 +291,12 @@ const evalExpression = (
         case ExpressionKind.Index: {
             const expr = expression as unknown as IndexExpression;
 
-            const _expr = evalExpression(expr.left, env);
+            const _expr = evalExpression(expr.left, env, option);
             if (!_expr) return null;
 
             if (_expr.kind === ObjectKind.ERROR) return NULL;
 
-            const index = evalExpression(expr.index, env);
+            const index = evalExpression(expr.index, env, option);
             if (!index) return null;
 
             if (index.kind === ObjectKind.ERROR) return NULL;
@@ -279,7 +306,8 @@ const evalExpression = (
         case ExpressionKind.Hash:
             return evalHashArguments(
                 (expression as unknown as HashExpression).pairs,
-                env
+                env,
+                option
             );
 
         default:
@@ -287,8 +315,12 @@ const evalExpression = (
     }
 };
 
-const evalQuote = (expression: Expression, env: Enviroment): LangObject => ({
-    value: evalUnquoteCalls(expression, env),
+const evalQuote = (
+    expression: Expression,
+    env: Enviroment,
+    option: Options
+): LangObject => ({
+    value: evalUnquoteCalls(expression, env, option),
     kind: ObjectKind.QUOTE,
 });
 
@@ -327,20 +359,28 @@ const convertObjectToAst = (object: LangObject): Expression => {
     }
 };
 
-const func = (expression: Expression, env: Enviroment): Expression => {
-    if (!isUnqoteCall(expression)) return expression;
+const evalUnquoteCalls = (
+    quoted: Expression,
+    env: Enviroment,
+    option: Options
+): Expression => {
+    const call = modify_expression(
+        quoted,
+        env,
+        (expression: Expression, env: Enviroment): Expression => {
+            if (!isUnqoteCall(expression)) return expression;
 
-    if (expression?.kind === ExpressionKind.Call) {
-        const call = expression as unknown as CallExpression;
-        if (call.arguments.length !== 1) return expression;
-        return convertObjectToAst(evalExpression(call.arguments[0], env));
-    }
+            if (expression?.kind === ExpressionKind.Call) {
+                const call = expression as unknown as CallExpression;
+                if (call.arguments.length !== 1) return expression;
+                return convertObjectToAst(
+                    evalExpression(call.arguments[0], env, option)
+                );
+            }
 
-    return expression;
-};
-
-const evalUnquoteCalls = (quoted: Expression, env: Enviroment): Expression => {
-    const call = modify_expression(quoted, env, func);
+            return expression;
+        }
+    );
     if (!call) return quoted;
 
     return call;
@@ -361,7 +401,8 @@ const isUnqoteCall = (expression: Expression): boolean => {
 
 const evalHashArguments = (
     args: Array<HashPair>,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): HashObject => {
     const hash: HashObject = {
         kind: ObjectKind.HASH,
@@ -369,10 +410,10 @@ const evalHashArguments = (
     };
 
     args.forEach((arg: HashPair) => {
-        const key = evalExpression(arg.key, env);
+        const key = evalExpression(arg.key, env, option);
         if (!key) return;
 
-        const value = evalExpression(arg.value, env);
+        const value = evalExpression(arg.value, env, option);
         if (!value) return;
 
         let key_: StringObject | NumberObject | BooleanObject = {
@@ -406,12 +447,13 @@ const evalHashArguments = (
 
 const evalExpressions = (
     expression: Array<Expression>,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): Array<LangObject> => {
     const ret: Array<LangObject> = [];
 
     expression.forEach((expr: Expression) => {
-        const obj = evalExpression(expr, env);
+        const obj = evalExpression(expr, env, option);
 
         if (obj?.kind === ObjectKind.ERROR) {
             ret.push(obj);
@@ -428,14 +470,16 @@ const applyFunction = (
     func: LangObject,
     name: string,
     args: Array<LangObject>,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
     if (name === '@') return NULL;
 
     if (func?.kind === ObjectKind.FUNCTION) {
         const res = evalExpression(
             (func as unknown as FunctionExpression).body,
-            extendFunctionEnv(func, args, env)
+            extendFunctionEnv(func, args, env, option),
+            option
         );
 
         if (res?.kind === ObjectKind.RETURN_VALUE) return res.value;
@@ -444,7 +488,7 @@ const applyFunction = (
     }
 
     if (func?.kind === ObjectKind.BUILTIN)
-        return (func as unknown as BuiltinFunction).func(args, env);
+        return (func as unknown as BuiltinFunction).func(args, env, option);
 
     return error(`'${name}' is not a function.`);
 };
@@ -452,7 +496,8 @@ const applyFunction = (
 const extendFunctionEnv = (
     func: LangObject,
     args: Array<LangObject>,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): Enviroment => {
     if (func?.kind === ObjectKind.FUNCTION) {
         const newEnv = newEnclosedEnvironment(env);
@@ -470,7 +515,11 @@ const extendFunctionEnv = (
     return new Enviroment();
 };
 
-const evalIdent = (name: string, env: Enviroment): LangObject => {
+const evalIdent = (
+    name: string,
+    env: Enviroment,
+    option: Options
+): LangObject => {
     if (env.get(name)) return env.get(name);
 
     return builtinFunction(name, env);
@@ -478,7 +527,8 @@ const evalIdent = (name: string, env: Enviroment): LangObject => {
 
 const evalLiteral = (
     literal: LiteralExpression,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
     switch (literal.value.kind) {
         case LiteralKind.Number:
@@ -507,9 +557,10 @@ const evalLiteral = (
 const evalPrefix = (
     operator: TokenType,
     right: Expression,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
-    const expression = evalExpression(right, env);
+    const expression = evalExpression(right, env, option);
 
     if (expression?.kind === ObjectKind.ERROR) return expression;
 
@@ -529,31 +580,32 @@ const evalInfix = (
     operator: TokenType,
     _left: Expression,
     _right: Expression,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
-    const left = evalExpression(_left, env);
+    const left = evalExpression(_left, env, option);
 
     if (left?.kind === ObjectKind.ERROR) return left;
 
-    const right = evalExpression(_right, env);
+    const right = evalExpression(_right, env, option);
 
     if (right?.kind === ObjectKind.ERROR) return right;
 
     switch (left?.kind) {
         case ObjectKind.NUMBER:
-            return evalNumberInfix(operator, left, right, env);
+            return evalNumberInfix(operator, left, right, env, option);
 
         case ObjectKind.STRING:
-            return evalStringInfix(operator, left, right, env);
+            return evalStringInfix(operator, left, right, env, option);
 
         case ObjectKind.BOOLEAN:
-            return evalBooleanInfix(operator, left, right, env);
+            return evalBooleanInfix(operator, left, right, env, option);
 
         case ObjectKind.HASH:
-            return evalHashInfix(operator, left, right, env);
+            return evalHashInfix(operator, left, right, env, option);
 
         case ObjectKind.ARRAY:
-            return evalArrayInfix(operator, left, right, env);
+            return evalArrayInfix(operator, left, right, env, option);
 
         default:
             return error(`type missmatch [${left?.kind}] [${right?.kind}]`);
@@ -564,7 +616,8 @@ const evalNumberInfix = (
     operator: TokenType,
     left: LangObject,
     right: LangObject,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
     if (left?.kind !== ObjectKind.NUMBER || right?.kind !== ObjectKind.NUMBER)
         return error(`type missmatch [
@@ -649,7 +702,8 @@ const evalBooleanInfix = (
     operator: TokenType,
     left: LangObject,
     right: LangObject,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
     if (left?.kind !== ObjectKind.BOOLEAN || right?.kind !== ObjectKind.BOOLEAN)
         return error(
@@ -692,7 +746,8 @@ const evalStringInfix = (
     operator: TokenType,
     left: LangObject,
     right: LangObject,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
     if (left?.kind !== ObjectKind.STRING || right?.kind !== ObjectKind.STRING)
         return error(
@@ -729,7 +784,8 @@ const evalHashInfix = (
     operator: TokenType,
     left: LangObject,
     right: LangObject,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
     if (left?.kind !== ObjectKind.HASH || right?.kind !== ObjectKind.HASH)
         return error(
@@ -763,7 +819,8 @@ const evalArrayInfix = (
     operator: TokenType,
     left: LangObject,
     right: LangObject,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
     if (left?.kind !== ObjectKind.ARRAY || right?.kind !== ObjectKind.ARRAY)
         return error(
@@ -802,18 +859,19 @@ const evalIfExpression = (
     condition: Expression,
     consequence: Expression,
     alternative: Expression,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
-    const conditionExpression = evalExpression(condition, env);
+    const conditionExpression = evalExpression(condition, env, option);
 
     if (conditionExpression?.kind === ObjectKind.ERROR)
         return conditionExpression;
 
     if (conditionExpression?.kind === ObjectKind.BOOLEAN) {
         if (conditionExpression.value) {
-            return evalExpression(consequence, env);
+            return evalExpression(consequence, env, option);
         } else if (alternative) {
-            return evalExpression(alternative, env);
+            return evalExpression(alternative, env, option);
         } else return NULL;
     }
 
