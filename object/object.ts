@@ -1,4 +1,5 @@
 import { Enviroment } from '.';
+import { Evaluator } from '../evaluator';
 import { Options } from '../options';
 import { Expression } from '../parser';
 
@@ -153,7 +154,8 @@ interface BuiltinFunction {
     func: (
         args: Array<LangObject>,
         env: Enviroment,
-        option: Options
+        option: Options,
+        t: Evaluator
     ) => LangObject;
     kind: ObjectKind.BUILTIN;
 }
