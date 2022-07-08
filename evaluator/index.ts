@@ -1,4 +1,4 @@
-import evaluator, { NULL, __builtin__arguments } from './evaluator';
+import Evaluator, { NULL } from './evaluator';
 import error, { printError } from './error';
 
-export { evaluator, NULL, __builtin__arguments, error, printError };
+export { Evaluator, NULL, error, printError };
