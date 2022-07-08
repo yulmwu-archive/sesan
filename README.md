@@ -13,6 +13,7 @@
         -   [Operators](#operators)
 -   [**Built-in functions**](#Built-in-functions)
 -   [**Standard library**](#Standard-library)
+-   [**Options**](#Options)
 -   [**Examples**](#Examples)
 -   [**ToDo**](#Todo)
 
@@ -179,6 +180,18 @@ npm run start [file]
         -   `forEach`
     -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
         -   `length`
+
+<br>
+
+# Options
+
+If `tiny.config.json` dose not exist in root (`./`), it extends Default.
+
+| Option                   | Description                        | Default |
+| ------------------------ | ---------------------------------- | ------- |
+| `allowEval`              | Allow `eval()` feature             | `false` |
+| `allowJavaScript`        | Allow `js()` feature               | `false` |
+| `useStdLibAutomatically` | Use standard library automatically | `false` |
 
 <br>
 
