@@ -1,4 +1,4 @@
-import { evaluator, NULL, __builtin__arguments } from '../evaluator';
+import { Evaluator, NULL } from '../evaluator';
 import {
     ArrayObject,
     BuiltinFunction,
@@ -55,12 +55,18 @@ export default (name: string, env: Enviroment): LangObject => {
     };
 };
 
-const getArguments: Func = (args: Array<LangObject>): LangObject => {
+const getArguments: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    option: Options,
+    t: Evaluator
+): LangObject => {
     if (args.length <= 0) return invalidArgument;
 
     return {
         kind: ObjectKind.ARRAY,
-        value: __builtin__arguments.get((args[0] as StringObject).value) ?? [],
+        value:
+            t.__builtin__arguments.get((args[0] as StringObject).value) ?? [],
     };
 };
 
@@ -77,13 +83,13 @@ const importEnv: Func = (
 
         if (!fileName.endsWith('.tiny')) fileName += '.tiny';
 
-        return evaluator(
+        return new Evaluator(
             new Parser(
                 new Lexer(readFileSync(fileName, 'utf8'))
             ).parseProgram(),
             env,
             option
-        );
+        ).eval();
     } catch (e) {
         return {
             kind: ObjectKind.ERROR,
@@ -168,11 +174,11 @@ const evalCode: Func = (
             message: 'allowEval is not allowed',
         };
 
-    return evaluator(
+    return new Evaluator(
         new Parser(new Lexer(args[0].value)).parseProgram(),
         env,
         option
-    );
+    ).eval();
 };
 
 const evalJSCode: Func = (

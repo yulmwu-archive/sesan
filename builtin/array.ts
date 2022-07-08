@@ -1,6 +1,5 @@
 import { Func, invalidArgument } from '.';
-import { NULL } from '../evaluator';
-import { applyFunction } from '../evaluator/evaluator';
+import { Evaluator, NULL } from '../evaluator';
 import {
     ArrayObject,
     Enviroment,
@@ -71,7 +70,8 @@ const slice: Func = (args: Array<LangObject>): LangObject => {
 const forEach: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    option: Options
+    option: Options,
+    t: Evaluator
 ): LangObject => {
     if (
         args.length < 2 ||
@@ -84,19 +84,13 @@ const forEach: Func = (
     const func = args[1] as FunctionObject;
 
     array.value.forEach((value, index) =>
-        applyFunction(
-            func,
-            '',
-            [
-                value,
-                {
-                    kind: ObjectKind.NUMBER,
-                    value: index,
-                },
-            ],
-            env,
-            option
-        )
+        t.applyFunction(func, '', [
+            value,
+            {
+                kind: ObjectKind.NUMBER,
+                value: index,
+            },
+        ], env, option)
     );
 
     return NULL;
