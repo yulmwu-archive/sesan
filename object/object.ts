@@ -1,4 +1,5 @@
 import { Enviroment } from '.';
+import { Options } from '../options';
 import { Expression } from '../parser';
 
 type LangObject =
@@ -144,11 +145,16 @@ interface FunctionObject {
     parameters: Array<Expression>;
     body: Expression;
     env: Enviroment;
+    option: Options;
     kind: ObjectKind.FUNCTION | ObjectKind.BUILTIN;
 }
 
 interface BuiltinFunction {
-    func: (args: Array<LangObject>, env: Enviroment) => LangObject;
+    func: (
+        args: Array<LangObject>,
+        env: Enviroment,
+        option: Options
+    ) => LangObject;
     kind: ObjectKind.BUILTIN;
 }
 
