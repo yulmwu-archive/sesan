@@ -5,7 +5,6 @@ import {
     Enviroment,
     HashObject,
     LangObject,
-    NumberObject,
     ObjectKind,
     objectKindStringify,
     StringObject,
@@ -15,6 +14,7 @@ import { Lexer } from '../tokenizer';
 import { readFileSync } from 'fs';
 import { print, printError, readLine, throwError } from './io';
 import { push, pop, shift, unshift, slice, forEach } from './array';
+import { Options } from '../options';
 
 type Func = Omit<BuiltinFunction, 'kind'>['func'];
 
@@ -30,6 +30,8 @@ export default (name: string, env: Enviroment): LangObject => {
         ['throw', throwError],
         ['delete', deleteEnv],
         ['update', updateEnv],
+        ['eval', evalCode],
+        ['js', evalJSCode],
         ['__builtin_push', push],
         ['__builtin_length', length],
         ['__builtin_pop', pop],
@@ -64,7 +66,8 @@ const getArguments: Func = (args: Array<LangObject>): LangObject => {
 
 const importEnv: Func = (
     args: Array<LangObject>,
-    env: Enviroment
+    env: Enviroment,
+    option: Options
 ): LangObject => {
     if (args.length <= 0 || args[0]?.kind !== ObjectKind.STRING)
         return invalidArgument;
@@ -78,7 +81,8 @@ const importEnv: Func = (
             new Parser(
                 new Lexer(readFileSync(fileName, 'utf8'))
             ).parseProgram(),
-            env
+            env,
+            option
         );
     } catch (e) {
         return {
@@ -148,6 +152,54 @@ const updateEnv: Func = (
     env.update(args[0].value, args[1]);
 
     return args[1];
+};
+
+const evalCode: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    option: Options
+): LangObject => {
+    if (args.length <= 0 || args[0]?.kind !== ObjectKind.STRING)
+        return invalidArgument;
+
+    if (!option.allowEval)
+        return {
+            kind: ObjectKind.ERROR,
+            message: 'allowEval is not allowed',
+        };
+
+    return evaluator(
+        new Parser(new Lexer(args[0].value)).parseProgram(),
+        env,
+        option
+    );
+};
+
+const evalJSCode: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    option: Options
+): LangObject => {
+    if (args.length <= 0 || args[0]?.kind !== ObjectKind.STRING)
+        return invalidArgument;
+
+    if (!option.allowJavaScript)
+        return {
+            kind: ObjectKind.ERROR,
+            message: 'allowJavaScript is not allowed',
+        };
+
+    try {
+        return eval(args[0].value);
+    } catch (e) {
+        if (e instanceof Error)
+            return {
+                kind: ObjectKind.ERROR,
+                message: `Could not eval JS code: ${e.message}`,
+            };
+
+        throw e;
+    }
 };
 
 const newLine: Func = (args: Array<LangObject>): LangObject => ({
