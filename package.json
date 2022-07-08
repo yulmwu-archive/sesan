@@ -1,6 +1,6 @@
 {
     "name": "@tsukiroku/tiny",
-    "version": "2.0.0",
+    "version": "0.1.0",
     "description": "Tiny interpreter",
     "main": "dist/index.js",
     "scripts": {
@@ -8,7 +8,8 @@
         "build": "if [ -d dist ]; then rm -rf dist; npm run build:tsc; else npm run build:tsc; fi",
         "build:windows": "@echo off && IF exist dist ( rd dist; npm run build:tsc ) ELSE ( npm run build:tsc ) && @echo on",
         "build:tsc": "tsc -p tsconfig.json",
-        "test": "npm run build && node ./dist/tests/$TEST.test.js # export TEST=something"
+        "test": "npm run build && node ./dist/tests/$TEST.test.js # export TEST=something",
+        "npm:publish": "npm run build && npm publish"
     },
     "repository": {
         "type": "git",
