@@ -1,7 +1,7 @@
-import { evaluator, printError } from './evaluator';
+import { Evaluator, printError } from './evaluator';
 import { Enviroment, ObjectKind, objectStringify } from './object';
 import { Options } from './options';
-import { Parser, Program } from './parser';
+import { Parser } from './parser';
 import { Lexer } from './tokenizer';
 
 type TinyOption = Options & {
@@ -24,13 +24,17 @@ export default class {
         const parser = new Parser(this.tokenizer());
 
         if (this.option.useStdLibAutomatically)
-            evaluator(
+            new Evaluator(
                 new Parser(new Lexer(`import('@std/lib');`)).parseProgram(),
                 env,
                 this.option
-            );
+            ).eval();
 
-        const result = evaluator(parser.parseProgram(), env, this.option);
+        const result = new Evaluator(
+            parser.parseProgram(),
+            env,
+            this.option
+        ).eval();
 
         if (parser.errors.length > 0)
             parser.errors.forEach((error) => printError(error));
