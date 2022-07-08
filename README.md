@@ -212,6 +212,8 @@ console.log(
 );
 ```
 
+> `@std/` must exist in root (`./`).
+
 <br>
 
 # Examples
