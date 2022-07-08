@@ -1,5 +1,5 @@
-import { evaluator } from './evaluator';
-import { Enviroment, objectStringify } from './object';
+import { evaluator, printError } from './evaluator';
+import { Enviroment, ObjectKind, objectStringify } from './object';
 import { Options } from './options';
 import { Parser, Program } from './parser';
 import { Lexer } from './tokenizer';
@@ -19,12 +19,9 @@ export default class {
         return new Lexer(this.x);
     }
 
-    public parse(): Program {
-        return new Parser(this.tokenizer()).parseProgram();
-    }
-
     public eval(): string {
         const env = this.option.enviroment ?? new Enviroment();
+        const parser = new Parser(this.tokenizer());
 
         if (this.option.useStdLibAutomatically)
             evaluator(
@@ -33,7 +30,14 @@ export default class {
                 this.option
             );
 
-        return objectStringify(evaluator(this.parse(), env, this.option));
+        const result = evaluator(parser.parseProgram(), env, this.option);
+
+        if (parser.errors.length > 0)
+            parser.errors.forEach((error) => printError(error));
+
+        if (result?.kind === ObjectKind.ERROR) printError(result.message);
+
+        return objectStringify(result);
     }
 }
 
