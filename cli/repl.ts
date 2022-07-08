@@ -1,7 +1,7 @@
 import prompt from 'prompt-sync';
 import colors from 'colors';
 
-import { evaluator, printError } from '../evaluator';
+import { Evaluator, printError } from '../evaluator';
 import { Enviroment, LangObject, objectStringify, ObjectKind } from '../object';
 import { Parser, Program } from '../parser';
 import { Lexer, Token, TokenType } from '../tokenizer';
@@ -49,13 +49,13 @@ export default class {
             [
                 '#import',
                 () => {
-                    evaluator(
+                    new Evaluator(
                         new Parser(
                             new Lexer(`import('@std/lib');`)
                         ).parseProgram(),
                         env,
                         this.option
-                    );
+                    ).eval();
 
                     return 'Imported std';
                 },
@@ -65,7 +65,7 @@ export default class {
 
         if (commands.has(command)) return commands.get(command)!(...args);
 
-        const result = evaluator(parsed, env, this.option);
+        const result = new Evaluator(parsed, env, this.option).eval();
 
         if (result?.kind === ObjectKind.ERROR) {
             printError(result.message);
@@ -99,11 +99,11 @@ export default class {
 
     public start() {
         if (this.option.useStdLibAutomatically)
-            evaluator(
+            new Evaluator(
                 new Parser(new Lexer(`import('@std/lib');`)).parseProgram(),
                 this.env,
                 this.option
-            );
+            ).eval();
 
         while (true) {
             const input = this.promptSync(

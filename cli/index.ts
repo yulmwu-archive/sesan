@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
-import { evaluator, printError } from '../evaluator';
+import { Evaluator, printError } from '../evaluator';
 import { Enviroment, ObjectKind } from '../object';
 import parseOptions from '../options';
 import { Parser } from '../parser';
@@ -21,7 +21,7 @@ else {
 
         const parser = new Parser(new Lexer(file));
 
-        const result = evaluator(parser.parseProgram(), env, option);
+        const result = new Evaluator(parser.parseProgram(), env, option).eval();
 
         if (parser.errors.length > 0)
             parser.errors.forEach((error) => printError(error));
