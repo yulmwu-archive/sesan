@@ -1,5 +1,5 @@
 import test, { eq } from '.';
-import { evaluator, NULL } from '../evaluator';
+import { Evaluator, NULL } from '../evaluator';
 import { Enviroment } from '../object';
 import parseOptions from '../options';
 import { Parser } from '../parser';
@@ -45,6 +45,6 @@ println(test(3));
     const parser = new Parser(lexer);
     const env = new Enviroment();
 
-    eq(evaluator(parser.parseProgram(), env, parseOptions()), NULL);
+    eq(new Evaluator(parser.parseProgram(), env, parseOptions()).eval(), NULL);
     // console.log(JSON.stringify(parser.parseProgram(), null, 2));
 });
