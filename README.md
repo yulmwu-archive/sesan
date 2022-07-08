@@ -14,6 +14,7 @@
 -   [**Built-in functions**](#Built-in-functions)
 -   [**Standard library**](#Standard-library)
 -   [**Options**](#Options)
+-   [**Npm package**](#Npm-Package)
 -   [**Examples**](#Examples)
 -   [**ToDo**](#Todo)
 
@@ -192,6 +193,24 @@ If `tiny.config.json` dose not exist in root (`./`), it extends Default.
 | `allowEval`              | Allow `eval()` feature             | `false` |
 | `allowJavaScript`        | Allow `js()` feature               | `false` |
 | `useStdLibAutomatically` | Use standard library automatically | `false` |
+
+<br>
+
+# Npm package
+
+```sh
+npm i @tsukiroku/tiny
+```
+
+```ts
+import Tiny from '@tsukiroku/tiny';
+
+console.log(
+    new Tiny('let x = "World!"; println("Hello, " + x)', {
+        useStdLibAutomatically: true,
+    }).eval()
+);
+```
 
 <br>
 
