@@ -230,5 +230,4 @@ console.log(
 
 -   [ ] Class
 -   [ ] else if
--   [ ] More exception handling
 -   [ ] More Examples
