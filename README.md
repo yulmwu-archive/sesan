@@ -111,7 +111,7 @@ npm run start [file]
 | Statement | Syntax                  | Statement             | Syntax                    |
 | --------- | ----------------------- | --------------------- | ------------------------- |
 | `Let`     | `let [ident] = [expr];` | `Assign`              | `[ident] = [expr];`       |
-| `Return`  | `[expr]`                | `ExpressionStatement` | `[expr]`                  |
+| `Return`  | `return [expr];`        | `ExpressionStatement` | `[expr]`                  |
 | `Block`   | `{ [statement] }`       | `While`               | `while ([expr]) [block];` |
 
 <br>
@@ -231,4 +231,4 @@ console.log(
 -   [ ] Class
 -   [ ] else if
 -   [ ] More exception handling
--   [ ] Examples
+-   [ ] More Examples

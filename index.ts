@@ -4,6 +4,12 @@ import { Options } from './options';
 import { Parser } from './parser';
 import { Lexer } from './tokenizer';
 
+export * from './object';
+export * from './options';
+export * from './tokenizer';
+export * from './parser';
+export * from './evaluator';
+
 type TinyOption = Options & {
     enviroment?: Enviroment;
 };
