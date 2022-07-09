@@ -10,6 +10,7 @@ let __expect_array = func(arr, name, callback) {
 //
 // let arr = [1, 2, 3];
 // push(arr, 4); // [1, 2, 3, 4];
+
 let push = func(arr, value) {
     __expect_array(arr, 'push', func() {
         __builtin_push(arr, value);
@@ -20,6 +21,7 @@ let push = func(arr, value) {
 //
 // let arr = [1, 2, 3];
 // pop(arr); // [1, 2];
+
 let pop = func(arr) {
     __expect_array(arr, 'pop', func() {
         __builtin_pop(arr);
@@ -30,6 +32,7 @@ let pop = func(arr) {
 //
 // let arr = [1, 2, 3];
 // shift(arr); // [2, 3];
+
 let shift = func(arr) {
     __expect_array(arr, 'shift', func() {
         __builtin_shift(arr);
@@ -40,6 +43,7 @@ let shift = func(arr) {
 //
 // let arr = [1, 2, 3];
 // unshift(arr, 0); // [0, 1, 2, 3];
+
 let unshift = func(arr, value) {
     __expect_array(arr, 'unshift', func() {
         __builtin_unshift(arr, value);
@@ -50,6 +54,7 @@ let unshift = func(arr, value) {
 //
 // let arr = [1, 2, 3];
 // slice(arr, 1, 2); // [2];
+
 let slice = func(arr, start, end) {
     __expect_array(arr, 'slice', func() {
         __builtin_slice(arr, start, end);
@@ -64,6 +69,7 @@ let slice = func(arr, start, end) {
 // forEach(arr, func(value, index) {
 //     println(index, value);
 // });
+
 let forEach = func(arr, callback) {
     __builtin_forEach(arr, callback);
 };

@@ -1,3 +1,43 @@
 let length = func(value) {
     __builtin_length(value);
 };
+
+// Example:
+// 
+// let res = match(3, [
+//     [ 1, func(v) { return value + 1; } ], 
+//     [ 2, func(v) { return value + 2; } ]
+// ], func(v) { 
+//     println('... nothing'); 
+//     return v;
+// });
+//
+// println(res);
+
+let match = func(value, case, default) {
+    let result = 0;
+    let matched = false;
+
+    forEach(case, func (item) {
+        if (item[0] == value) {
+            matched = true;
+            result = item[1](value);
+        }
+    });
+
+    if (!matched) { result = default(value); }
+
+    return result;
+};
+
+let number = func(value) {
+    return convert(value, 'number');
+};
+
+let string = func(value) {
+    return convert(value, 'string');
+};
+
+let boolean = func(value) {
+    return convert(value, 'boolean');
+};
