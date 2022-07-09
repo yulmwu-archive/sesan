@@ -81,14 +81,14 @@ export default class Parser {
         this.peekToken = this.lexer.nextToken();
     }
 
-    private expectPeek(tokenType: TokenType, err: boolean = true): boolean {
+    private expectPeek(tokenType: TokenType): boolean {
         if (this.peekTokenIs(tokenType)) {
             this.nextToken();
 
             return true;
         }
 
-        if (err) this.peekError(tokenType);
+        this.peekError(tokenType);
 
         return false;
     }
@@ -500,7 +500,7 @@ export default class Parser {
             if (expression) args.push(expression);
         }
 
-        if (this.expectPeek(end, false)) return args;
+        if (this.expectPeek(end)) return args;
 
         return args;
     }
@@ -513,16 +513,16 @@ export default class Parser {
 
             const key = this.parseExpression(Priority.LOWEST);
 
-            if (this.peekTokenIs(TokenType.COLON)) {
-                this.nextToken();
-                this.nextToken();
-            }
+            if (!this.peekTokenIs(TokenType.COLON)) return null;
+
+            this.nextToken();
+            this.nextToken();
 
             const value = this.parseExpression(Priority.LOWEST);
 
             if (
-                !this.expectPeek(TokenType.COMMA) &&
-                !this.peekTokenIs(TokenType.RBRACE)
+                !this.peekTokenIs(TokenType.RBRACE) &&
+                !this.expectPeek(TokenType.COMMA)
             )
                 return null;
 
