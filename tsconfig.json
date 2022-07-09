@@ -8,5 +8,6 @@
         "skipLibCheck": true,
         "declaration": true,
         "outDir": "./dist"
-    }
+    },
+    "exclude": ["node_modules"]
 }
