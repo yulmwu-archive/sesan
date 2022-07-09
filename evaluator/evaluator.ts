@@ -26,13 +26,13 @@ import {
     InfixExpression,
     LiteralExpression,
     LiteralKind,
-    modify_expression,
     NodeKind,
     PrefixExpression,
     Program,
     Statement,
     StringLiteral,
     WhileStatement,
+    ReturnStatement,
 } from '../parser';
 import { TokenType } from '../tokenizer';
 import { error } from '.';
@@ -52,7 +52,7 @@ export default class Evaluator {
     ) {}
 
     public eval(): LangObject {
-        return this.evalStatements(this.p.statements, this.env, this.option);
+        return this.evalStatements(this.p.statements, this.env);
     }
 
     private getFinalVal(objects: Array<LangObject>): LangObject {
@@ -62,34 +62,33 @@ export default class Evaluator {
 
     private evalStatements(
         statements: Array<Statement>,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
         let results: Array<LangObject> = [];
 
-        statements.forEach((statement) => {
-            const result = this.evalStatement(statement, env, option);
+        for (const statement of statements) {
+            const result = this.evalStatement(statement, env);
 
             results.push(result);
 
             if (result) {
-                if (result.kind === ObjectKind.RETURN_VALUE) return result;
+                if (result.kind === ObjectKind.RETURN_VALUE)
+                    return result.value;
                 if (result.kind === ObjectKind.ERROR) return result;
             }
-        });
+        }
 
         return this.getFinalVal(results);
     }
 
     private evalBlockStatements(
         statements: Array<Statement>,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
         let results: Array<LangObject> = [];
 
-        statements.forEach((statement) => {
-            const result = this.evalStatement(statement, env, option);
+        for (const statement of statements) {
+            const result = this.evalStatement(statement, env);
 
             results.push(result);
 
@@ -97,22 +96,18 @@ export default class Evaluator {
                 if (result.kind === ObjectKind.RETURN_VALUE) return result;
                 if (result.kind === ObjectKind.ERROR) return result;
             }
-        });
+        }
 
         return this.getFinalVal(results);
     }
 
-    private evalStatement(
-        statement: Statement,
-        env: Enviroment,
-        option: Options
-    ): LangObject {
+    private evalStatement(statement: Statement, env: Enviroment): LangObject {
         switch (statement.kind) {
             case NodeKind.ExpressionStatement:
-                return this.evalExpression(statement.expression, env, option);
+                return this.evalExpression(statement.expression, env);
 
             case NodeKind.LetStatement: {
-                const value = this.evalExpression(statement.value, env, option);
+                const value = this.evalExpression(statement.value, env);
                 if (value?.kind === ObjectKind.ERROR) return value;
 
                 const name = (statement.ident as unknown as StringLiteral)
@@ -127,7 +122,7 @@ export default class Evaluator {
             }
 
             case NodeKind.AssignStatement: {
-                const value = this.evalExpression(statement.value, env, option);
+                const value = this.evalExpression(statement.value, env);
 
                 if (value?.kind === ObjectKind.ERROR) return value;
 
@@ -142,9 +137,8 @@ export default class Evaluator {
 
             case NodeKind.ReturnStatement: {
                 const expression = this.evalExpression(
-                    (statement as unknown as ExpressionStatement).expression,
-                    env,
-                    option
+                    (statement as unknown as ReturnStatement).value,
+                    env
                 );
 
                 if (expression)
@@ -159,8 +153,7 @@ export default class Evaluator {
             case NodeKind.WhileStatement: {
                 let condition = this.evalExpression(
                     (statement as unknown as WhileStatement).condition,
-                    env,
-                    option
+                    env
                 );
 
                 if (condition?.kind === ObjectKind.ERROR) return condition;
@@ -170,16 +163,14 @@ export default class Evaluator {
                 while (this.isTruthy(condition)) {
                     const result = this.evalExpression(
                         (statement as unknown as WhileStatement).body,
-                        env,
-                        option
+                        env
                     );
 
                     if (result?.kind === ObjectKind.ERROR) return result;
 
                     condition = this.evalExpression(
                         (statement as unknown as WhileStatement).condition,
-                        env,
-                        option
+                        env
                     );
 
                     if (condition?.kind === ObjectKind.ERROR) return condition;
@@ -197,22 +188,17 @@ export default class Evaluator {
 
     private evalExpression(
         expression: Expression,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
         if (!expression) return null;
 
         switch (expression.kind) {
             case ExpressionKind.Literal:
-                return this.evalLiteral(
-                    expression as LiteralExpression,
-                    env,
-                    option
-                );
+                return this.evalLiteral(expression as LiteralExpression, env);
 
             case ExpressionKind.Prefix: {
                 const expr = expression as unknown as PrefixExpression;
-                return this.evalPrefix(expr.operator, expr.right, env, option);
+                return this.evalPrefix(expr.operator, expr.right, env);
             }
             case ExpressionKind.Infix:
                 const infix = expression as unknown as InfixExpression;
@@ -220,15 +206,13 @@ export default class Evaluator {
                     infix.operator,
                     infix.left,
                     infix.right,
-                    env,
-                    option
+                    env
                 );
 
             case ExpressionKind.Block:
                 return this.evalBlockStatements(
                     (expression as unknown as BlockStatement).statements,
-                    env,
-                    option
+                    env
                 );
 
             case ExpressionKind.If: {
@@ -237,16 +221,14 @@ export default class Evaluator {
                     expr.condition,
                     expr.consequence,
                     expr.alternative,
-                    env,
-                    option
+                    env
                 );
             }
 
             case ExpressionKind.Ident:
                 return this.evalIdent(
                     (expression as unknown as StringLiteral).value,
-                    env,
-                    option
+                    env
                 );
 
             case ExpressionKind.Function: {
@@ -255,7 +237,7 @@ export default class Evaluator {
                     parameters: expr.arguments,
                     body: expr.body,
                     env,
-                    option,
+                    option: this.option,
                     kind: ObjectKind.FUNCTION,
                 };
             }
@@ -265,35 +247,22 @@ export default class Evaluator {
 
                 const name = (expr.function as unknown as StringLiteral).value;
 
-                if (name === 'quote')
-                    return this.evalQuote(expr.arguments[0], env, option);
+                const functionObject = this.evalExpression(expr.function, env);
 
-                const functionObject = this.evalExpression(
-                    expr.function,
-                    env,
-                    option
-                );
-
-                const args = this.evalExpressions(expr.arguments, env, option);
+                const args = this.evalExpressions(expr.arguments, env);
 
                 this.__builtin__arguments.set(name, args);
 
                 if (args.length == 1 && args[0]?.kind === ObjectKind.ERROR)
                     return args[0];
 
-                return this.applyFunction(
-                    functionObject,
-                    name,
-                    args,
-                    env,
-                    option
-                );
+                return this.applyFunction(functionObject, name, args, env);
             }
 
             case ExpressionKind.Array: {
                 const expr = expression as unknown as ArrayExpression;
 
-                const args = this.evalExpressions(expr.elements, env, option);
+                const args = this.evalExpressions(expr.elements, env);
 
                 if (args.length == 1 && args[0]?.kind === ObjectKind.ERROR)
                     return args[0];
@@ -311,12 +280,12 @@ export default class Evaluator {
             case ExpressionKind.Index: {
                 const expr = expression as unknown as IndexExpression;
 
-                const _expr = this.evalExpression(expr.left, env, option);
+                const _expr = this.evalExpression(expr.left, env);
                 if (!_expr) return null;
 
                 if (_expr.kind === ObjectKind.ERROR) return NULL;
 
-                const index = this.evalExpression(expr.index, env, option);
+                const index = this.evalExpression(expr.index, env);
                 if (!index) return null;
 
                 if (index.kind === ObjectKind.ERROR) return NULL;
@@ -326,8 +295,7 @@ export default class Evaluator {
             case ExpressionKind.Hash:
                 return this.evalHashArguments(
                     (expression as unknown as HashExpression).pairs,
-                    env,
-                    option
+                    env
                 );
 
             default:
@@ -335,96 +303,9 @@ export default class Evaluator {
         }
     }
 
-    private evalQuote(
-        expression: Expression,
-        env: Enviroment,
-        option: Options
-    ): LangObject {
-        return {
-            value: this.evalUnquoteCalls(expression, env, option),
-            kind: ObjectKind.QUOTE,
-        };
-    }
-
-    private convertObjectToAst(object: LangObject): Expression {
-        if (!object) return null;
-        switch (object.kind) {
-            case ObjectKind.NUMBER:
-                return {
-                    kind: ExpressionKind.Literal,
-                    value: {
-                        kind: LiteralKind.Number,
-                        value: object.value,
-                    },
-                };
-
-            case ObjectKind.BOOLEAN:
-                return {
-                    kind: ExpressionKind.Literal,
-                    value: {
-                        kind: LiteralKind.Boolean,
-                        value: object.value,
-                    },
-                };
-
-            case ObjectKind.QUOTE:
-                return object.value;
-
-            default:
-                return {
-                    kind: ExpressionKind.Literal,
-                    value: {
-                        kind: LiteralKind.Number,
-                        value: 0,
-                    },
-                };
-        }
-    }
-
-    private evalUnquoteCalls(
-        quoted: Expression,
-        env: Enviroment,
-        option: Options
-    ): Expression {
-        const call = modify_expression(
-            quoted,
-            env,
-            (expression: Expression, env: Enviroment): Expression => {
-                if (!this.isUnqoteCall(expression)) return expression;
-
-                if (expression?.kind === ExpressionKind.Call) {
-                    const call = expression as unknown as CallExpression;
-                    if (call.arguments.length !== 1) return expression;
-                    return this.convertObjectToAst(
-                        this.evalExpression(call.arguments[0], env, option)
-                    );
-                }
-
-                return expression;
-            }
-        );
-        if (!call) return quoted;
-
-        return call;
-    }
-
-    private isUnqoteCall(expression: Expression): boolean {
-        if (expression?.kind === ExpressionKind.Call) {
-            const call = expression as unknown as CallExpression;
-
-            if (call.function?.kind === ExpressionKind.Ident) {
-                const ident = call.function as unknown as StringLiteral;
-
-                return ident.value === 'unquote';
-            }
-        }
-        return false;
-    }
-
     private evalHashArguments(
         args: Array<HashPair>,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): HashObject {
         const hash: HashObject = {
             kind: ObjectKind.HASH,
@@ -432,10 +313,10 @@ export default class Evaluator {
         };
 
         args.forEach((arg: HashPair) => {
-            const key = this.evalExpression(arg.key, env, option);
+            const key = this.evalExpression(arg.key, env);
             if (!key) return;
 
-            const value = this.evalExpression(arg.value, env, option);
+            const value = this.evalExpression(arg.value, env);
             if (!value) return;
 
             let key_: StringObject | NumberObject | BooleanObject = {
@@ -469,13 +350,12 @@ export default class Evaluator {
 
     private evalExpressions(
         expression: Array<Expression>,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): Array<LangObject> {
         const ret: Array<LangObject> = [];
 
         expression.forEach((expr: Expression) => {
-            const obj = this.evalExpression(expr, env, option);
+            const obj = this.evalExpression(expr, env);
 
             if (obj?.kind === ObjectKind.ERROR) {
                 ret.push(obj);
@@ -492,16 +372,14 @@ export default class Evaluator {
         func: LangObject,
         name: string,
         args: Array<LangObject>,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
         if (name === '@') return NULL;
 
         if (func?.kind === ObjectKind.FUNCTION) {
             const res = this.evalExpression(
                 (func as unknown as FunctionExpression).body,
-                this.extendFunctionEnv(func, args, env, option),
-                option
+                this.extendFunctionEnv(func, args, env)
             );
 
             if (res?.kind === ObjectKind.RETURN_VALUE) return res.value;
@@ -513,7 +391,7 @@ export default class Evaluator {
             return (func as unknown as BuiltinFunction).func(
                 args,
                 env,
-                option,
+                this.option,
                 this
             );
 
@@ -523,8 +401,7 @@ export default class Evaluator {
     private extendFunctionEnv(
         func: LangObject,
         args: Array<LangObject>,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): Enviroment {
         if (func?.kind === ObjectKind.FUNCTION) {
             const newEnv = newEnclosedEnvironment(env);
@@ -542,11 +419,7 @@ export default class Evaluator {
         return new Enviroment();
     }
 
-    private evalIdent(
-        name: string,
-        env: Enviroment,
-        option: Options
-    ): LangObject {
+    private evalIdent(name: string, env: Enviroment): LangObject {
         if (env.get(name)) return env.get(name);
 
         return builtinFunction(name, env);
@@ -554,8 +427,7 @@ export default class Evaluator {
 
     private evalLiteral(
         literal: LiteralExpression,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
         switch (literal.value.kind) {
             case LiteralKind.Number:
@@ -584,10 +456,9 @@ export default class Evaluator {
     private evalPrefix(
         operator: TokenType,
         right: Expression,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
-        const expression = this.evalExpression(right, env, option);
+        const expression = this.evalExpression(right, env);
 
         if (expression?.kind === ObjectKind.ERROR) return expression;
 
@@ -607,38 +478,31 @@ export default class Evaluator {
         operator: TokenType,
         _left: Expression,
         _right: Expression,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
-        const left = this.evalExpression(_left, env, option);
+        const left = this.evalExpression(_left, env);
 
         if (left?.kind === ObjectKind.ERROR) return left;
 
-        const right = this.evalExpression(_right, env, option);
+        const right = this.evalExpression(_right, env);
 
         if (right?.kind === ObjectKind.ERROR) return right;
 
         switch (left?.kind) {
             case ObjectKind.NUMBER:
-                return this.evalNumberInfix(operator, left, right, env, option);
+                return this.evalNumberInfix(operator, left, right, env);
 
             case ObjectKind.STRING:
-                return this.evalStringInfix(operator, left, right, env, option);
+                return this.evalStringInfix(operator, left, right, env);
 
             case ObjectKind.BOOLEAN:
-                return this.evalBooleanInfix(
-                    operator,
-                    left,
-                    right,
-                    env,
-                    option
-                );
+                return this.evalBooleanInfix(operator, left, right, env);
 
             case ObjectKind.HASH:
-                return this.evalHashInfix(operator, left, right, env, option);
+                return this.evalHashInfix(operator, left, right, env);
 
             case ObjectKind.ARRAY:
-                return this.evalArrayInfix(operator, left, right, env, option);
+                return this.evalArrayInfix(operator, left, right, env);
 
             default:
                 return error(`type missmatch [${left?.kind}] [${right?.kind}]`);
@@ -649,8 +513,7 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
         if (
             left?.kind !== ObjectKind.NUMBER ||
@@ -738,8 +601,7 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
         if (
             left?.kind !== ObjectKind.BOOLEAN ||
@@ -785,8 +647,7 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
         if (
             left?.kind !== ObjectKind.STRING ||
@@ -826,8 +687,7 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
         if (left?.kind !== ObjectKind.HASH || right?.kind !== ObjectKind.HASH)
             return error(
@@ -862,8 +722,7 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
         if (left?.kind !== ObjectKind.ARRAY || right?.kind !== ObjectKind.ARRAY)
             return error(
@@ -904,19 +763,18 @@ export default class Evaluator {
         condition: Expression,
         consequence: Expression,
         alternative: Expression,
-        env: Enviroment,
-        option: Options
+        env: Enviroment
     ): LangObject {
-        const conditionExpression = this.evalExpression(condition, env, option);
+        const conditionExpression = this.evalExpression(condition, env);
 
         if (conditionExpression?.kind === ObjectKind.ERROR)
             return conditionExpression;
 
         if (conditionExpression?.kind === ObjectKind.BOOLEAN) {
             if (conditionExpression.value) {
-                return this.evalExpression(consequence, env, option);
+                return this.evalExpression(consequence, env);
             } else if (alternative) {
-                return this.evalExpression(alternative, env, option);
+                return this.evalExpression(alternative, env);
             } else return NULL;
         }
 
