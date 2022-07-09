@@ -90,7 +90,7 @@ const forEach: Func = (
                 kind: ObjectKind.NUMBER,
                 value: index,
             },
-        ], env, option)
+        ], env)
     );
 
     return NULL;
