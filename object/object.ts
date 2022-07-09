@@ -11,7 +11,6 @@ type LangObject =
     | HashObject
     | FunctionObject
     | BuiltinFunction
-    | QuoteObject
     | ReturnValue
     | ErrorObject
     | Null
@@ -25,7 +24,6 @@ enum ObjectKind {
     HASH,
     FUNCTION,
     BUILTIN,
-    QUOTE,
     RETURN_VALUE,
     ERROR,
     NULL,
@@ -100,9 +98,6 @@ const objectKindStringify = (kind: ObjectKind): string => {
         case ObjectKind.BUILTIN:
             return 'BUILTIN';
 
-        case ObjectKind.QUOTE:
-            return 'QUOTE';
-
         case ObjectKind.RETURN_VALUE:
             return 'RETURN_VALUE';
 
@@ -160,11 +155,6 @@ interface BuiltinFunction {
     kind: ObjectKind.BUILTIN;
 }
 
-interface QuoteObject {
-    value: Expression;
-    kind: ObjectKind.QUOTE;
-}
-
 interface ReturnValue {
     value: LangObject;
     kind: ObjectKind.RETURN_VALUE;
@@ -188,7 +178,6 @@ export {
     HashObject,
     FunctionObject,
     BuiltinFunction,
-    QuoteObject,
     ReturnValue,
     ErrorObject,
     Null,
