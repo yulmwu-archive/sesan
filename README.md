@@ -181,6 +181,10 @@ npm run start [file]
         -   `forEach`
     -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
         -   `length`
+        -   `match`
+        -   `string`
+        -   `number`
+        -   `boolean`
 
 <br>
 
