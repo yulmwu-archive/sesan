@@ -23,7 +23,7 @@ const invalidArgument: LangObject = {
     message: 'Invalid arguments',
 };
 
-export default (name: string, env: Enviroment): LangObject => {
+export default (name: string, env: Enviroment): LangObject | null => {
     const func: Func | undefined = new Map([
         ['import', importEnv],
         ['typeof', typeofObject],
@@ -44,10 +44,9 @@ export default (name: string, env: Enviroment): LangObject => {
         ['__builtin__arguments', getArguments],
         ['__new_line', newLine],
         ['__builtin_forEach', forEach],
-        ['@', () => NULL],
     ]).get(name);
 
-    if (!func) return NULL;
+    if (!func) return null;
 
     return {
         kind: ObjectKind.BUILTIN,
