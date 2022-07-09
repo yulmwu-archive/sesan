@@ -374,8 +374,6 @@ export default class Evaluator {
         args: Array<LangObject>,
         env: Enviroment
     ): LangObject {
-        if (name === '@') return NULL;
-
         if (func?.kind === ObjectKind.FUNCTION) {
             const res = this.evalExpression(
                 (func as unknown as FunctionExpression).body,
@@ -422,7 +420,10 @@ export default class Evaluator {
     private evalIdent(name: string, env: Enviroment): LangObject {
         if (env.get(name)) return env.get(name);
 
-        return builtinFunction(name, env);
+        const builtin = builtinFunction(name, env);
+        if (!builtin) return error(`identifier '${name}' is not defined.`);
+
+        return builtin;
     }
 
     private evalLiteral(
