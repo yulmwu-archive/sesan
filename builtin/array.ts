@@ -10,7 +10,7 @@ import {
 import { Options } from '../options';
 
 const push: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length < 2 || args[0]?.kind !== ObjectKind.ARRAY)
+    if (args.length !== 2 || args[0]?.kind !== ObjectKind.ARRAY)
         return invalidArgument;
 
     return {
@@ -20,7 +20,7 @@ const push: Func = (args: Array<LangObject>): LangObject => {
 };
 
 const pop: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length < 1 || args[0]?.kind !== ObjectKind.ARRAY)
+    if (args.length !== 1 || args[0]?.kind !== ObjectKind.ARRAY)
         return invalidArgument;
 
     return {
@@ -30,7 +30,7 @@ const pop: Func = (args: Array<LangObject>): LangObject => {
 };
 
 const shift: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length < 1 || args[0]?.kind !== ObjectKind.ARRAY)
+    if (args.length !== 1 || args[0]?.kind !== ObjectKind.ARRAY)
         return invalidArgument;
 
     return {
@@ -40,7 +40,7 @@ const shift: Func = (args: Array<LangObject>): LangObject => {
 };
 
 const unshift: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length < 2 || args[0]?.kind !== ObjectKind.ARRAY)
+    if (args.length !== 2 || args[0]?.kind !== ObjectKind.ARRAY)
         return invalidArgument;
 
     return {
@@ -51,7 +51,7 @@ const unshift: Func = (args: Array<LangObject>): LangObject => {
 
 const slice: Func = (args: Array<LangObject>): LangObject => {
     if (
-        args.length < 3 ||
+        args.length !== 3 ||
         args[0]?.kind !== ObjectKind.ARRAY ||
         args[1]?.kind !== ObjectKind.NUMBER ||
         args[2]?.kind !== ObjectKind.NUMBER
@@ -74,7 +74,7 @@ const forEach: Func = (
     t: Evaluator
 ): LangObject => {
     if (
-        args.length < 2 ||
+        args.length !== 2 ||
         args[0]?.kind !== ObjectKind.ARRAY ||
         args[1]?.kind !== ObjectKind.FUNCTION
     )
@@ -84,13 +84,18 @@ const forEach: Func = (
     const func = args[1] as FunctionObject;
 
     array.value.forEach((value, index) =>
-        t.applyFunction(func, '', [
-            value,
-            {
-                kind: ObjectKind.NUMBER,
-                value: index,
-            },
-        ], env)
+        t.applyFunction(
+            func,
+            '',
+            [
+                value,
+                {
+                    kind: ObjectKind.NUMBER,
+                    value: index,
+                },
+            ],
+            env
+        )
     );
 
     return NULL;

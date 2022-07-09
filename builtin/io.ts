@@ -6,7 +6,7 @@ import { Enviroment, LangObject, objectStringify, ObjectKind } from '../object';
 const promptSync = prompt({ sigint: true });
 
 const print: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length <= 0 || args[0]?.kind !== ObjectKind.ARRAY) return NULL;
+    if (args.length !== 1 || args[0]?.kind !== ObjectKind.ARRAY) return NULL;
 
     process.stdout.write(
         `${args[0]?.value
@@ -18,7 +18,7 @@ const print: Func = (args: Array<LangObject>): LangObject => {
 };
 
 const printError: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length <= 0 || args[0]?.kind !== ObjectKind.ARRAY) return NULL;
+    if (args.length !== 1 || args[0]?.kind !== ObjectKind.ARRAY) return NULL;
 
     process.stdout.write(
         `${args[0]?.value
@@ -40,7 +40,7 @@ const readLine: Func = (args: Array<LangObject>): LangObject => {
 };
 
 const throwError: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length <= 0 || args[0]?.kind !== ObjectKind.STRING)
+    if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
         return invalidArgument;
 
     printError_(args[0].value);

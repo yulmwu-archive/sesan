@@ -7,6 +7,7 @@ import {
     LangObject,
     ObjectKind,
     objectKindStringify,
+    objectStringify,
     StringObject,
 } from '../object';
 import { Parser } from '../parser';
@@ -32,6 +33,7 @@ export default (name: string, env: Enviroment): LangObject | null => {
         ['update', updateEnv],
         ['eval', evalCode],
         ['js', evalJSCode],
+        ['convert', convert],
         ['__builtin_push', push],
         ['__builtin_length', length],
         ['__builtin_pop', pop],
@@ -60,7 +62,7 @@ const getArguments: Func = (
     option: Options,
     t: Evaluator
 ): LangObject => {
-    if (args.length <= 0) return invalidArgument;
+    if (args.length !== 1) return invalidArgument;
 
     return {
         kind: ObjectKind.ARRAY,
@@ -74,7 +76,7 @@ const importEnv: Func = (
     env: Enviroment,
     option: Options
 ): LangObject => {
-    if (args.length <= 0 || args[0]?.kind !== ObjectKind.STRING)
+    if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
         return invalidArgument;
 
     try {
@@ -100,7 +102,7 @@ const importEnv: Func = (
 };
 
 const typeofObject: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length <= 0) return invalidArgument;
+    if (args.length !== 1) return invalidArgument;
 
     return {
         kind: ObjectKind.STRING,
@@ -110,7 +112,7 @@ const typeofObject: Func = (args: Array<LangObject>): LangObject => {
 
 const length: Func = (args: Array<LangObject>): LangObject => {
     if (
-        args.length < 1 ||
+        args.length !== 2 ||
         (args[0]?.kind !== ObjectKind.ARRAY &&
             args[0]?.kind !== ObjectKind.HASH &&
             args[0]?.kind !== ObjectKind.STRING)
@@ -139,7 +141,7 @@ const deleteEnv: Func = (
     args: Array<LangObject>,
     env: Enviroment
 ): LangObject => {
-    if (args.length <= 0 || args[0]?.kind !== ObjectKind.STRING)
+    if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
         return invalidArgument;
 
     env.delete(args[0].value);
@@ -151,7 +153,7 @@ const updateEnv: Func = (
     args: Array<LangObject>,
     env: Enviroment
 ): LangObject => {
-    if (args.length <= 1 || args[0]?.kind !== ObjectKind.STRING)
+    if (args.length !== 2 || args[0]?.kind !== ObjectKind.STRING)
         return invalidArgument;
 
     env.update(args[0].value, args[1]);
@@ -164,7 +166,7 @@ const evalCode: Func = (
     env: Enviroment,
     option: Options
 ): LangObject => {
-    if (args.length <= 0 || args[0]?.kind !== ObjectKind.STRING)
+    if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
         return invalidArgument;
 
     if (!option.allowEval)
@@ -185,7 +187,7 @@ const evalJSCode: Func = (
     env: Enviroment,
     option: Options
 ): LangObject => {
-    if (args.length <= 0 || args[0]?.kind !== ObjectKind.STRING)
+    if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
         return invalidArgument;
 
     if (!option.allowJavaScript)
@@ -205,6 +207,62 @@ const evalJSCode: Func = (
 
         throw e;
     }
+};
+
+const convert: Func = (args: Array<LangObject>): LangObject => {
+    if (args.length !== 2 || args[1]?.kind !== ObjectKind.STRING)
+        return invalidArgument;
+
+    const to = args[1].value.toLowerCase();
+
+    if (to === 'number') {
+        switch (args[0]?.kind) {
+            case ObjectKind.NUMBER:
+                return args[0];
+
+            case ObjectKind.BOOLEAN:
+                return {
+                    kind: ObjectKind.NUMBER,
+                    value: args[0].value ? 1 : 0,
+                };
+
+            case ObjectKind.STRING:
+                const num = Number(args[0]?.value);
+                return isNaN(num)
+                    ? NULL
+                    : { kind: ObjectKind.NUMBER, value: num };
+
+            default:
+                return NULL;
+        }
+    } else if (to === 'string')
+        return { kind: ObjectKind.STRING, value: objectStringify(args[0]) };
+    else if (to === 'boolean') {
+        switch (args[0]?.kind) {
+            case ObjectKind.BOOLEAN:
+                return {
+                    kind: ObjectKind.BOOLEAN,
+                    value: args[0].value,
+                };
+
+            case ObjectKind.NUMBER:
+                return {
+                    kind: ObjectKind.BOOLEAN,
+                    value: args[0].value !== 0,
+                };
+
+            case ObjectKind.STRING:
+                return {
+                    kind: ObjectKind.BOOLEAN,
+                    value: args[0].value !== '',
+                };
+
+            default:
+                return NULL;
+        }
+    }
+
+    return { kind: ObjectKind.NULL };
 };
 
 const newLine: Func = (args: Array<LangObject>): LangObject => ({
