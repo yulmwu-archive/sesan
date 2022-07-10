@@ -212,7 +212,9 @@ npm i @tsukiroku/tiny
 import Tiny, { NULL } from '@tsukiroku/tiny';
 
 console.log(
-    new Tiny(file, { enviroment: env, ...option })
+    new Tiny('let x = "World!"; println("Hello, " + x);', {
+        useStdLibAutomatically: true,
+    })
         .setBuiltins(new Map([['test', () => NULL]]))
         .applyBuiltins()
         .eval()
