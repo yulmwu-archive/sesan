@@ -6,6 +6,7 @@ let __expect_array = func(arr, name, callback) {
     }
 };
 
+
 // Example:
 //
 // let arr = [1, 2, 3];
@@ -16,6 +17,7 @@ let push = func(arr, value) {
         __builtin_push(arr, value);
     });
 };
+
 
 // Example:
 //
@@ -28,6 +30,7 @@ let pop = func(arr) {
     });
 };
 
+
 // Example:
 //
 // let arr = [1, 2, 3];
@@ -38,6 +41,7 @@ let shift = func(arr) {
         __builtin_shift(arr);
     });
 };
+
 
 // Example:
 //
@@ -50,6 +54,7 @@ let unshift = func(arr, value) {
     });
 };
 
+
 // Example:
 //
 // let arr = [1, 2, 3];
@@ -61,6 +66,7 @@ let slice = func(arr, start, end) {
     });
 };
 
+
 // Example:
 //
 // import('@std/io');
@@ -70,7 +76,42 @@ let slice = func(arr, start, end) {
 //     println(index, value);
 // });
 
+
 let forEach = func(arr, callback) {
     __builtin_forEach(arr, callback);
 };
 
+
+// Example:
+//
+// repeat('foo', 3); // ['foo', 'foo', 'foo'];
+// repeat(5); // [NULL, NULL, NULL, NULL, NULL];
+
+let repeat = func(x, r) {
+    return match(length(__builtin__arguments('repeat')), [
+        [1, func() {
+            let _x = 0;
+            let result = [];
+
+            while (_x < x) {
+                result = push(result, null());
+                _x = _x + 1;
+            }
+
+            return result;
+        }],
+        [2, func() {
+            let _x = 0;
+            let result = [];
+
+            while (_x < r) {
+                result = push(result, x);
+                _x = _x + 1;
+            }
+
+            return result;
+        }]
+    ], func(value) {
+        throw('invalid argument: range() must provide 1 or 2 arguments, got ' + string(value));
+    });
+};
