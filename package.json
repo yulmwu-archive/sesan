@@ -1,6 +1,6 @@
 {
     "name": "@tsukiroku/tiny",
-    "version": "0.1.34",
+    "version": "0.2",
     "description": "Tiny interpreter",
     "main": "dist/index.js",
     "scripts": {
