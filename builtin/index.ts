@@ -13,7 +13,7 @@ import {
 import { Parser } from '../parser';
 import { Lexer } from '../tokenizer';
 import { readFileSync } from 'fs';
-import { print, printError, readLine, throwError } from './io';
+import { print, readLine, throwError } from './io';
 import { push, pop, shift, unshift, slice, forEach } from './array';
 import { Options } from '../options';
 
@@ -44,7 +44,6 @@ export default (name: string, env: Enviroment): LangObject | null => {
         ['__builtin_unshift', unshift],
         ['__builtin_slice', slice],
         ['__builtin_print', print],
-        ['__builtin_print_error', printError],
         ['__builtin_readline', readLine],
         ['__builtin__arguments', getArguments],
         ['__new_line', newLine],
