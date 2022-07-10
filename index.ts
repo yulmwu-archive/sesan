@@ -1,3 +1,4 @@
+import { builtinsEval, Func } from './builtin';
 import { Evaluator, printError } from './evaluator';
 import { Enviroment, ObjectKind, objectStringify } from './object';
 import { Options } from './options';
@@ -14,8 +15,9 @@ type TinyOption = Options & {
     enviroment?: Enviroment;
 };
 
-export default class {
+export default class Tiny {
     public option: TinyOption;
+    public builtins: Map<string, Func> = new Map();
 
     constructor(public x: string, option?: TinyOption) {
         this.option = { ...option };
@@ -48,6 +50,24 @@ export default class {
         if (result?.kind === ObjectKind.ERROR) printError(result.message);
 
         return objectStringify(result);
+    }
+
+    public setBuiltin(name: string, func: Func): Tiny {
+        this.builtins.set(name, func);
+
+        return this;
+    }
+
+    public setBuiltins(builtins: Map<string, Func>): Tiny {
+        builtins.forEach((func, name) => this.setBuiltin(name, func));
+
+        return this;
+    }
+
+    public applyBuiltins(): Tiny {
+        this.builtins.forEach((func, name) => builtinsEval.set(name, func));
+
+        return this;
     }
 }
 

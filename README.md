@@ -152,13 +152,16 @@ npm run start [file]
 
 # Built-in functions
 
-| Function | Arguments |
-| -------- | --------- |
-| `import` | `string`  |
-| `typeof` | `object`  |
-| `throw`  | `string`  |
-| `delete` | `string`  |
-| `update` | `string`  |
+| Function  | Arguments |
+| --------- | --------- |
+| `import`  | `string`  |
+| `typeof`  | `object`  |
+| `throw`   | `string`  |
+| `delete`  | `string`  |
+| `eval`    | `string`  |
+| `js`      | `string`  |
+| `convert` | `Any`     |
+| `null`    |           |
 
 <br>
 
@@ -167,24 +170,25 @@ npm run start [file]
 -   [**`@std/`**](https://github.com/tsukiroku/tiny/blob/main/@std/)
     -   [`lib`](https://github.com/tsukiroku/tiny/blob/main/@std/lib.tiny)
     -   [`io`](https://github.com/tsukiroku/tiny/blob/main/@std/io.tiny)
-        -   `print`
-        -   `println`
-        -   `print_error`
-        -   `println_error`
+        -   `print(args*)`
+        -   `println(args*)`
+        -   `print_error(args*)`
+        -   `println_error(args*)`
         -   `readline`
     -   [`array`](https://github.com/tsukiroku/tiny/blob/main/@std/array.tiny)
-        -   `push`
-        -   `pop`
-        -   `shift`
-        -   `unshift`
-        -   `slice`
-        -   `forEach`
+        -   `push(array, value)`
+        -   `pop(array)`
+        -   `shift(array)`
+        -   `unshift(array, value)`
+        -   `slice(array, start, end)`
+        -   `forEach(array, callback)`
+        -   `repeat(value, count)`, `repeat(count)`
     -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
-        -   `length`
-        -   `match`
-        -   `string`
-        -   `number`
-        -   `boolean`
+        -   `length(array)`
+        -   `match(value, [pattern], default)`
+        -   `string(value)`
+        -   `number(value)`
+        -   `boolean(value)`
 
 <br>
 
@@ -207,12 +211,13 @@ npm i @tsukiroku/tiny
 ```
 
 ```ts
-import Tiny from '@tsukiroku/tiny';
+import Tiny, { NULL } from '@tsukiroku/tiny';
 
 console.log(
-    new Tiny('let x = "World!"; println("Hello, " + x)', {
-        useStdLibAutomatically: true,
-    }).eval()
+    new Tiny(file, { enviroment: env, ...option })
+        .setBuiltins(new Map([['test', () => NULL]]))
+        .applyBuiltins()
+        .eval()
 );
 ```
 
