@@ -24,16 +24,19 @@ const invalidArgument: LangObject = {
     message: 'Invalid arguments',
 };
 
+const builtinsEval: Map<string, Func> = new Map();
+
 export default (name: string, env: Enviroment): LangObject | null => {
     const func: Func | undefined = new Map([
+        ...builtinsEval,
         ['import', importEnv],
         ['typeof', typeofObject],
         ['throw', throwError],
         ['delete', deleteEnv],
-        ['update', updateEnv],
         ['eval', evalCode],
         ['js', evalJSCode],
         ['convert', convert],
+        ['null', () => NULL],
         ['__builtin_push', push],
         ['__builtin_length', length],
         ['__builtin_pop', pop],
@@ -112,7 +115,7 @@ const typeofObject: Func = (args: Array<LangObject>): LangObject => {
 
 const length: Func = (args: Array<LangObject>): LangObject => {
     if (
-        args.length !== 2 ||
+        args.length !== 1 ||
         (args[0]?.kind !== ObjectKind.ARRAY &&
             args[0]?.kind !== ObjectKind.HASH &&
             args[0]?.kind !== ObjectKind.STRING)
@@ -147,18 +150,6 @@ const deleteEnv: Func = (
     env.delete(args[0].value);
 
     return NULL;
-};
-
-const updateEnv: Func = (
-    args: Array<LangObject>,
-    env: Enviroment
-): LangObject => {
-    if (args.length !== 2 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument;
-
-    env.update(args[0].value, args[1]);
-
-    return args[1];
 };
 
 const evalCode: Func = (
@@ -270,4 +261,4 @@ const newLine: Func = (args: Array<LangObject>): LangObject => ({
     value: '\n',
 });
 
-export { Func, invalidArgument };
+export { Func, invalidArgument, builtinsEval };
