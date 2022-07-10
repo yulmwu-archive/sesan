@@ -172,8 +172,6 @@ npm run start [file]
     -   [`io`](https://github.com/tsukiroku/tiny/blob/main/@std/io.tiny)
         -   `print(args*)`
         -   `println(args*)`
-        -   `print_error(args*)`
-        -   `println_error(args*)`
         -   `readline`
     -   [`array`](https://github.com/tsukiroku/tiny/blob/main/@std/array.tiny)
         -   `push(array, value)`
