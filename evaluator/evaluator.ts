@@ -113,9 +113,6 @@ export default class Evaluator {
                 const name = (statement.ident as unknown as StringLiteral)
                     .value;
 
-                if (env.get(name))
-                    return error(`identifier '${name}' already defined`);
-
                 if (statement.ident) env.set(name, value);
 
                 return null;
@@ -126,11 +123,13 @@ export default class Evaluator {
 
                 if (value?.kind === ObjectKind.ERROR) return value;
 
-                if (statement.ident)
-                    env.update(
-                        (statement.ident as unknown as StringLiteral).value,
-                        value
-                    );
+                const name = (statement.ident as unknown as StringLiteral)
+                    .value;
+
+                if (!env.get(name))
+                    return error(`identifier '${name}' not defined`);
+
+                if (statement.ident) env.update(name, value);
 
                 return null;
             }
