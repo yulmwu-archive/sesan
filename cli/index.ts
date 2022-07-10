@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'fs';
 import { Enviroment } from '../object';
 import parseOptions from '../options';
 import Repl from './repl';
-import Tiny from '..';
+import Tiny from '../index';
 
 const args = process.argv.slice(2);
 
