@@ -88,7 +88,9 @@ export default class Parser {
             return true;
         }
 
-        this.peekError(tokenType);
+        this.pushError(
+            `Expected next token to be ${tokenType}, got ${this.peekToken.type} instead.`
+        );
 
         return false;
     }
@@ -107,10 +109,8 @@ export default class Parser {
         return this.currToken.type === tokenType;
     }
 
-    private peekError(tokenType: TokenType) {
-        this.errors.push(
-            `Expected next token to be ${tokenType}, got ${this.peekToken.type} instead.`
-        );
+    private pushError(message: string) {
+        this.errors.push(message);
     }
 
     private parseLetStatement(): LetStatement | null {
@@ -131,7 +131,7 @@ export default class Parser {
 
         const expression = this.parseExpression(Priority.LOWEST);
 
-        if (!this.peekTokenIs(TokenType.SEMICOLON)) this.nextToken();
+        if (!this.expectPeek(TokenType.SEMICOLON)) return null;
 
         return {
             debug: 'parseLetStatement>return',
@@ -200,7 +200,13 @@ export default class Parser {
 
     private parseExpression(priority: Priority): Expression | null {
         let left: Expression = this.parsePrefix();
-        if (!left) return null;
+        if (!left) {
+            if (!this.currTokenIs(TokenType.SEMICOLON))
+                this.pushError(
+                    `Expected expression, got ${this.currToken.type} instead.`
+                );
+            return null;
+        }
 
         while (
             !this.peekTokenIs(TokenType.SEMICOLON) &&
