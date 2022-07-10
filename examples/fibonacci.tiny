@@ -1,13 +1,14 @@
 let fib = func(n) {
-    if ((n == 0) || (n == 1)) {
-        if (n == 0) {
+    match(n, [
+        [0, func(v) {
             return 0;
-        } else {
+        }], 
+        [1, func(v) {
             return 1;
-        }
-    } else {
+        }]
+    ], func(v) {
         return fib(n - 1) + fib(n - 2);
-    }
+    });
 };
 
 println(fib(10));
