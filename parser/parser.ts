@@ -328,6 +328,19 @@ export default class Parser {
             }
 
             case TokenType.FUNCTION: {
+                let name: Expression | null = null;
+
+                if (!this.peekTokenIs(TokenType.IDENT)) name = null;
+                else {
+                    this.nextToken();
+
+                    name = {
+                        debug: 'parsePrefix>case>function>name',
+                        value: this.currToken.literal,
+                        kind: ExpressionKind.Ident,
+                    };
+                }
+
                 if (!this.expectPeek(TokenType.LPAREN)) return null;
 
                 const parameters = this.parseFunctionParameters();
@@ -340,6 +353,7 @@ export default class Parser {
 
                 return {
                     debug: 'parsePrefix>case>function',
+                    function: name,
                     arguments: parameters,
                     body,
                     kind: ExpressionKind.Function,

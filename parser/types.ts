@@ -119,6 +119,7 @@ interface IfExpression extends Debug {
 }
 
 interface FunctionExpression extends Debug {
+    function: Expression;
     arguments: Array<Expression>;
     body: Expression;
     kind: ExpressionKind.Function;
