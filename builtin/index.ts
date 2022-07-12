@@ -15,7 +15,8 @@ import { Lexer } from '../tokenizer';
 import { readFileSync } from 'fs';
 import { print, readLine, throwError } from './io';
 import { push, pop, shift, unshift, slice, forEach } from './array';
-import { Options } from '../options';
+import { Options } from '../index';
+import { decoratorFunc } from './decorator';
 
 type Func = Omit<BuiltinFunction, 'kind'>['func'];
 
@@ -48,6 +49,7 @@ export default (name: string, env: Enviroment): LangObject | null => {
         ['__builtin__arguments', getArguments],
         ['__new_line', newLine],
         ['__builtin_forEach', forEach],
+        ['@func', decoratorFunc]
     ]).get(name);
 
     if (!func) return null;
