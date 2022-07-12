@@ -10,6 +10,7 @@ import {
     StringObject,
     newEnclosedEnvironment,
     objectKindStringify,
+    FunctionObject,
 } from '../object';
 import {
     ArrayExpression,
@@ -17,7 +18,6 @@ import {
     CallExpression,
     Expression,
     ExpressionKind,
-    ExpressionStatement,
     FunctionExpression,
     HashExpression,
     HashPair,
@@ -35,8 +35,9 @@ import {
     ReturnStatement,
 } from '../parser';
 import { TokenType } from '../tokenizer';
-import { error } from '.';
 import { Options } from '../options';
+import { error } from '.';
+import { Decorator } from '../builtin/decorator';
 
 const NULL: LangObject = {
     kind: ObjectKind.NULL,
@@ -44,6 +45,7 @@ const NULL: LangObject = {
 
 export default class Evaluator {
     public __builtin__arguments: Map<string, Array<LangObject>> = new Map();
+    public __function__decorator: Decorator = null;
 
     constructor(
         public p: Program,
@@ -199,6 +201,7 @@ export default class Evaluator {
                 const expr = expression as unknown as PrefixExpression;
                 return this.evalPrefix(expr.operator, expr.right, env);
             }
+
             case ExpressionKind.Infix:
                 const infix = expression as unknown as InfixExpression;
                 return this.evalInfix(
@@ -232,13 +235,26 @@ export default class Evaluator {
 
             case ExpressionKind.Function: {
                 const expr = expression as unknown as FunctionExpression;
-                return {
+
+                const ret: LangObject = {
+                    function: expr.function,
                     parameters: expr.arguments,
+                    d: this.__function__decorator?.disableCheckArguments ?? false,
                     body: expr.body,
                     env,
                     option: this.option,
                     kind: ObjectKind.FUNCTION,
                 };
+
+                if (expr.function)
+                    env.set(
+                        (expr.function as unknown as StringLiteral).value,
+                        ret
+                    );
+
+                this.__function__decorator = null;
+
+                return ret;
             }
 
             case ExpressionKind.Call: {
@@ -371,11 +387,22 @@ export default class Evaluator {
         func: LangObject,
         name: string,
         args: Array<LangObject>,
-        env: Enviroment
+        env: Enviroment,
     ): LangObject {
         if (func?.kind === ObjectKind.FUNCTION) {
+            const f = func as unknown as FunctionObject;
+
+            if (
+                !func.d &&
+                f.parameters.length !== args.length
+            )
+                return {
+                    kind: ObjectKind.ERROR,
+                    message: `${name} expected ${f.parameters.length} arguments but got ${args.length}`,
+                };
+
             const res = this.evalExpression(
-                (func as unknown as FunctionExpression).body,
+                f.body,
                 this.extendFunctionEnv(func, args, env)
             );
 
@@ -384,13 +411,14 @@ export default class Evaluator {
             return res;
         }
 
-        if (func?.kind === ObjectKind.BUILTIN)
+        if (func?.kind === ObjectKind.BUILTIN) {
             return (func as unknown as BuiltinFunction).func(
                 args,
                 env,
                 this.option,
                 this
             );
+        }
 
         return error(`'${name}' is not a function.`);
     }
@@ -404,10 +432,11 @@ export default class Evaluator {
             const newEnv = newEnclosedEnvironment(env);
 
             func.parameters.forEach((param: Expression, i: number) => {
-                if (param?.kind === ExpressionKind.Ident) {
-                    const ident = param as unknown as StringLiteral;
-                    newEnv.set(ident.value, args[i]);
-                }
+                if (param?.kind === ExpressionKind.Ident)
+                    newEnv.set(
+                        (param as unknown as StringLiteral).value,
+                        args[i]
+                    );
             });
 
             return newEnv;
