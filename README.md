@@ -16,7 +16,7 @@
 -   [**Options**](#Options)
 -   [**Npm package**](#Npm-Package)
 -   [**Examples**](#Examples)
--   [**ToDo**](#Todo)
+-   [**Todo**](#Todo)
 
 <br>
 
@@ -47,7 +47,7 @@ npm run start [file]
 
 ## REPL commands
 
-> `#command args1 args2 args3`
+> `//command ...args`
 
 | Command | Description     |
 | ------- | --------------- |
@@ -96,13 +96,13 @@ npm run start [file]
 
 ## Expressions
 
-| Expression | Syntax                              | Expression | Syntax                 |
-| ---------- | ----------------------------------- | ---------- | ---------------------- |
-| `Literal`  |                                     | `Block`    | `{ [expr] }`           |
-| `If`       | `if ([expr]) [block] else [block];` | `Function` | `func([args]) [block]` |
-| `Call`     | `[ident]([args])`                   | `Ident`    |                        |
-| `Array`    | `[[expr], ...]`                     | `Index`    | `[ident][number]`      |
-| `Hash`     | `{ string: expression, ... }`       | `Class`    | Todo                   |
+| Expression | Syntax                              | Expression | Syntax                         |
+| ---------- | ----------------------------------- | ---------- | ------------------------------ |
+| `Literal`  |                                     | `Block`    | `{ [expr] }`                   |
+| `If`       | `if ([expr]) [block] else [block];` | `Function` | `func [name?]([args]) [block]` |
+| `Call`     | `[ident]([args])`                   | `Ident`    |                                |
+| `Array`    | `[[expr], ...]`                     | `Index`    | `[ident][number]`              |
+| `Hash`     | `{ string: expression, ... }`       | `Class`    | Todo                           |
 
 <br>
 
@@ -147,6 +147,7 @@ npm run start [file]
 | `boolean` | `true`, `false`                              |
 | `dict`    | `{ [key (String, Number)]: [value (Any)], }` |
 | `array`   | `[value (Any)]`                              |
+| `func`    | `func [name?]([args]) [block]`               |
 
 <br>
 
