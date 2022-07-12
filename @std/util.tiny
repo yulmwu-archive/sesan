@@ -16,17 +16,15 @@ let length = func(value) {
 // println(res);
 
 let match = func(value, case, default) {
-    let result = 0;
-    let matched = false;
+    let result = null();
 
-    forEach(case, func (item) {
+    forEach(case, func (item, index) {
         if (item[0] == value) {
-            matched = true;
             result = item[1](value);
         }
     });
 
-    if (!matched) { result = default(value); }
+    if (typeof(result) == 'NULL') { result = default(value); }
 
     return result;
 };

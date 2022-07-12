@@ -1,13 +1,16 @@
 let nl = __new_line();
 
+@func(true);
 let print = func() {
     __builtin_print(__builtin__arguments('print'), '');
 };
 
+@func(true);
 let println = func() {
     __builtin_print(__builtin__arguments('println'), nl);
 };
 
+@func(true);
 let readline = func() {
     __builtin_readline(__builtin__arguments('readline'));
 };

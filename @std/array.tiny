@@ -1,4 +1,4 @@
-let __expect_array = func(arr, name, callback) {
+func __expect_array(arr, name, callback) {
     if (typeof(arr) != 'ARRAY') {
         throw('invalid argument: ' + name + '() must provide an array');
     } else {
@@ -12,7 +12,7 @@ let __expect_array = func(arr, name, callback) {
 // let arr = [1, 2, 3];
 // push(arr, 4); // [1, 2, 3, 4];
 
-let push = func(arr, value) {
+func push(arr, value) {
     __expect_array(arr, 'push', func() {
         __builtin_push(arr, value);
     });
@@ -24,7 +24,7 @@ let push = func(arr, value) {
 // let arr = [1, 2, 3];
 // pop(arr); // [1, 2];
 
-let pop = func(arr) {
+func pop(arr) {
     __expect_array(arr, 'pop', func() {
         __builtin_pop(arr);
     });
@@ -36,7 +36,7 @@ let pop = func(arr) {
 // let arr = [1, 2, 3];
 // shift(arr); // [2, 3];
 
-let shift = func(arr) {
+func shift(arr) {
     __expect_array(arr, 'shift', func() {
         __builtin_shift(arr);
     });
@@ -48,7 +48,7 @@ let shift = func(arr) {
 // let arr = [1, 2, 3];
 // unshift(arr, 0); // [0, 1, 2, 3];
 
-let unshift = func(arr, value) {
+func unshift(arr, value) {
     __expect_array(arr, 'unshift', func() {
         __builtin_unshift(arr, value);
     });
@@ -60,7 +60,7 @@ let unshift = func(arr, value) {
 // let arr = [1, 2, 3];
 // slice(arr, 1, 2); // [2];
 
-let slice = func(arr, start, end) {
+func slice(arr, start, end) {
     __expect_array(arr, 'slice', func() {
         __builtin_slice(arr, start, end);
     });
@@ -69,15 +69,12 @@ let slice = func(arr, start, end) {
 
 // Example:
 //
-// import('@std/io');
-//
 // let arr = [1, 2, 3];
 // forEach(arr, func(value, index) {
 //     println(index, value);
 // });
 
-
-let forEach = func(arr, callback) {
+func forEach(arr, callback) {
     __builtin_forEach(arr, callback);
 };
 
@@ -87,9 +84,10 @@ let forEach = func(arr, callback) {
 // repeat('foo', 3); // ['foo', 'foo', 'foo'];
 // repeat(5); // [NULL, NULL, NULL, NULL, NULL];
 
-let repeat = func(x, r) {
+@func(true);
+func repeat(x, r) {
     return match(length(__builtin__arguments('repeat')), [
-        [1, func() {
+        [1, func(value) {
             let _x = 0;
             let result = [];
 
@@ -100,7 +98,7 @@ let repeat = func(x, r) {
 
             return result;
         }],
-        [2, func() {
+        [2, func(value) {
             let _x = 0;
             let result = [];
 
@@ -112,6 +110,6 @@ let repeat = func(x, r) {
             return result;
         }]
     ], func(value) {
-        throw('invalid argument: range() must provide 1 or 2 arguments, got ' + string(value));
+        throw('invalid argument: repeat() must provide 1 or 2 arguments, got ' + string(value));
     });
 };
