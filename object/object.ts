@@ -138,7 +138,9 @@ interface HashObject {
 }
 
 interface FunctionObject {
+    function: Expression;
     parameters: Array<Expression>;
+    d: boolean;
     body: Expression;
     env: Enviroment;
     option: Options;
