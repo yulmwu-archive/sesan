@@ -7,7 +7,7 @@ import { Parser, Program } from '../parser';
 import { Lexer, Token, TokenType } from '../tokenizer';
 import { Options } from '../options';
 
-type Mode = 'repl' | 'parser' | 'parser_Json' | 'lexer' | 'env';
+type Mode = 'repl' | 'parser' | 'parser_json' | 'lexer' | 'env';
 
 export default class {
     public promptSync = prompt({ sigint: true });
@@ -29,7 +29,7 @@ export default class {
             (...args: Array<string>) => LangObject | string
         > = new Map([
             [
-                '#mode',
+                '//mode',
                 (...args) => {
                     if (
                         !['repl', 'parser', 'lexer', 'env'].includes(args[0]) ||
@@ -40,14 +40,14 @@ export default class {
                         args[0] === 'parser' &&
                         (args.length >= 2 && args[1].toLowerCase()) === 'json'
                     )
-                        this.mode = 'parser_Json';
+                        this.mode = 'parser_json';
                     else this.mode = args[0] as Mode;
 
                     return `Switched to '${this.mode}' mode`;
                 },
             ],
             [
-                '#import',
+                '//import',
                 () => {
                     new Evaluator(
                         new Parser(
@@ -60,40 +60,43 @@ export default class {
                     return 'Imported std';
                 },
             ],
-            ['#exit', () => process.exit(0)],
+            ['//exit', () => process.exit(0)],
         ]);
 
         if (commands.has(command)) return commands.get(command)!(...args);
+        else {
+            const result = new Evaluator(parsed, env, this.option).eval();
 
-        const result = new Evaluator(parsed, env, this.option).eval();
+            if (result?.kind === ObjectKind.ERROR) {
+                printError(result.message);
+                return '';
+            }
 
-        if (result?.kind === ObjectKind.ERROR) {
-            printError(result.message);
-            return '';
-        }
+            switch (this.mode) {
+                case 'repl':
+                    return objectStringify(result).gray;
 
-        switch (this.mode) {
-            case 'repl':
-                return objectStringify(result).gray;
+                case 'parser':
+                    return parsed;
 
-            case 'parser':
-                return parsed;
+                case 'parser_json':
+                    return JSON.stringify(parsed, null, 2);
 
-            case 'parser_Json':
-                return JSON.stringify(parsed, null, 2);
+                case 'lexer':
+                    const tokens: Array<Token> = [];
 
-            case 'lexer':
-                const tokens: Array<Token> = [];
+                    let peekToken: Token;
 
-                let peekToken: Token;
+                    while (
+                        (peekToken = lexer.nextToken()).type !== TokenType.EOF
+                    )
+                        tokens.push(peekToken);
 
-                while ((peekToken = lexer.nextToken()).type !== TokenType.EOF)
-                    tokens.push(peekToken);
+                    return tokens;
 
-                return tokens;
-
-            case 'env':
-                return env;
+                case 'env':
+                    return env;
+            }
         }
     }
 

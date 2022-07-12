@@ -19,6 +19,6 @@ else {
 
         new Tiny(file, { enviroment: env, ...option }).eval();
     } catch (e) {
-        console.error('Cannot open file: ' + args[0]);
+        console.error(`Cannot open file ${args[0]}: ${e}`);
     }
 }
