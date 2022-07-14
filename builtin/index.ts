@@ -15,7 +15,6 @@ import { Lexer } from '../tokenizer';
 import { readFileSync } from 'fs';
 import { print, readLine, throwError } from './io';
 import { push, pop, shift, unshift, slice, forEach } from './array';
-import { Options } from '../index';
 import { decoratorFunc } from './decorator';
 
 type Func = Omit<BuiltinFunction, 'kind'>['func'];
@@ -49,21 +48,21 @@ export default (name: string, env: Enviroment): LangObject | null => {
         ['__builtin__arguments', getArguments],
         ['__new_line', newLine],
         ['__builtin_forEach', forEach],
-        ['@func', decoratorFunc]
+        ['__root', rootDir],
+        ['@func', decoratorFunc],
     ]).get(name);
 
     if (!func) return null;
 
     return {
         kind: ObjectKind.BUILTIN,
-        func: func,
+        func,
     };
 };
 
 const getArguments: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    option: Options,
     t: Evaluator
 ): LangObject => {
     if (args.length !== 1) return invalidArgument;
@@ -78,7 +77,7 @@ const getArguments: Func = (
 const importEnv: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    option: Options
+    t: Evaluator
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
         return invalidArgument;
@@ -90,10 +89,15 @@ const importEnv: Func = (
 
         return new Evaluator(
             new Parser(
-                new Lexer(readFileSync(fileName, 'utf8'))
+                new Lexer(
+                    readFileSync(`${t.root}${fileName}`, 'utf8'),
+                    t.stdio.stdin
+                )
             ).parseProgram(),
             env,
-            option
+            t.option,
+            t.stdio,
+            t.root
         ).eval();
     } catch (e) {
         return {
@@ -156,33 +160,33 @@ const deleteEnv: Func = (
 const evalCode: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    option: Options
+    t: Evaluator
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
         return invalidArgument;
 
-    if (!option.allowEval)
+    if (!t.option.allowEval)
         return {
             kind: ObjectKind.ERROR,
             message: 'allowEval is not allowed',
         };
 
     return new Evaluator(
-        new Parser(new Lexer(args[0].value)).parseProgram(),
+        new Parser(new Lexer(args[0].value, t.stdio.stdout)).parseProgram(),
         env,
-        option
+        t.option
     ).eval();
 };
 
 const evalJSCode: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    option: Options
+    t: Evaluator
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
         return invalidArgument;
 
-    if (!option.allowJavaScript)
+    if (!t.option.allowJavaScript)
         return {
             kind: ObjectKind.ERROR,
             message: 'allowJavaScript is not allowed',
@@ -260,6 +264,15 @@ const convert: Func = (args: Array<LangObject>): LangObject => {
 const newLine: Func = (args: Array<LangObject>): LangObject => ({
     kind: ObjectKind.STRING,
     value: '\n',
+});
+
+const rootDir = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator
+): LangObject => ({
+    kind: ObjectKind.STRING,
+    value: t.root,
 });
 
 export { Func, invalidArgument, builtinsEval };

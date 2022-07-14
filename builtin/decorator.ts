@@ -10,7 +10,6 @@ type Decorator = {
 const decoratorFunc: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    option: Options,
     t: Evaluator
 ): LangObject => {
     if (!(args.length > 0) || args[0]?.kind !== ObjectKind.BOOLEAN)

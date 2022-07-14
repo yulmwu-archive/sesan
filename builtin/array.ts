@@ -7,7 +7,6 @@ import {
     LangObject,
     ObjectKind,
 } from '../object';
-import { Options } from '../options';
 
 const push: Func = (args: Array<LangObject>): LangObject => {
     if (args.length !== 2 || args[0]?.kind !== ObjectKind.ARRAY)
@@ -70,7 +69,6 @@ const slice: Func = (args: Array<LangObject>): LangObject => {
 const forEach: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    option: Options,
     t: Evaluator
 ): LangObject => {
     if (
