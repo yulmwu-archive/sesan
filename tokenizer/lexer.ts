@@ -1,14 +1,13 @@
+import { Stdio } from '../index';
 import { printError } from '../evaluator';
 import { fromLiteral, Token, TokenType } from './token';
 
 export default class Lexer {
-    public input: string;
     public position: number = 0;
     public readPosition: number = 0;
     public ch: string = '';
 
-    constructor(input: string) {
-        this.input = input;
+    constructor(public input: string, public stdout: Stdio) {
         this.readChar();
     }
 
@@ -41,7 +40,7 @@ export default class Lexer {
         while (this.isDigit(this.ch)) {
             if (this.ch === '.') {
                 if (dot) {
-                    printError(`[Lexer] Invalid number`);
+                    printError(`[Lexer] Invalid number`, this.stdout);
                     return {
                         type: TokenType.EOF,
                         literal: 'EOF',
@@ -68,7 +67,8 @@ export default class Lexer {
                 `[Lexer] Unterminated string: ${this.input.substring(
                     position - 1,
                     this.position
-                )}`
+                )}`,
+                this.stdout
             );
             return {
                 type: TokenType.EOF,
