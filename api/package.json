@@ -1,0 +1,17 @@
+{
+    "name": "api",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "start": "npm run build && node ./dist/api/index.js",
+        "build": "if [ -d dist ]; then rm -rf dist; npm run build:tsc; else npm run build:tsc; fi",
+        "build:windows": "@echo off && IF exist dist ( rd dist; npm run build:tsc ) ELSE ( npm run build:tsc ) && @echo on",
+        "build:tsc": "tsc -p tsconfig.json"
+    },
+    "dependencies": {
+        "express": "^4.18.1"
+    },
+    "devDependencies": {
+        "@types/express": "^4.17.13"
+    }
+}
