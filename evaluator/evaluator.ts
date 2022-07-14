@@ -38,6 +38,7 @@ import { TokenType } from '../tokenizer';
 import { Options } from '../options';
 import { error } from '.';
 import { Decorator } from '../builtin/decorator';
+import { stdin, StdioOptions, stdout } from '../index';
 
 const NULL: LangObject = {
     kind: ObjectKind.NULL,
@@ -50,7 +51,12 @@ export default class Evaluator {
     constructor(
         public p: Program,
         public env: Enviroment,
-        public option: Options
+        public option: Options,
+        public stdio: StdioOptions = {
+            stdin,
+            stdout,
+        },
+        public root: string = './'
     ) {}
 
     public eval(): LangObject {
@@ -239,7 +245,9 @@ export default class Evaluator {
                 const ret: LangObject = {
                     function: expr.function,
                     parameters: expr.arguments,
-                    d: this.__function__decorator?.disableCheckArguments ?? false,
+                    d:
+                        this.__function__decorator?.disableCheckArguments ??
+                        false,
                     body: expr.body,
                     env,
                     option: this.option,
@@ -387,15 +395,12 @@ export default class Evaluator {
         func: LangObject,
         name: string,
         args: Array<LangObject>,
-        env: Enviroment,
+        env: Enviroment
     ): LangObject {
         if (func?.kind === ObjectKind.FUNCTION) {
             const f = func as unknown as FunctionObject;
 
-            if (
-                !func.d &&
-                f.parameters.length !== args.length
-            )
+            if (!func.d && f.parameters.length !== args.length)
                 return {
                     kind: ObjectKind.ERROR,
                     message: `${name} expected ${f.parameters.length} arguments but got ${args.length}`,
@@ -411,14 +416,8 @@ export default class Evaluator {
             return res;
         }
 
-        if (func?.kind === ObjectKind.BUILTIN) {
-            return (func as unknown as BuiltinFunction).func(
-                args,
-                env,
-                this.option,
-                this
-            );
-        }
+        if (func?.kind === ObjectKind.BUILTIN)
+            return (func as unknown as BuiltinFunction).func(args, env, this);
 
         return error(`'${name}' is not a function.`);
     }
