@@ -1,8 +1,9 @@
 import test, { eq } from '.';
+import { stdout } from '../index';
 import { Parser } from '../parser';
 import { Lexer } from '../tokenizer';
 
-const parse = (input: string) => new Parser(new Lexer(input)).parseProgram();
+const parse = (input: string) => new Parser(new Lexer(input, stdout)).parseProgram();
 
 test('Parser test', () => {
     const expected = {

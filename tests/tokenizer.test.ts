@@ -1,4 +1,5 @@
 import test, { eq } from '.';
+import { stdout } from '../index';
 import { Lexer } from '../tokenizer';
 
 test('Tokenizer token test', () => {
@@ -41,7 +42,7 @@ let x = {
     "c": 'hello',
     "d": [1, 2, 3],
 };
-    `);
+    `, stdout);
 
     expected.forEach((expected) => eq(lexer.nextToken(), expected));
 });

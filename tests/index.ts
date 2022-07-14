@@ -1,8 +1,3 @@
-/*
-Not using 'jest' in this tiny project.
-too many dependencies are just trash.
-*/
-
 export default (description: string, callback: () => any) => {
     console.log(`\n----- ${description} -----\n`);
     const start = performance.now();

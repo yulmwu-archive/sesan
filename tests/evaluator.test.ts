@@ -6,7 +6,8 @@ import { Parser } from '../parser';
 import { Lexer } from '../tokenizer';
 
 test('Tokenizer token test', () => {
-    const lexer = new Lexer(`
+    const lexer = new Lexer(
+        `
 import("@std/io");
 
 let f = func (x, y) { 
@@ -40,7 +41,9 @@ let test = func (x) {
 };
 
 println(test(3));
-`);
+`,
+        (x) => console.log(x)
+    );
 
     const parser = new Parser(lexer);
     const env = new Enviroment();
