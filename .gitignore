@@ -4,3 +4,4 @@ node_modules
 _*.*
 dist
 package-lock.json
+build
