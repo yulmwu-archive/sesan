@@ -5,3 +5,4 @@ _*.*
 dist
 package-lock.json
 build
+.vercel
