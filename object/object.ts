@@ -151,8 +151,7 @@ interface BuiltinFunction {
     func: (
         args: Array<LangObject>,
         env: Enviroment,
-        option: Options,
-        t: Evaluator
+        t: Evaluator,
     ) => LangObject;
     kind: ObjectKind.BUILTIN;
 }
