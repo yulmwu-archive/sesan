@@ -6,6 +6,7 @@ import { Enviroment, LangObject, objectStringify, ObjectKind } from '../object';
 import { Parser, Program } from '../parser';
 import { Lexer, Token, TokenType } from '../tokenizer';
 import { Options } from '../options';
+import { stdout } from '../index';
 
 type Mode = 'repl' | 'parser' | 'parser_json' | 'lexer' | 'env';
 
@@ -46,20 +47,6 @@ export default class {
                     return `Switched to '${this.mode}' mode`;
                 },
             ],
-            [
-                '//import',
-                () => {
-                    new Evaluator(
-                        new Parser(
-                            new Lexer(`import('@std/lib');`)
-                        ).parseProgram(),
-                        env,
-                        this.option
-                    ).eval();
-
-                    return 'Imported std';
-                },
-            ],
             ['//exit', () => process.exit(0)],
         ]);
 
@@ -68,7 +55,7 @@ export default class {
             const result = new Evaluator(parsed, env, this.option).eval();
 
             if (result?.kind === ObjectKind.ERROR) {
-                printError(result.message);
+                printError(result.message, stdout);
                 return '';
             }
 
@@ -103,9 +90,11 @@ export default class {
     public start() {
         if (this.option.useStdLibAutomatically)
             new Evaluator(
-                new Parser(new Lexer(`import('@std/lib');`)).parseProgram(),
+                new Parser(
+                    new Lexer(`import('@std/lib');`, stdout)
+                ).parseProgram(),
                 this.env,
-                this.option
+                this.option,
             ).eval();
 
         while (true) {
@@ -115,18 +104,18 @@ export default class {
                 } ${'➜'.red} `
             );
 
-            const parser = new Parser(new Lexer(input));
+            const parser = new Parser(new Lexer(input, stdout));
 
             const executed = this.executeCommand(
                 input,
-                new Lexer(input),
+                new Lexer(input, stdout),
                 parser.parseProgram(),
                 this.env
             );
 
             if (executed)
                 if (parser.errors.length > 0)
-                    parser.errors.forEach((error) => printError(error));
+                    parser.errors.forEach((error) => printError(error, stdout));
 
             console.log(executed, '\n');
         }
