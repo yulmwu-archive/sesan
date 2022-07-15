@@ -1,9 +1,12 @@
-import express from 'express';
 import { readdirSync } from 'fs';
-import Tiny, { ObjectKind } from './index';
 import { NULL } from './tiny/evaluator';
+import Tiny, { ObjectKind } from './index';
+import express from 'express';
+import version from './@std/index';
 
 const app = express();
+
+console.log(version);
 
 app.listen(5050, () => console.log('http://localhost:5050'));
 
@@ -22,13 +25,13 @@ app.get('/eval/:code', (req, res) => {
         useStdLibAutomatically: true,
         root: './',
     })
-    .setBuiltin('test', () => {
-        return {
-            kind: ObjectKind.STRING,
-            value: readdirSync('./').join('\n'),
-        }
-    })
-    .applyBuiltins()
+        .setBuiltin('test', () => {
+            return {
+                kind: ObjectKind.STRING,
+                value: readdirSync('./').join('\n'),
+            };
+        })
+        .applyBuiltins()
         .setStdout((x) => result.push(x))
         .setStdin(() => NULL)
         .eval();
