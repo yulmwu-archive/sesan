@@ -1,15 +1,21 @@
 {
     "version": 2,
     "public": true,
+    "builds": [
+        {
+            "src": "api.ts",
+            "use": "@vercel/node",
+            "includeFiles": "**/*.tiny"
+        },
+        {
+            "src": "**/*.tiny",
+            "use": "@vercel/static"
+        }
+    ],
     "routes": [
         {
             "src": "/(.*)",
             "dest": "/api.ts"
         }
-    ],
-    "functions": {
-        "api.ts": {
-            "includeFiles": "**/*.tiny"
-        }
-    }
+    ]
 }
