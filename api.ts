@@ -18,6 +18,8 @@ app.get('/eval/:code', (req, res) => {
         .setStdin(() => NULL)
         .eval();
 
+    res.header('Content-Type', 'application/json');
+    res.header('Access-Control-Allow-Origin', '*');
     res.json({
         result,
     });
