@@ -5,22 +5,13 @@
     let result = '';
 
     const _eval = async (x) => {
-        console.log(x);
-        return axios
-            .get(`http://tiny-tsukiroku.vercel.app/eval/${x}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                },
-            })
-            .then(async (response) => {
-                console.log(response);
-                response.json().result;
-            })
-            .catch((error) => {
-                console.error(error);
-                return error.message;
-            });
+        return await (
+            await axios.get(
+                `https://tiny-tsukiroku.vercel.app/eval/${encodeURIComponent(
+                    x
+                )}`
+            )
+        ).data.result;
     };
 </script>
 
@@ -28,7 +19,7 @@
     <textarea on:input={(e) => (x = e.target.value)} class="input" />
     <button
         on:click={() => {
-            result = _eval(x);
+            _eval(x).then((r) => (result = r.join('\n')));
         }}
     >
         Eval
@@ -40,5 +31,10 @@
     .input {
         width: 100%;
         height: 70vh;
+    }
+
+    .output {
+        width: 100%;
+        height: 20vh;
     }
 </style>
