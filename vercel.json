@@ -3,11 +3,11 @@
     "public": true,
     "builds": [
         {
-            "src": "*.ts",
+            "src": "**/*.ts",
             "use": "@vercel/node"
         },
         {
-            "src": "*.tiny",
+            "src": "**/*.tiny",
             "use": "@vercel/static"
         }
     ],
