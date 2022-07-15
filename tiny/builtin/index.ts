@@ -90,7 +90,7 @@ const importEnv: Func = (
         return new Evaluator(
             new Parser(
                 new Lexer(
-                    readFileSync(`${t.root}../${fileName}`, 'utf8'),
+                    readFileSync(`${t.root}${fileName}`, 'utf8'),
                     t.stdio.stdin
                 )
             ).parseProgram(),
