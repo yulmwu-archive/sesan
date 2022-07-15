@@ -28,7 +28,7 @@ app.get('/eval/:code', (req, res) => {
         .setBuiltin('test', () => {
             return {
                 kind: ObjectKind.STRING,
-                value: readdirSync('./').join('\n'),
+                value: readdirSync('./@std').join('\n'),
             };
         })
         .applyBuiltins()
