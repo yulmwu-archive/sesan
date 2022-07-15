@@ -1,16 +1,16 @@
-import { builtinsEval, Func } from './builtin';
-import { Evaluator, printError } from './evaluator';
-import { Enviroment, ObjectKind, objectStringify } from './object';
-import { Options } from './options';
-import { Parser } from './parser';
-import { Lexer } from './tokenizer';
+import { builtinsEval, Func } from './tiny/builtin';
+import { Evaluator, printError } from './tiny/evaluator';
+import { Enviroment, ObjectKind, objectStringify } from './tiny/object';
+import { Options } from './tiny/options';
+import { Parser } from './tiny/parser';
+import { Lexer } from './tiny/tokenizer';
 import prompt from 'prompt-sync';
 
-export * from './object';
-export * from './options';
-export * from './tokenizer';
-export * from './parser';
-export * from './evaluator';
+export * from './tiny/object';
+export * from './tiny/options';
+export * from './tiny/tokenizer';
+export * from './tiny/parser';
+export * from './tiny/evaluator';
 
 type Stdio = (...x: Array<any>) => any;
 

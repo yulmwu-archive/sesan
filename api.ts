@@ -1,6 +1,6 @@
 import express from 'express';
-import Tiny from '.';
-import { NULL } from './evaluator';
+import Tiny from './index';
+import { NULL } from './tiny/evaluator';
 
 const app = express();
 

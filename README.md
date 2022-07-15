@@ -37,7 +37,7 @@
 npm i
 
 # REPL
-npm run start
+npm run start:repl
 
 # You can also from a file.
 npm run start [file]
