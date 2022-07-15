@@ -4,8 +4,7 @@
     "builds": [
         {
             "src": "api.ts",
-            "use": "@vercel/node",
-            "includeFiles": "**/*.tiny"
+            "use": "@vercel/node"
         },
         {
             "src": "**/*.tiny",
