@@ -4,7 +4,8 @@
     "builds": [
         {
             "src": "api.ts",
-            "use": "@vercel/node"
+            "use": "@vercel/node",
+            "includeFiles": "**/*.tiny"
         }
     ],
     "routes": [
@@ -12,10 +13,5 @@
             "src": "/(.*)",
             "dest": "/api.ts"
         }
-    ],
-    "functions": {
-        "api.ts": {
-            "includeFiles": "**/*.tiny"
-        }
-    }
+    ]
 }
