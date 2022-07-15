@@ -1,4 +1,5 @@
 import express from 'express';
+import { readdirSync } from 'fs';
 import Tiny, { ObjectKind } from './index';
 import { NULL } from './tiny/evaluator';
 
@@ -24,7 +25,7 @@ app.get('/eval/:code', (req, res) => {
     .setBuiltin('test', () => {
         return {
             kind: ObjectKind.STRING,
-            value: __dirname,
+            value: readdirSync('./').join('\n'),
         }
     })
     .applyBuiltins()
