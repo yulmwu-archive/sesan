@@ -3,12 +3,12 @@
     "public": true,
     "builds": [
         {
-            "src": "api.ts",
+            "src": "*.ts",
             "use": "@vercel/node"
         },
         {
-            "src": "@std",
-            "use": "@vercel/static-build"
+            "src": "*.tiny",
+            "use": "@vercel/static"
         }
     ],
     "routes": [
