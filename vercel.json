@@ -7,7 +7,7 @@
             "use": "@vercel/node"
         },
         {
-            "src": "**/*.tiny",
+            "src": "@std/*",
             "use": "@vercel/static"
         }
     ],
