@@ -15,7 +15,7 @@
     ],
     "functions": {
         "api.ts": {
-            "includeFiles": ["**/*.tiny"]
+            "includeFiles": "**/*.tiny"
         }
     }
 }
