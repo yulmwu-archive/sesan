@@ -13,11 +13,9 @@
             "dest": "/api.ts"
         }
     ],
-    "functions": [
-        {
-            "api.ts": {
-                "includeFiles": ["**/*.tiny"]
-            }
+    "functions": {
+        "api.ts": {
+            "includeFiles": ["**/*.tiny"]
         }
-    ]
+    }
 }
