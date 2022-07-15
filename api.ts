@@ -1,5 +1,5 @@
 import express from 'express';
-import Tiny from './index';
+import Tiny, { ObjectKind } from './index';
 import { NULL } from './tiny/evaluator';
 
 const app = express();
@@ -21,6 +21,13 @@ app.get('/eval/:code', (req, res) => {
         useStdLibAutomatically: true,
         root: './',
     })
+    .setBuiltin('test', () => {
+        return {
+            kind: ObjectKind.STRING,
+            value: __dirname,
+        }
+    })
+    .applyBuiltins()
         .setStdout((x) => result.push(x))
         .setStdin(() => NULL)
         .eval();
