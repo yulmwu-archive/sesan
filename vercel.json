@@ -7,7 +7,19 @@
             "use": "@vercel/node"
         },
         {
-            "src": "@std/*",
+            "src": "./@std/array.tiny",
+            "use": "@vercel/static"
+        },
+        {
+            "src": "./@std/io.tiny",
+            "use": "@vercel/static"
+        },
+        {
+            "src": "./@std/util.tiny",
+            "use": "@vercel/static"
+        },
+        {
+            "src": "./@std/lib.tiny",
             "use": "@vercel/static"
         }
     ],
