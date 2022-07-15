@@ -12,5 +12,12 @@
             "src": "/(.*)",
             "dest": "/api.ts"
         }
+    ],
+    "functions": [
+        {
+            "api.ts": {
+                "includeFiles": ["**/*.tiny"]
+            }
+        }
     ]
 }
