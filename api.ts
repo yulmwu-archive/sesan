@@ -10,16 +10,21 @@ app.listen(5050, () => console.log('http://localhost:5050'));
 app.get('/eval', (req, res) => {
     res.header('Content-Type', 'application/json');
     res.header('Access-Control-Allow-Origin', '*');
+
     res.json({
-        result: '',
+        result: [],
+        error: [],
     });
 });
 
 app.get('/eval/:code', (req, res) => {
     const result: Array<string> = [];
+    const errors: Array<string> = [];
 
     new Tiny(req.params.code, {
         useStdLibAutomatically: true,
+        stderrPrefix: false,
+        stderrColor: false,
         root: './',
     })
         .setBuiltin('test', () => {
@@ -30,12 +35,15 @@ app.get('/eval/:code', (req, res) => {
         })
         .applyBuiltins()
         .setStdout((x) => result.push(x))
+        .setStderr((x) => errors.push(x))
         .setStdin(() => NULL)
         .eval();
 
     res.header('Content-Type', 'application/json');
     res.header('Access-Control-Allow-Origin', '*');
+
     res.json({
         result,
+        errors,
     });
 });
