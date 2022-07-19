@@ -41,7 +41,7 @@ const throwError: Func = (
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
         return invalidArgument;
 
-    printError_(args[0].value, t.stdio.stdout);
+    printError_(args[0].value, t.stdio.stderr, t.option);
 
     return NULL;
 };

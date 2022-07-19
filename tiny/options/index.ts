@@ -1,13 +1,15 @@
-import Options from './types';
+import Options, { IOptions } from './types';
 
 const parseOptions = (option?: string): Options =>
     option
-        ? JSON.parse(option)
+        ? { ...JSON.parse(option), ...parseOptions() }
         : ({
               allowEval: false,
               allowJavaScript: false,
               useStdLibAutomatically: false,
-          } as Options);
+              stderrPrefix: true,
+              stderrColor: true,
+          } as IOptions);
 
 export default parseOptions;
 export { Options };

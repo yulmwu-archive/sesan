@@ -38,7 +38,7 @@ import { TokenType } from '../tokenizer';
 import { Options } from '../options';
 import { error } from '.';
 import { Decorator } from '../builtin/decorator';
-import { stdin, StdioOptions, stdout } from '../../index';
+import { stderr, stdin, StdioOptions, stdout } from '../../index';
 
 const NULL: LangObject = {
     kind: ObjectKind.NULL,
@@ -55,6 +55,7 @@ export default class Evaluator {
         public stdio: StdioOptions = {
             stdin,
             stdout,
+            stderr,
         },
         public root: string = './'
     ) {}

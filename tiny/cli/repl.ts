@@ -6,7 +6,7 @@ import { Enviroment, LangObject, objectStringify, ObjectKind } from '../object';
 import { Parser, Program } from '../parser';
 import { Lexer, Token, TokenType } from '../tokenizer';
 import { Options } from '../options';
-import { stdout } from '../../index';
+import { stdout, stderr } from '../../index';
 
 type Mode = 'repl' | 'parser' | 'parser_json' | 'lexer' | 'env';
 
@@ -55,7 +55,7 @@ export default class {
             const result = new Evaluator(parsed, env, this.option).eval();
 
             if (result?.kind === ObjectKind.ERROR) {
-                printError(result.message, stdout);
+                printError(result.message, stdout, this.option);
                 return '';
             }
 
@@ -91,10 +91,13 @@ export default class {
         if (this.option.useStdLibAutomatically)
             new Evaluator(
                 new Parser(
-                    new Lexer(`import('@std/lib');`, stdout)
+                    new Lexer(`import('@std/lib');`, {
+                        ...this.option,
+                        stderr,
+                    })
                 ).parseProgram(),
                 this.env,
-                this.option,
+                this.option
             ).eval();
 
         while (true) {
@@ -104,18 +107,28 @@ export default class {
                 } ${'➜'.red} `
             );
 
-            const parser = new Parser(new Lexer(input, stdout));
+            const parser = new Parser(
+                new Lexer(input, {
+                    ...this.option,
+                    stderr,
+                })
+            );
 
             const executed = this.executeCommand(
                 input,
-                new Lexer(input, stdout),
+                new Lexer(input, {
+                    ...this.option,
+                    stderr,
+                }),
                 parser.parseProgram(),
                 this.env
             );
 
             if (executed)
                 if (parser.errors.length > 0)
-                    parser.errors.forEach((error) => printError(error, stdout));
+                    parser.errors.forEach((error) =>
+                        printError(error, stderr, this.option)
+                    );
 
             console.log(executed, '\n');
         }

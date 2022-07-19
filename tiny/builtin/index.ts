@@ -89,10 +89,10 @@ const importEnv: Func = (
 
         return new Evaluator(
             new Parser(
-                new Lexer(
-                    readFileSync(`${t.root}${fileName}`, 'utf8'),
-                    t.stdio.stdin
-                )
+                new Lexer(readFileSync(`${t.root}${fileName}`, 'utf8'), {
+                    ...t.option,
+                    stderr: t.stdio.stderr,
+                })
             ).parseProgram(),
             env,
             t.option,
@@ -172,7 +172,12 @@ const evalCode: Func = (
         };
 
     return new Evaluator(
-        new Parser(new Lexer(args[0].value, t.stdio.stdout)).parseProgram(),
+        new Parser(
+            new Lexer(args[0].value, {
+                ...t.option,
+                stderr: t.stdio.stderr,
+            })
+        ).parseProgram(),
         env,
         t.option
     ).eval();

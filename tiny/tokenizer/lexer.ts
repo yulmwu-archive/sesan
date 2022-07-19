@@ -1,13 +1,18 @@
 import { Stdio } from '../../index';
 import { printError } from '../evaluator';
 import { fromLiteral, Token, TokenType } from './token';
+import { Options } from '../options';
+
+interface LexerStderrOptions extends Options {
+    stderr: Stdio;
+}
 
 export default class Lexer {
     public position: number = 0;
     public readPosition: number = 0;
     public ch: string = '';
 
-    constructor(public input: string, public stdout: Stdio) {
+    constructor(public input: string, public stderr: LexerStderrOptions) {
         this.readChar();
     }
 
@@ -40,7 +45,10 @@ export default class Lexer {
         while (this.isDigit(this.ch)) {
             if (this.ch === '.') {
                 if (dot) {
-                    printError(`[Lexer] Invalid number`, this.stdout);
+                    printError(`[Lexer] Invalid number`, this.stderr.stderr, {
+                        ...this.stderr,
+                    });
+
                     return {
                         type: TokenType.EOF,
                         literal: 'EOF',
@@ -68,8 +76,12 @@ export default class Lexer {
                     position - 1,
                     this.position
                 )}`,
-                this.stdout
+                this.stderr.stderr,
+                {
+                    ...this.stderr,
+                }
             );
+
             return {
                 type: TokenType.EOF,
                 literal: 'EOF',
