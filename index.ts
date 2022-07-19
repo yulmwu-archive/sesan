@@ -22,22 +22,27 @@ type TinyOption = Options & {
 interface StdioOptions {
     stdin: Stdio;
     stdout: Stdio;
+    stderr: Stdio;
 }
 
 const stdin: Stdio = (...x) => prompt({ sigint: true });
 const stdout: Stdio = (...x) => process.stdout.write(x.join(' '));
+const stderr: Stdio = (...x) => process.stderr.write(x.join(' '));
 
 export default class Tiny {
     public option: TinyOption;
     public builtins: Map<string, Func> = new Map();
-    public stdio: StdioOptions = { stdin, stdout };
+    public stdio: StdioOptions = { stdin, stdout, stderr };
 
     constructor(public x: string, option?: TinyOption) {
         this.option = { ...option };
     }
 
     public tokenizer(): Lexer {
-        return new Lexer(this.x, this.stdio.stdout);
+        return new Lexer(this.x, {
+            ...this.option,
+            stderr: this.stdio.stderr,
+        });
     }
 
     public eval(): string {
@@ -46,7 +51,10 @@ export default class Tiny {
         if (this.option.useStdLibAutomatically)
             new Evaluator(
                 new Parser(
-                    new Lexer(`import('@std/lib');`, this.stdio.stdin)
+                    new Lexer(`import('@std/lib');`, {
+                        ...this.option,
+                        stderr: this.stdio.stderr,
+                    })
                 ).parseProgram(),
                 env,
                 this.option,
@@ -63,7 +71,7 @@ export default class Tiny {
         ).eval();
 
         if (result?.kind === ObjectKind.ERROR)
-            printError(result.message, this.stdio.stdout);
+            printError(result.message, this.stdio.stderr, this.option);
 
         return objectStringify(result);
     }
@@ -97,6 +105,12 @@ export default class Tiny {
 
         return this;
     }
+
+    public setStderr(func: Stdio): Tiny {
+        this.stdio = { ...this.stdio, stderr: func };
+
+        return this;
+    }
 }
 
-export { TinyOption, Stdio, StdioOptions, stdin, stdout };
+export { TinyOption, Stdio, StdioOptions, stdin, stdout, stderr };
