@@ -1,5 +1,15 @@
+<script>
+    import { lines, words } from '../stores.js';
+
+    let [_lines, _words] = [0, 0];
+
+    lines.subscribe((v) => (_lines = v.length ?? 1));
+
+    words.subscribe((v) => (_words = v));
+</script>
+
 <div class="footer">
-    <p>Footer</p>
+    <p>{_lines} Lines, {_words} Words</p>
 </div>
 
 <style>
