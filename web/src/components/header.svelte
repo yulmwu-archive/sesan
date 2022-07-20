@@ -39,17 +39,31 @@
 
     const examples = [
         {
-            id: '1',
             name: 'Hello, World!',
             code: `func hello(name) {
     return "Hello, " + name + "!";
 }
 
-println(hello('World'));`,
+println(hello('World'));
+`,
         },
         {
-            id: '2',
             name: 'Fibonacci',
+            code: `let fib = func(n) {
+    match(n, [
+        [0, func(v) {
+            return 0;
+        }], 
+        [1, func(v) {
+            return 1;
+        }]
+    ], func(v) {
+        return fib(n - 1) + fib(n - 2);
+    });
+};
+
+println(fib(10));
+`,
         },
     ];
 
