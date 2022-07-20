@@ -1,10 +1,11 @@
 <script>
-    import { currentLine, currentColumn, evaluating } from '../stores.js';
-    let [_curr, _column, _e] = [1, 0, false];
+    import { currentLine, currentColumn, evaluating, errors } from '../stores.js';
+    let [_curr, _column, _e, _errs] = [1, 0, false, 0];
 
     currentLine.subscribe((v) => (_curr = v));
     currentColumn.subscribe((v) => (_column = v));
     evaluating.subscribe((v) => (_e = v));
+    errors.subscribe((v) => (_errs = v));
 </script>
 
 <div class="footer">
@@ -17,6 +18,10 @@
 
     {#if !_e}
         <p class="evaluating">Ready</p>
+
+        {#if _errs > 0}
+            <p class="errors">{_errs} errors</p>
+        {/if}
     {:else}
         <p class="evaluating">Evaluating...</p>
     {/if}
@@ -53,6 +58,14 @@
         padding: 0 10px;
         display: inline;
         text-align: center;
+        float: left;
+        cursor: pointer;
+    }
+
+    div.footer > .errors {
+        color: rgb(234, 24, 24);
+        width: 80px;
+        display: inline;
         float: left;
         cursor: pointer;
     }

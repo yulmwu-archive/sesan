@@ -1,5 +1,5 @@
 <script>
-    import { results, evaluating } from '../stores';
+    import { results, evaluating, errors } from '../stores';
     import { editor } from './editor.svelte';
     import axios from 'axios';
 
@@ -10,6 +10,7 @@
     const _eval = async () => {
         if (disabled) {
             evaluating.update(() => true);
+            errors.update(() => 0);
 
             try {
                 const res = await (

@@ -1,12 +1,14 @@
 <script>
-    import { results } from '../stores';
-    let _results;
+    import { results, errors } from '../stores';
+
+    let _results = null;
 
     results.subscribe((v) => {
-        console.log(v);
-        if (JSON.stringify(v.errors) !== JSON.stringify([]))
+        if (JSON.stringify(v.errors) !== JSON.stringify([])) {
+            errors.update(() => v.errors.length);
+
             _results = v.errors;
-        else _results = v.result.join('\n');
+        } else _results = v.result.join('\n');
     });
 </script>
 
