@@ -1,5 +1,5 @@
 <div class="header">
-    (WIP)
+    <!-- TODO -->
 </div>
 
 <style>
