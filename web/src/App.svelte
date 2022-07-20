@@ -38,12 +38,14 @@
         height: 20vh;
     }
 </style> -->
-
 <script>
     import Header from './components/header.svelte';
-    import Editor from './components/editor.svelte';
+    import Editor, { editor } from './components/editor.svelte';
     import Results from './components/results.svelte';
     import Footer from './components/footer.svelte';
+    import { onMount } from 'svelte';
+
+    onMount(() => editor.focus());
 </script>
 
 <div class="container">

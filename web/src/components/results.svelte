@@ -1,5 +1,9 @@
+<script context="module">
+    export let results;
+</script>
+
 <div class="sidebar">
-    results
+    <p bind:this={results}></p>
 </div>
 
 <style>

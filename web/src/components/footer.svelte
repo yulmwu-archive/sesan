@@ -1,15 +1,19 @@
 <script>
-    import { lines, words } from '../stores.js';
+    import { currentLine, currentColumn } from '../stores.js';
+    let [_curr, _column] = Array(4).fill(0);
 
-    let [_lines, _words] = [0, 0];
-
-    lines.subscribe((v) => (_lines = v.length ?? 1));
-
-    words.subscribe((v) => (_words = v));
+    currentLine.subscribe((v) => (_curr = v));
+    currentColumn.subscribe((v) => (_column = v));
 </script>
 
 <div class="footer">
-    <p>{_lines} Lines, {_words} Words</p>
+    <p
+        class="github"
+        on:click={() => window.open('https://github.com/tsukiroku/tiny')}
+    >
+        Github
+    </p>
+    <p class="curr">Ln {_curr}, Col {_column}</p>
 </div>
 
 <style>
@@ -19,7 +23,26 @@
         bottom: 0;
         width: 100%;
         height: 20px;
-        padding: 0 10px;
         background-color: #007acc;
+    }
+
+    div.footer > .github {
+        background-color: #329171;
+        width: 80px;
+        padding: 0 10px;
+        display: inline;
+        text-align: center;
+        float: left;
+        cursor: pointer;
+    }
+
+    div.footer > .github:hover {
+        background-color: #369c7a;
+    }
+
+    div.footer > .curr {
+        margin-right: 10px;
+        display: inline;
+        float: right;
     }
 </style>

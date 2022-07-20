@@ -1,14 +1,31 @@
-<script>
-    import { lines, words } from '../stores.js';
+<script context="module">
+    import { currentLine, currentColumn } from '../stores.js';
+
+    const getCurrent = () => {
+        const text = editor.value.substr(0, editor.selectionStart).split('\n');
+
+        return {
+            line: text.length,
+            column: text[text.length - 1].length,
+        };
+    };
 
     const onInput = (e) => {
-        lines.update(() => e.target.value.split('\n'));
-        words.update(() => e.target.value.length);
+        currentLine.update(() => getCurrent().line);
+        currentColumn.update(() => getCurrent().column);
     };
+
+    export let editor;
 </script>
 
 <div class="editor">
-    <textarea class="input" on:input={onInput} />
+    <textarea
+        class="input"
+        on:input={onInput}
+        on:keydown={onInput}
+        on:click={onInput}
+        bind:this={editor}
+    />
 </div>
 
 <style>
