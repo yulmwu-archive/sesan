@@ -13,7 +13,7 @@ app.get('/eval', (req, res) => {
 
     res.json({
         result: [],
-        error: [],
+        errors: [],
     });
 });
 
