@@ -1,6 +1,6 @@
 <script>
     import { currentLine, currentColumn } from '../stores.js';
-    let [_curr, _column] = Array(4).fill(0);
+    let [_curr, _column] = [1, 0];
 
     currentLine.subscribe((v) => (_curr = v));
     currentColumn.subscribe((v) => (_column = v));

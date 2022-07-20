@@ -15,7 +15,7 @@
         currentColumn.update(() => getCurrent().column);
     };
 
-    export let editor;
+    export let editor = null;
 </script>
 
 <div class="editor">
@@ -34,7 +34,6 @@
         height: 100%;
         float: left;
         padding: 15px;
-        margin-bottom: 20px;
         background-color: #1e1e1e;
     }
 
