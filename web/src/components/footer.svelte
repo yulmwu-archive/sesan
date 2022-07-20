@@ -1,9 +1,10 @@
 <script>
-    import { currentLine, currentColumn } from '../stores.js';
-    let [_curr, _column] = [1, 0];
+    import { currentLine, currentColumn, evaluating } from '../stores.js';
+    let [_curr, _column, _e] = [1, 0, false];
 
     currentLine.subscribe((v) => (_curr = v));
     currentColumn.subscribe((v) => (_column = v));
+    evaluating.subscribe((v) => (_e = v));
 </script>
 
 <div class="footer">
@@ -13,6 +14,12 @@
     >
         Github
     </p>
+
+    {#if !_e}
+        <p class="evaluating">Ready</p>
+    {:else}
+        <p class="evaluating">Evaluating...</p>
+    {/if}
     <p class="curr">Ln {_curr}, Col {_column}</p>
 </div>
 
@@ -38,6 +45,16 @@
 
     div.footer > .github:hover {
         background-color: #369c7a;
+    }
+
+    div.footer > .evaluating {
+        color: #ffffff;
+        width: 80px;
+        padding: 0 10px;
+        display: inline;
+        text-align: center;
+        float: left;
+        cursor: pointer;
     }
 
     div.footer > .curr {

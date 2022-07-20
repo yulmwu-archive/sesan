@@ -1,18 +1,40 @@
 <script>
-    import { results } from '../stores';
+    import { results, evaluating } from '../stores';
     import { editor } from './editor.svelte';
     import axios from 'axios';
 
-    const _eval = async () => {
-        const c = await (
-            await axios.get(
-                `https://tiny-tsukiroku.vercel.app/eval/${encodeURIComponent(
-                    editor.value
-                )}`
-            )
-        ).data;
+    let disabled = false;
 
-        results.update(() => c);
+    evaluating.subscribe((v) => (disabled = !v));
+
+    const _eval = async () => {
+        if (disabled) {
+            evaluating.update(() => true);
+
+            try {
+                const res = await (
+                    await axios.get(
+                        `https://tiny-tsukiroku.vercel.app/eval/${encodeURIComponent(
+                            editor.value
+                        )}`
+                    )
+                ).data;
+
+                results.update(() => res);
+            } catch (e) {
+                results.update(() => ({
+                    errors: [
+                        `[Evaluating] ${e.message}, Check if the code is an infinite loop.`,
+                    ],
+                }));
+            }
+
+            evaluating.update(() => false);
+        } else {
+            results.update(() => ({
+                errors: ['Evaluating...'],
+            }));
+        }
     };
 
     const examples = [
@@ -33,13 +55,16 @@ println(hello('World'));`,
 
     let selected = 'placeholder';
 
-    const example = () => {
-        editor.value = selected.code;
-    };
+    const example = () => (editor.value = selected.code);
+
+    const share = () =>
+        (window.location = `#${encodeURIComponent(editor.value)}`);
 </script>
 
 <div class="header">
-    <p class="run" on:click={_eval}>Run</p>
+    <p class="run" on:click={_eval} {disabled}>Run</p>
+
+    <p class="share" on:click={share}>Share</p>
 
     <select bind:value={selected} on:change={example}>
         <option value="placeholder" disabled selected>Examples</option>
@@ -63,6 +88,12 @@ println(hello('World'));`,
         display: inline;
     }
 
+    div.header > .share {
+        cursor: pointer;
+        display: inline;
+        padding: 0 10px;
+    }
+
     div.header > select {
         display: inline;
         border: none;
@@ -70,7 +101,6 @@ println(hello('World'));`,
         color: rgb(252, 255, 54);
         font-size: 14px;
         outline: none;
-        padding: 0 10px;
         appearance: none;
         cursor: pointer;
     }
