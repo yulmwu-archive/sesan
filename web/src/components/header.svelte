@@ -113,9 +113,7 @@
     }
 
     div.header > select option {
-        background-color: #151515;
-        color: rgb(252, 255, 54);
-        font-size: 14px;
+        background-color: #252526;
         outline: none;
         appearance: none;
         cursor: pointer;
