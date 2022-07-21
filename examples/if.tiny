@@ -1,0 +1,11 @@
+let x = 1;
+
+while (x < 6) {
+    if (x >= 3) {
+        println('x (' + string(x) + ') is greater than or equal to 5');
+    } else {
+        println('x (' + string(x) + ') is less than 5');
+    }
+
+    x = x + 1;
+}

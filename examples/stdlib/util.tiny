@@ -1,0 +1,15 @@
+let x = 3;
+
+println(match(3, [
+    [ 1, func(v) { return value + 1; } ], 
+    [ 2, func(v) { return value + 2; } ]
+], func(v) { 
+    println('nothing'); 
+    return v * 10;
+}));
+
+let y = string(x);
+
+println('x is ' + string(1 + 2));
+println(number(y) + 20);
+println(boolean(1));

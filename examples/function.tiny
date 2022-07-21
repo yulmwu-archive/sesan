@@ -1,0 +1,15 @@
+func my_function(x, y) {
+    let z = x * y;
+
+    return z;
+}
+
+println(my_function(2, 3));
+
+let anonymous_function = func(x, y) {
+    let z = x + y;
+
+    return z;
+};
+
+println(anonymous_function(2, 3));

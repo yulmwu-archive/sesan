@@ -1,0 +1,3 @@
+import('./function'); // Examples -> Function
+
+println(my_function(1, 2));
