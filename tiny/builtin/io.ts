@@ -27,7 +27,7 @@ const readLine: Func = (
 
     return {
         kind: ObjectKind.STRING,
-        value: t.stdio.stdout(
+        value: t.stdio.stdin(
             args[0]?.value.map((arg) => objectStringify(arg)).join(' ')
         ),
     };

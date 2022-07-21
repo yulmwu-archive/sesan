@@ -3,6 +3,7 @@ import { Enviroment } from '../object';
 import Tiny from '../../index';
 import parseOptions from '../options';
 import Repl from './repl';
+import prompt from 'prompt-sync';
 
 const args = process.argv.slice(2);
 
@@ -17,7 +18,13 @@ else {
     try {
         const file = readFileSync(args[0], 'utf8');
 
-        new Tiny(file, { enviroment: env, ...option }).eval();
+        new Tiny(file, { enviroment: env, ...option })
+            .setStdin((x) =>
+                prompt({
+                    sigint: true,
+                })(x)
+            )
+            .eval();
     } catch (e) {
         console.error(`Cannot open file ${args[0]}: ${e}`);
     }

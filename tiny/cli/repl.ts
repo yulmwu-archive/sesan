@@ -52,7 +52,11 @@ export default class {
 
         if (commands.has(command)) return commands.get(command)!(...args);
         else {
-            const result = new Evaluator(parsed, env, this.option).eval();
+            const result = new Evaluator(parsed, env, this.option, {
+                stdin: this.promptSync,
+                stdout,
+                stderr,
+            }).eval();
 
             if (result?.kind === ObjectKind.ERROR) {
                 printError(result.message, stdout, this.option);
@@ -97,7 +101,12 @@ export default class {
                     })
                 ).parseProgram(),
                 this.env,
-                this.option
+                this.option,
+                {
+                    stdin: this.promptSync,
+                    stdout,
+                    stderr,
+                }
             ).eval();
 
         while (true) {
