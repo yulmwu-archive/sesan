@@ -190,7 +190,7 @@ export default class Evaluator {
             }
 
             default:
-                return NULL;
+                return error(`unknown statement kind: ${statement.kind}`);
         }
     }
 
