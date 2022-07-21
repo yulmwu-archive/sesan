@@ -111,4 +111,13 @@
     div.header > select::-ms-expand {
         display: none;
     }
+
+    div.header > select option {
+        background-color: #151515;
+        color: rgb(252, 255, 54);
+        font-size: 14px;
+        outline: none;
+        appearance: none;
+        cursor: pointer;
+    }
 </style>
