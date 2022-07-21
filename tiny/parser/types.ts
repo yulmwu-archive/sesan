@@ -1,4 +1,3 @@
-import { ErrorObject } from '../object';
 import { TokenType } from '../tokenizer';
 
 interface Program {
