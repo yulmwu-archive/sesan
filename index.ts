@@ -61,8 +61,17 @@ export default class Tiny {
                 this.option.root
             ).eval();
 
+        const parser = new Parser(this.tokenizer());
+        const program = parser.parseProgram();
+
+        parser.errors.forEach((error) =>
+            printError(error, this.stdio.stderr, {
+                ...this.option,
+            })
+        );
+
         const result = new Evaluator(
-            new Parser(this.tokenizer()).parseProgram(),
+            program,
             env,
             this.option,
             this.stdio,
