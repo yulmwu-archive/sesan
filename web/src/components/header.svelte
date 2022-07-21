@@ -51,6 +51,34 @@
             name: 'Fibonacci',
             source: 'fibonacci.tiny',
         },
+        {
+            name: 'Function',
+            source: 'function.tiny',
+        },
+        {
+            name: 'If',
+            source: 'if.tiny',
+        },
+        {
+            name: 'While',
+            source: 'while.tiny',
+        },
+        {
+            name: 'Import',
+            source: 'import.tiny',
+        },
+        {
+            name: 'Standard Library - IO',
+            source: '/stdlib/io.tiny',
+        },
+        {
+            name: 'Standard Library - Array',
+            source: '/stdlib/array.tiny',
+        },
+        {
+            name: 'Standard Library - Utility',
+            source: '/stdlib/util.tiny',
+        },
     ];
 
     let selected = examples[0];
