@@ -23,9 +23,9 @@ app.get('/eval/:code', (req, res) => {
 
     new Tiny(req.params.code, {
         useStdLibAutomatically: true,
+        allowEval: true,
         stderrPrefix: false,
         stderrColor: false,
-        root: './',
     })
         .setStdout((x) => result.push(x))
         .setStderr((x) => errors.push(x))

@@ -27,7 +27,7 @@ interface StdioOptions {
 
 const stdin: Stdio = (...x) => prompt({ sigint: true });
 const stdout: Stdio = (...x) => process.stdout.write(x.join(' '));
-const stderr: Stdio = (...x) => process.stderr.write(x.join(' '));
+const stderr: Stdio = (...x) => process.stderr.write(`${x.join(' ')}\n`);
 
 export default class Tiny {
     public option: TinyOption;
