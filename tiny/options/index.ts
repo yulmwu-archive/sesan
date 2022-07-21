@@ -2,7 +2,7 @@ import Options, { IOptions } from './types';
 
 const parseOptions = (option?: string): Options =>
     option
-        ? { ...JSON.parse(option), ...parseOptions() }
+        ? { ...parseOptions(), ...JSON.parse(option) }
         : ({
               allowEval: false,
               allowJavaScript: false,

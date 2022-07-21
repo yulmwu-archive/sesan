@@ -280,6 +280,7 @@ export default class Lexer {
             token.type === TokenType.IF ||
             token.type === TokenType.ELSE ||
             token.type === TokenType.RETURN ||
+            token.type === TokenType.WHILE ||
             token.type === TokenType.IDENT ||
             token.type === TokenType.NUMBER
         )
