@@ -290,7 +290,12 @@ export default class Lexer {
     }
 
     private isLetter(ch: string): boolean {
-        return /[a-zA-Z]/.test(ch) || ch === '_' || ch === '@' || ch === '#';
+        return (
+            /[a-zA-Z]/.test(ch) ||
+            /[^\u0000-\u00ff]/.test(ch) ||
+            ch === '_' ||
+            ch === '@'
+        );
     }
 
     private isDigit(ch: string): boolean {

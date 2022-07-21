@@ -17,6 +17,7 @@ import {
     Statement,
     WhileStatement,
 } from '.';
+import { ObjectKind } from '../object';
 
 enum Priority {
     LOWEST = 1,
@@ -42,6 +43,7 @@ export default class Parser {
     public parseProgram(): Program {
         let program: Program = {
             statements: [],
+            errors: [],
         };
 
         while (this.currToken.type !== TokenType.EOF) {
@@ -50,6 +52,13 @@ export default class Parser {
 
             this.nextToken();
         }
+
+        this.errors.forEach((error) => {
+            program.errors.push({
+                message: error,
+                kind: ObjectKind.ERROR,
+            });
+        });
 
         return program;
     }

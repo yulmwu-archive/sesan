@@ -61,6 +61,7 @@ export default class Evaluator {
     ) {}
 
     public eval(): LangObject {
+        if (this.p.errors.length > 0) return error(this.p.errors[0].message);
         return this.evalStatements(this.p.statements, this.env);
     }
 

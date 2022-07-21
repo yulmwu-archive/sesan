@@ -1,7 +1,9 @@
+import { ErrorObject } from '../object';
 import { TokenType } from '../tokenizer';
 
 interface Program {
     statements: Array<Statement>;
+    errors: Array<ErrorObject>;
 }
 
 type Statement =
