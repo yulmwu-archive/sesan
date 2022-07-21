@@ -29,15 +29,21 @@ enum ObjectKind {
     NULL,
 }
 
-const objectStringify = (obj: LangObject, strW: boolean = false): string => {
+const objectStringify = (
+    obj: LangObject,
+    strW: boolean = false,
+    strO: boolean = false
+): string => {
     if (!obj) return 'NULL';
+
+    const quote = (str: string, w: boolean): string => (w ? `"${str}"` : str);
 
     switch (obj.kind) {
         case ObjectKind.NUMBER:
             return obj.value.toString();
 
         case ObjectKind.STRING:
-            return strW ? `"${obj.value}"` : obj.value;
+            return quote(obj.value, strW);
 
         case ObjectKind.BOOLEAN:
             return obj.value ? 'true' : 'false';
@@ -48,27 +54,37 @@ const objectStringify = (obj: LangObject, strW: boolean = false): string => {
                 .join(', ')}]`;
 
         case ObjectKind.HASH:
-            return `{ ${[...obj.pairs.entries()]
-                .map(
-                    ([key, value]) =>
-                        `${objectStringify(key)}: ${objectStringify(
-                            value,
-                            true
-                        )}`
-                )
-                .join(', ')} }`;
+            return JSON.stringify(
+                JSON.parse(
+                    `{ ${[...obj.pairs.entries()]
+                        .map(
+                            ([key, value]) =>
+                                `${objectStringify(
+                                    key,
+                                    true,
+                                    true
+                                )}: ${objectStringify(value, true, true)}`
+                        )
+                        .join(', ')} }`
+                ),
+                null,
+                2
+            );
 
         case ObjectKind.FUNCTION:
-            return `func([${obj.parameters.map((m) => m?.kind).join(', ')}])`;
+            return quote(
+                `func([${obj.parameters.map((m) => m?.kind).join(', ')}])`,
+                strO
+            );
 
         case ObjectKind.BUILTIN:
-            return `builtin`;
+            return quote(`builtin`, strO);
 
         case ObjectKind.NULL:
-            return 'NULL';
+            return quote('NULL', strO);
 
         case ObjectKind.ERROR:
-            return `Error: ${obj.message}`;
+            return quote(`Error: ${obj.message}`, strO);
 
         default:
             return `[Unknown]`;
@@ -151,7 +167,7 @@ interface BuiltinFunction {
     func: (
         args: Array<LangObject>,
         env: Enviroment,
-        t: Evaluator,
+        t: Evaluator
     ) => LangObject;
     kind: ObjectKind.BUILTIN;
 }

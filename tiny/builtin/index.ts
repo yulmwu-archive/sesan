@@ -16,6 +16,7 @@ import { readFileSync } from 'fs';
 import { print, readLine, throwError } from './io';
 import { push, pop, shift, unshift, slice, forEach } from './array';
 import { decoratorFunc } from './decorator';
+import Tiny from '../../index';
 
 type Func = Omit<BuiltinFunction, 'kind'>['func'];
 
@@ -49,6 +50,7 @@ export default (name: string, env: Enviroment): LangObject | null => {
         ['__new_line', newLine],
         ['__builtin_forEach', forEach],
         ['__root', rootDir],
+        ['__ast', ast],
         ['@func', decoratorFunc],
     ]).get(name);
 
@@ -271,7 +273,7 @@ const newLine: Func = (args: Array<LangObject>): LangObject => ({
     value: '\n',
 });
 
-const rootDir = (
+const rootDir: Func = (
     args: Array<LangObject>,
     env: Enviroment,
     t: Evaluator
@@ -279,5 +281,21 @@ const rootDir = (
     kind: ObjectKind.STRING,
     value: t.root,
 });
+
+const ast: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator
+): LangObject =>
+    new Evaluator(
+        new Parser(
+            new Lexer(JSON.stringify(t.p.statements), {
+                ...t.option,
+                stderr: t.stdio.stderr,
+            })
+        ).parseProgram(),
+        env,
+        t.option
+    ).eval() as ArrayObject;
 
 export { Func, invalidArgument, builtinsEval };
