@@ -1,14 +1,15 @@
-<script>
+<script lang="ts">
     import { results, errors } from '../stores';
 
-    let _results = null;
+    let _results: string;
 
     results.subscribe((v) => {
-        if (JSON.stringify(v.errors) !== JSON.stringify([])) {
-            errors.update(() => v.errors.length);
+        console.log(v);
+        if (v.errors.length > 0) {
+            errors.update(() => (v.errors ?? []).length);
 
-            _results = v.errors;
-        } else _results = v.result.join('\n');
+            _results = (v.errors ?? []).join('\n');
+        } else _results = (v.result ?? []).join('\n');
     });
 </script>
 

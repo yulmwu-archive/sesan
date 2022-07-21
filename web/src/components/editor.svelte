@@ -1,4 +1,4 @@
-<script context="module">
+<script context="module" lang="ts">
     import { currentLine, currentColumn } from '../stores.js';
 
     const getCurrent = () => {
@@ -10,12 +10,14 @@
         };
     };
 
-    const onInput = (e) => {
+    const onInput = () => {
         currentLine.update(() => getCurrent().line);
         currentColumn.update(() => getCurrent().column);
     };
 
-    export let editor = null;
+    let editor: HTMLTextAreaElement;
+
+    export { editor };
 </script>
 
 <div class="editor">

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { currentLine, currentColumn, evaluating, errors } from '../stores.js';
     let [_curr, _column, _e, _errs] = [1, 0, false, 0];
 

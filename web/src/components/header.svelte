@@ -1,79 +1,69 @@
-<script>
+<script lang="ts">
     import { results, evaluating, errors } from '../stores';
     import { editor } from './editor.svelte';
+    import type { IExamples } from '../types';
     import axios from 'axios';
 
     let disabled = false;
 
     evaluating.subscribe((v) => (disabled = !v));
 
-    const _eval = async () => {
+    const _eval = () => {
         if (disabled) {
             evaluating.update(() => true);
             errors.update(() => 0);
 
-            try {
-                const res = await (
-                    await axios.get(
-                        `https://tiny-tsukiroku.vercel.app/eval/${encodeURIComponent(
-                            editor.value
-                        )}`
-                    )
-                ).data;
-
-                results.update(() => res);
-            } catch (e) {
-                results.update(() => ({
-                    errors: [
-                        `[Evaluating] ${e.message}, Check if the code is an infinite loop.`,
-                    ],
-                }));
-            }
-
-            evaluating.update(() => false);
+            axios
+                .get(
+                    `https://tiny-tsukiroku.vercel.app/eval/${encodeURIComponent(
+                        editor.value
+                    )}`
+                )
+                .then((res) => results.update(() => res.data))
+                .catch((err) =>
+                    results.update(() => ({
+                        result: [],
+                        errors: [
+                            `[Evaluating] ${err}, Check if the code is an infinite loop.`,
+                        ],
+                    }))
+                )
+                .finally(() => evaluating.update(() => false));
         } else {
             results.update(() => ({
+                result: [],
                 errors: ['Evaluating...'],
             }));
         }
     };
 
-    const examples = [
+    const examples: Array<IExamples> = [
+        {
+            name: 'Examples',
+            source: '',
+            disabled: true,
+        },
         {
             name: 'Hello, World!',
-            code: `func hello(name) {
-    return "Hello, " + name + "!";
-}
-
-println(hello('World'));
-`,
+            source: 'hello_world.tiny',
         },
         {
             name: 'Fibonacci',
-            code: `let fib = func(n) {
-    match(n, [
-        [0, func(v) {
-            return 0;
-        }], 
-        [1, func(v) {
-            return 1;
-        }]
-    ], func(v) {
-        return fib(n - 1) + fib(n - 2);
-    });
-};
-
-println(fib(10));
-`,
+            source: 'fibonacci.tiny',
         },
     ];
 
-    let selected = 'placeholder';
+    let selected = examples[0];
 
-    const example = () => (editor.value = selected.code);
+    const example = () =>
+        axios
+            .get(
+                `https://raw.githubusercontent.com/tsukiroku/tiny/main/examples/${selected.source}`
+            )
+            .then((res) => (editor.value = res.data));
 
     const share = () =>
-        (window.location = `#${encodeURIComponent(editor.value)}`);
+        (window.location.href = `#${encodeURIComponent(editor.value)}`);
 </script>
 
 <div class="header">
@@ -82,10 +72,8 @@ println(fib(10));
     <p class="share" on:click={share}>Share</p>
 
     <select bind:value={selected} on:change={example}>
-        <option value="placeholder" disabled selected>Examples</option>
-
         {#each examples as e}
-            <option value={e}>{e.name}</option>
+            <option value={e} disabled={e.disabled}>{e.name}</option>
         {/each}
     </select>
 </div>
