@@ -1,10 +1,9 @@
 import { builtinsEval, Func } from './tiny/builtin';
-import { Evaluator, printError } from './tiny/evaluator';
+import { Evaluator, NULL, printError } from './tiny/evaluator';
 import { Enviroment, ObjectKind, objectStringify } from './tiny/object';
 import { Options } from './tiny/options';
 import { Parser } from './tiny/parser';
 import { Lexer } from './tiny/tokenizer';
-import prompt from 'prompt-sync';
 
 export * from './tiny/object';
 export * from './tiny/options';
@@ -25,7 +24,7 @@ interface StdioOptions {
     stderr: Stdio;
 }
 
-const stdin: Stdio = (...x) => prompt({ sigint: true });
+const stdin: Stdio = (...x) => NULL;
 const stdout: Stdio = (...x) => process.stdout.write(x.join(' '));
 const stderr: Stdio = (...x) => process.stderr.write(`${x.join(' ')}\n`);
 

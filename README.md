@@ -3,6 +3,7 @@
     -   [Start REPL](#start-repl)
         -   [REPL commands](#repl-commands)
         -   [REPL mode](#repl-mode)
+    -   [Web Playground](#web-playground)
 -   [**Interpreter**](#Interpreter)
     -   Tokenizer
         -   [Tokens](#tokens)
@@ -16,7 +17,6 @@
 -   [**Options**](#Options)
 -   [**Npm package**](#Npm-Package)
 -   [**Examples**](#Examples)
--   [**Todo**](#Todo)
 
 <br>
 
@@ -40,7 +40,7 @@ npm i
 npm run start:repl
 
 # You can also from a file.
-npm run start [file]
+npm run start:repl [file]
 ```
 
 <br>
@@ -65,6 +65,12 @@ npm run start [file]
 | `parser`      | Parser mode                  |
 | `parser json` | Parser mode with JSON output |
 | `env`         | Environment mode             |
+
+<br>
+
+# Web Playground
+
+[Click here](https://tsukiroku.github.io/tiny)
 
 <br>
 
@@ -228,16 +234,14 @@ console.log(
 
 # Examples
 
-> **tests**: [`./test`](https://github.com/tsukiroku/tiny/tree/main/tests)
-
 -   [**`./examples`**](https://github.com/tsukiroku/tiny/tree/main/examples)
     -   [`Hello, World!`](https://github.com/tsukiroku/tiny/blob/main/examples/hello_world.tiny)
-    -   [`fibonacci`](https://github.com/tsukiroku/tiny/blob/main/examples/fibonacci.tiny)
-
-<br>
-
-# Todo
-
--   [ ] Class
--   [ ] else if
--   [ ] More Examples
+    -   [`Fibonacci`](https://github.com/tsukiroku/tiny/blob/main/examples/fibonacci.tiny)
+    -   [`Function`](https://github.com/tsukiroku/tiny/blob/main/examples/function.tiny)
+    -   [`If`](https://github.com/tsukiroku/tiny/blob/main/examples/if.tiny)
+    -   [`While`](https://github.com/tsukiroku/tiny/blob/main/examples/while.tiny)
+    -   [`Import`](https://github.com/tsukiroku/tiny/blob/main/examples/import.tiny)
+    -   [`StdLib`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib)
+        -   [`Array`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/array.tiny)
+        -   [`IO`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/io.tiny)
+        -   [`Utility`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/util.tiny)
