@@ -145,10 +145,5 @@
         outline: none;
         appearance: none;
         cursor: pointer;
-        padding: 5px;
-    }
-
-    div.header > select option:disabled {
-        color: rgb(200, 200, 200);
     }
 </style>
