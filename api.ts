@@ -27,13 +27,6 @@ app.get('/eval/:code', (req, res) => {
         stderrColor: false,
         root: './',
     })
-        .setBuiltin('test', () => {
-            return {
-                kind: ObjectKind.STRING,
-                value: readdirSync('./@std').join('\n'),
-            };
-        })
-        .applyBuiltins()
         .setStdout((x) => result.push(x))
         .setStderr((x) => errors.push(x))
         .setStdin(() => NULL)

@@ -1,9 +1,5 @@
-import('@std/lib');
-
-test();
-
 let hello = func(name) {
-    println('Hello, ' + name + '!');
+    return 'Hello, ' + name + '!';
 };
 
-hello('World');
+println(hello('World'));
