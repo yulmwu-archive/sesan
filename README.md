@@ -102,23 +102,22 @@ npm run start:repl [file]
 
 ## Expressions
 
-| Expression | Syntax                              | Expression | Syntax                         |
-| ---------- | ----------------------------------- | ---------- | ------------------------------ |
-| `Literal`  |                                     | `Block`    | `{ [expr] }`                   |
-| `If`       | `if ([expr]) [block] else [block];` | `Function` | `func [name?]([args]) [block]` |
-| `Call`     | `[ident]([args])`                   | `Ident`    |                                |
-| `Array`    | `[[expr], ...]`                     | `Index`    | `[ident][number]`              |
-| `Hash`     | `{ string: expression, ... }`       | `Class`    | Todo                           |
+| Expression | Syntax                            | Expression | Syntax                       |
+| ---------- | --------------------------------- | ---------- | ---------------------------- |
+| `Literal`  |                                   | `Block`    | `{ [expr] }`                 |
+| `If`       | `if (expr) [block] else [block];` | `Function` | `func [name?](args) [block]` |
+| `Call`     | `ident(args)`                     | `Ident`    |                              |
+| `Array`    | `[expr, expr, ...]`               | `Index`    | `ident[number]`              |
+| `Hash`     | `{ string: expr, ... }`           | `Assign`   | `ident = expr`               |
 
 <br>
 
 ## Statements
 
-| Statement | Syntax                  | Statement             | Syntax                    |
-| --------- | ----------------------- | --------------------- | ------------------------- |
-| `Let`     | `let [ident] = [expr];` | `Assign`              | `[ident] = [expr];`       |
-| `Return`  | `return [expr];`        | `ExpressionStatement` | `[expr]`                  |
-| `Block`   | `{ [statement] }`       | `While`               | `while ([expr]) [block];` |
+| Statement | Syntax              | Statement | Syntax                  |
+| --------- | ------------------- | --------- | ----------------------- |
+| `Let`     | `let ident = expr;` | `While`   | `while (expr) [block];` |
+| `Return`  | `return expr;`      | `Block`   | `{ statement }`         |
 
 <br>
 
