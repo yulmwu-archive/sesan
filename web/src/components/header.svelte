@@ -68,6 +68,14 @@
             source: 'import.tiny',
         },
         {
+            name: 'Variable',
+            source: 'variable.tiny',
+        },
+        {
+            name: 'Operators',
+            source: 'operators.tiny',
+        },
+        {
             name: 'Standard Library - IO',
             source: '/stdlib/io.tiny',
         },
