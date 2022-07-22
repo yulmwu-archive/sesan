@@ -151,7 +151,7 @@ export default class Lexer {
     }
 
     public skipWhitespace() {
-        while (this.ch === ' ' || this.ch === '\n' || this.ch === '\r') {
+        while (this.ch === ' ' || this.ch === '\n' || this.ch === '\r' || this.ch === '\t') {
             if (this.ch === '\n') {
                 this.line += 1;
 
