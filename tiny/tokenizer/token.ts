@@ -10,6 +10,7 @@ enum TokenType {
     FUNCTION = 'FUNCTION',
     COMMENT = 'COMMENT',
     ELEMENT = 'ELEMENT',
+    NULLISH = 'NULLISH',
 
     ASSIGN = '=',
     PLUS = '+',
@@ -18,6 +19,7 @@ enum TokenType {
     ASTERISK = '*',
     SLASH = '/',
     PERCENT = '%',
+    QUESTION = '?',
 
     LT = '<',
     GT = '>',

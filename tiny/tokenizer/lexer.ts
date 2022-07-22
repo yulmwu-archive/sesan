@@ -151,7 +151,12 @@ export default class Lexer {
     }
 
     public skipWhitespace() {
-        while (this.ch === ' ' || this.ch === '\n' || this.ch === '\r' || this.ch === '\t') {
+        while (
+            this.ch === ' ' ||
+            this.ch === '\n' ||
+            this.ch === '\r' ||
+            this.ch === '\t'
+        ) {
             if (this.ch === '\n') {
                 this.line += 1;
 
@@ -355,6 +360,22 @@ export default class Lexer {
                     token = {
                         type: TokenType.ILLEGAL,
                         literal: this.ch,
+                        ...this.curr(),
+                    };
+                break;
+
+            case '?':
+                if (this.peekChar() === '?') {
+                    this.readChar();
+                    token = {
+                        type: TokenType.NULLISH,
+                        literal: '??',
+                        ...this.curr(),
+                    };
+                } else
+                    token = {
+                        type: TokenType.QUESTION,
+                        literal: '?',
                         ...this.curr(),
                     };
                 break;

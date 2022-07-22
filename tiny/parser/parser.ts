@@ -620,6 +620,7 @@ export default class Parser {
             case TokenType.PERCENT:
             case TokenType.ELEMENT:
             case TokenType.IN:
+            case TokenType.NULLISH:
                 return Priority.PRODUCT;
 
             case TokenType.LPAREN:

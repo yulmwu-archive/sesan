@@ -552,6 +552,9 @@ export default class Evaluator {
 
         if (right?.kind === ObjectKind.ERROR) return right;
 
+        if (operator === TokenType.NULLISH)
+            return left?.kind === ObjectKind.NULL ? right : left;
+
         switch (left?.kind) {
             case ObjectKind.NUMBER:
                 return this.evalNumberInfix(operator, left, right, env, pos);
