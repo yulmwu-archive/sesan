@@ -129,17 +129,21 @@ npm run start:repl [file]
 
 ## Operators
 
-| Operator | Syntax               | Literal Type                           |
-| -------- | -------------------- | -------------------------------------- |
-| `+`      | `Literal + Literal`  | `number`, `array`, `string`            |
-| `-`      | `Literal - Literal`  | `number`                               |
-| `*`      | `Literal * Literal`  | `number`                               |
-| `/`      | `Literal / Literal`  | `number`                               |
-| `%`      | `Literal % Literal`  | `number`                               |
-| `==`     | `Literal == Literal` | `number, string, boolean, array, hash` |
-| `!=`     | `Literal != Literal` | `number, string, boolean, array, hash` |
-| `<`      | `Literal < Literal`  | `number`                               |
-| `>`      | `Literal > Literal`  | `number`                               |
+| Operator | Syntax               | Literal Type                                          |
+| -------- | -------------------- | ----------------------------------------------------- |
+| `+`      | `Literal + Literal`  | `number`, `array`, `string`                           |
+| `-`      | `Literal - Literal`  | `number`                                              |
+| `*`      | `Literal * Literal`  | `number`                                              |
+| `/`      | `Literal / Literal`  | `number`                                              |
+| `%`      | `Literal % Literal`  | `number`                                              |
+| `==`     | `Literal == Literal` | `number, string, boolean, array, hash`                |
+| `!=`     | `Literal != Literal` | `number, string, boolean, array, hash`                |
+| `<`      | `Literal < Literal`  | `number`                                              |
+| `>`      | `Literal > Literal`  | `number`                                              |
+| `<=`     | `Literal <= Literal` | `number`                                              |
+| `>=`     | `Literal >= Literal` | `number`                                              |
+| `<-`     | `Literal <- Literal` | `array, hash`, `Any`                                  |
+| `in`     | `Literal in Literal` | `string, number, hash`, `string, number, hash, array` |
 
 <br>
 
@@ -240,6 +244,8 @@ console.log(
     -   [`If`](https://github.com/tsukiroku/tiny/blob/main/examples/if.tiny)
     -   [`While`](https://github.com/tsukiroku/tiny/blob/main/examples/while.tiny)
     -   [`Import`](https://github.com/tsukiroku/tiny/blob/main/examples/import.tiny)
+    -   [`Variable`](https://github.com/tsukiroku/tiny/blob/main/examples/variable.tiny)
+    -   [`Operators`](https://github.com/tsukiroku/tiny/blob/main/examples/operators.tiny)
     -   [`StdLib`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib)
         -   [`Array`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/array.tiny)
         -   [`IO`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/io.tiny)

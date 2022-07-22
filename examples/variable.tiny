@@ -1,0 +1,30 @@
+let str = 'Hello World';
+let str2 = "Hello World";
+
+let num = 10;
+let num2 = 3.141592;
+
+let bool = true;
+let bool2 = false;
+
+let arr = [1, 2, 3, 4, 5];
+
+let dict = {
+    'name': 'Kim',
+    'age': 20,
+    'hasCar': true,
+    'cars': ['Hyundai', 'Kia'],
+    'address': {
+        'street': 'Yeouido',
+        'city': 'Seoul'
+    },
+    'about': func() {
+        return 'My name is ' + dict['name'] + '.\n' +
+            'I am ' + string(dict['age']) + ' years old.\n' +
+            'I have a ' + string(length(dict['cars'])) + ' car(s), ' +
+            'and I live in ' + dict['address']['city'] + ' ' + dict['address']['street'] +
+            '.\nNice to meet you!';
+    }
+};
+
+println(dict['about']());
