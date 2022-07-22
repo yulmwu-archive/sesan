@@ -1,5 +1,5 @@
 func expect_true(v, i) {
-    if (!x) { throw('❌'); }
+    if (!v) { throw('❌'); }
 }
 
 forEach([

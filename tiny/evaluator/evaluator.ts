@@ -887,7 +887,16 @@ export default class Evaluator {
         if (operator === TokenType.ASSIGN) {
             const _right = this.evalExpression(right, env);
 
-            env.set((left as unknown as StringLiteral).value, _right);
+            if (!env.get((left as unknown as StringLiteral).value))
+                return error(
+                    `${
+                        (left as unknown as StringLiteral).value
+                    } is not defined`,
+                    pos.line,
+                    pos.column
+                );
+
+            env.update((left as unknown as StringLiteral).value, _right);
 
             return _right;
         }

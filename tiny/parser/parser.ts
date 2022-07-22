@@ -602,6 +602,7 @@ export default class Parser {
             case TokenType.NOT_EQUAL:
             case TokenType.AND:
             case TokenType.OR:
+            case TokenType.ASSIGN:
                 return Priority.EQUAL;
 
             case TokenType.LT:
@@ -617,7 +618,6 @@ export default class Parser {
             case TokenType.SLASH:
             case TokenType.ASTERISK:
             case TokenType.PERCENT:
-            case TokenType.ASSIGN:
             case TokenType.ELEMENT:
             case TokenType.IN:
                 return Priority.PRODUCT;

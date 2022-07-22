@@ -105,6 +105,7 @@ func repeat(x, r) {
             while (_x < r) {
                 result = push(result, x);
                 _x = _x + 1;
+                println(_x)
             }
 
             return result;
