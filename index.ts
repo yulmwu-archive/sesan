@@ -1,15 +1,18 @@
-import { builtinsEval, Func } from './tiny/builtin';
-import { Evaluator, NULL, printError } from './tiny/evaluator';
-import { Enviroment, ObjectKind, objectStringify } from './tiny/object';
-import { Options } from './tiny/options';
-import { Parser } from './tiny/parser';
-import { Lexer } from './tiny/tokenizer';
+import {
+    builtinsEval,
+    Func,
+    Evaluator,
+    NULL,
+    printError,
+    Enviroment,
+    ObjectKind,
+    objectStringify,
+    Options,
+    Lexer,
+    Parser,
+} from './tiny';
 
-export * from './tiny/object';
-export * from './tiny/options';
-export * from './tiny/tokenizer';
-export * from './tiny/parser';
-export * from './tiny/evaluator';
+export * from './tiny';
 
 type Stdio = (...x: Array<any>) => any;
 
