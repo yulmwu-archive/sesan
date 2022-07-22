@@ -38,7 +38,7 @@ import { TokenType } from '../tokenizer';
 import { Options } from '../options';
 import { error } from '.';
 import { Decorator } from '../builtin/decorator';
-import { stderr, stdin, StdioOptions, stdout } from '../../index';
+import { Position, stderr, stdin, StdioOptions, stdout } from '../../index';
 
 const NULL: LangObject = {
     kind: ObjectKind.NULL,
@@ -136,7 +136,11 @@ export default class Evaluator {
                     .value;
 
                 if (!env.get(name))
-                    return error(`identifier '${name}' not defined`);
+                    return error(
+                        `identifier '${name}' not defined`,
+                        statement.line,
+                        statement.column
+                    );
 
                 if (statement.ident) env.update(name, value);
 
@@ -206,7 +210,11 @@ export default class Evaluator {
 
             case ExpressionKind.Prefix: {
                 const expr = expression as unknown as PrefixExpression;
-                return this.evalPrefix(expr.operator, expr.right, env);
+
+                return this.evalPrefix(expr.operator, expr.right, env, {
+                    line: expr.line,
+                    column: expr.column,
+                });
             }
 
             case ExpressionKind.Infix:
@@ -215,7 +223,11 @@ export default class Evaluator {
                     infix.operator,
                     infix.left,
                     infix.right,
-                    env
+                    env,
+                    {
+                        line: infix.line,
+                        column: infix.column,
+                    }
                 );
 
             case ExpressionKind.Block:
@@ -237,7 +249,11 @@ export default class Evaluator {
             case ExpressionKind.Ident:
                 return this.evalIdent(
                     (expression as unknown as StringLiteral).value,
-                    env
+                    env,
+                    {
+                        line: expression.line,
+                        column: expression.column,
+                    }
                 );
 
             case ExpressionKind.Function: {
@@ -280,7 +296,10 @@ export default class Evaluator {
                 if (args.length == 1 && args[0]?.kind === ObjectKind.ERROR)
                     return args[0];
 
-                return this.applyFunction(functionObject, name, args, env);
+                return this.applyFunction(functionObject, name, args, env, {
+                    line: expression.line,
+                    column: expression.column,
+                });
             }
 
             case ExpressionKind.Array: {
@@ -314,7 +333,10 @@ export default class Evaluator {
 
                 if (index.kind === ObjectKind.ERROR) return NULL;
 
-                return this.evalIndex(_expr, index);
+                return this.evalIndex(_expr, index, {
+                    line: expression.line,
+                    column: expression.column,
+                });
             }
             case ExpressionKind.Hash:
                 return this.evalHashArguments(
@@ -396,16 +418,18 @@ export default class Evaluator {
         func: LangObject,
         name: string,
         args: Array<LangObject>,
-        env: Enviroment
+        env: Enviroment,
+        pos: Position
     ): LangObject {
         if (func?.kind === ObjectKind.FUNCTION) {
             const f = func as unknown as FunctionObject;
 
             if (!func.d && f.parameters.length !== args.length)
-                return {
-                    kind: ObjectKind.ERROR,
-                    message: `${name} expected ${f.parameters.length} arguments but got ${args.length}`,
-                };
+                return error(
+                    `${name} expected ${f.parameters.length} arguments but got ${args.length}`,
+                    pos.line,
+                    pos.column
+                );
 
             const res = this.evalExpression(
                 f.body,
@@ -418,9 +442,14 @@ export default class Evaluator {
         }
 
         if (func?.kind === ObjectKind.BUILTIN)
-            return (func as unknown as BuiltinFunction).func(args, env, this);
+            return (func as unknown as BuiltinFunction).func(
+                args,
+                env,
+                this,
+                pos
+            );
 
-        return error(`'${name}' is not a function.`);
+        return error(`'${name}' is not a function.`, pos.line, pos.column);
     }
 
     private extendFunctionEnv(
@@ -445,11 +474,20 @@ export default class Evaluator {
         return new Enviroment();
     }
 
-    private evalIdent(name: string, env: Enviroment): LangObject {
+    private evalIdent(
+        name: string,
+        env: Enviroment,
+        pos: Position
+    ): LangObject {
         if (env.get(name)) return env.get(name);
 
         const builtin = builtinFunction(name, env);
-        if (!builtin) return error(`identifier '${name}' is not defined.`);
+        if (!builtin)
+            return error(
+                `identifier '${name}' is not defined.`,
+                pos.line,
+                pos.column
+            );
 
         return builtin;
     }
@@ -485,7 +523,8 @@ export default class Evaluator {
     private evalPrefix(
         operator: TokenType,
         right: Expression,
-        env: Enviroment
+        env: Enviroment,
+        pos: Position
     ): LangObject {
         const expression = this.evalExpression(right, env);
 
@@ -493,7 +532,7 @@ export default class Evaluator {
 
         switch (operator) {
             case TokenType.MINUS:
-                return this.evalMinus(expression);
+                return this.evalMinus(expression, pos);
 
             case TokenType.BANG:
                 return this.evalBang(expression);
@@ -507,7 +546,8 @@ export default class Evaluator {
         operator: TokenType,
         _left: Expression,
         _right: Expression,
-        env: Enviroment
+        env: Enviroment,
+        pos: Position
     ): LangObject {
         const left = this.evalExpression(_left, env);
 
@@ -519,22 +559,26 @@ export default class Evaluator {
 
         switch (left?.kind) {
             case ObjectKind.NUMBER:
-                return this.evalNumberInfix(operator, left, right, env);
+                return this.evalNumberInfix(operator, left, right, env, pos);
 
             case ObjectKind.STRING:
-                return this.evalStringInfix(operator, left, right, env);
+                return this.evalStringInfix(operator, left, right, env, pos);
 
             case ObjectKind.BOOLEAN:
-                return this.evalBooleanInfix(operator, left, right, env);
+                return this.evalBooleanInfix(operator, left, right, env, pos);
 
             case ObjectKind.HASH:
-                return this.evalHashInfix(operator, left, right, env);
+                return this.evalHashInfix(operator, left, right, env, pos);
 
             case ObjectKind.ARRAY:
-                return this.evalArrayInfix(operator, left, right, env);
+                return this.evalArrayInfix(operator, left, right, env, pos);
 
             default:
-                return error(`type missmatch [${left?.kind}] [${right?.kind}]`);
+                return error(
+                    `type missmatch [${left?.kind}] [${right?.kind}]`,
+                    pos.line,
+                    pos.column
+                );
         }
     }
 
@@ -542,7 +586,8 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment
+        env: Enviroment,
+        pos: Position
     ): LangObject {
         if (
             left?.kind !== ObjectKind.NUMBER ||
@@ -551,7 +596,9 @@ export default class Evaluator {
             return error(
                 `type missmatch [${objectKindStringify(
                     left?.kind ?? ObjectKind.NULL
-                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`
+                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`,
+                pos.line,
+                pos.column
             );
 
         switch (operator) {
@@ -630,7 +677,8 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment
+        env: Enviroment,
+        pos: Position
     ): LangObject {
         if (
             left?.kind !== ObjectKind.BOOLEAN ||
@@ -639,7 +687,9 @@ export default class Evaluator {
             return error(
                 `type missmatch [${objectKindStringify(
                     left?.kind ?? ObjectKind.NULL
-                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`
+                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`,
+                pos.line,
+                pos.column
             );
 
         switch (operator) {
@@ -676,7 +726,8 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment
+        env: Enviroment,
+        pos: Position
     ): LangObject {
         if (
             left?.kind !== ObjectKind.STRING ||
@@ -685,7 +736,9 @@ export default class Evaluator {
             return error(
                 `type missmatch [${objectKindStringify(
                     left?.kind ?? ObjectKind.NULL
-                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`
+                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`,
+                pos.line,
+                pos.column
             );
 
         switch (operator) {
@@ -716,13 +769,16 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment
+        env: Enviroment,
+        pos: Position
     ): LangObject {
         if (left?.kind !== ObjectKind.HASH || right?.kind !== ObjectKind.HASH)
             return error(
                 `type missmatch [${objectKindStringify(
                     left?.kind ?? ObjectKind.NULL
-                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`
+                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`,
+                pos.line,
+                pos.column
             );
 
         switch (operator) {
@@ -751,13 +807,16 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment
+        env: Enviroment,
+        pos: Position
     ): LangObject {
         if (left?.kind !== ObjectKind.ARRAY || right?.kind !== ObjectKind.ARRAY)
             return error(
                 `type missmatch [${objectKindStringify(
                     left?.kind ?? ObjectKind.NULL
-                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`
+                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`,
+                pos.line,
+                pos.column
             );
 
         switch (operator) {
@@ -810,13 +869,17 @@ export default class Evaluator {
         return NULL;
     }
 
-    private evalIndex(left: LangObject, index: LangObject): LangObject {
+    private evalIndex(
+        left: LangObject,
+        index: LangObject,
+        pos: Position
+    ): LangObject {
         switch (left?.kind) {
             case ObjectKind.ARRAY:
                 if (index?.kind === ObjectKind.NUMBER)
-                    return this.evalArrayIndex(left, index);
+                    return this.evalArrayIndex(left, index, pos);
 
-                return error('type missmatch');
+                return error('type missmatch', pos.line, pos.column);
 
             case ObjectKind.HASH:
                 let key: string | number;
@@ -826,7 +889,7 @@ export default class Evaluator {
                         key = index.value;
                         break;
                     default:
-                        return error('type missmatch');
+                        return error('type missmatch', pos.line, pos.column);
                 }
 
                 const newMap: Map<string | number, LangObject> = new Map();
@@ -842,15 +905,19 @@ export default class Evaluator {
         }
     }
 
-    private evalArrayIndex(left: LangObject, index: LangObject): LangObject {
+    private evalArrayIndex(
+        left: LangObject,
+        index: LangObject,
+        pos: Position
+    ): LangObject {
         if (
             index?.kind !== ObjectKind.NUMBER ||
             left?.kind !== ObjectKind.ARRAY
         )
-            return error('type missmatch');
+            return error('type missmatch', pos.line, pos.column);
 
         if (index.value < 0 || index.value >= left.value.length)
-            return error('index out of range');
+            return error('index out of range', pos.line, pos.column);
 
         return left.value[index.value];
     }
@@ -880,8 +947,9 @@ export default class Evaluator {
         };
     }
 
-    private evalMinus(obj: LangObject): LangObject {
-        if (obj?.kind !== ObjectKind.NUMBER) return error('type missmatch');
+    private evalMinus(obj: LangObject, pos: Position): LangObject {
+        if (obj?.kind !== ObjectKind.NUMBER)
+            return error('type missmatch', pos.line, pos.column);
 
         return {
             kind: ObjectKind.NUMBER,

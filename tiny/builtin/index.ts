@@ -10,20 +10,20 @@ import {
     objectStringify,
     StringObject,
 } from '../object';
-import { Parser } from '../parser';
+import { Parser, Position } from '../parser';
 import { Lexer } from '../tokenizer';
 import { readFileSync } from 'fs';
 import { print, readLine, throwError } from './io';
 import { push, pop, shift, unshift, slice, forEach } from './array';
 import { decoratorFunc } from './decorator';
-import Tiny from '../../index';
 
 type Func = Omit<BuiltinFunction, 'kind'>['func'];
 
-const invalidArgument: LangObject = {
+const invalidArgument = (pos: Position): LangObject => ({
     kind: ObjectKind.ERROR,
     message: 'Invalid arguments',
-};
+    ...pos,
+});
 
 const builtinsEval: Map<string, Func> = new Map();
 
@@ -51,6 +51,7 @@ export default (name: string, env: Enviroment): LangObject | null => {
         ['__builtin_forEach', forEach],
         ['__root', rootDir],
         ['__ast', ast],
+        ['__pos', curr],
         ['@func', decoratorFunc],
     ]).get(name);
 
@@ -65,9 +66,10 @@ export default (name: string, env: Enviroment): LangObject | null => {
 const getArguments: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    t: Evaluator
+    t: Evaluator,
+    pos: Position
 ): LangObject => {
-    if (args.length !== 1) return invalidArgument;
+    if (args.length !== 1) return invalidArgument(pos);
 
     return {
         kind: ObjectKind.ARRAY,
@@ -79,10 +81,11 @@ const getArguments: Func = (
 const importEnv: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    t: Evaluator
+    t: Evaluator,
+    pos: Position
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument;
+        return invalidArgument(pos);
 
     try {
         let fileName = (args[0] as StringObject).value;
@@ -107,12 +110,18 @@ const importEnv: Func = (
             message: `Could not import file: ${
                 (args[0] as StringObject).value
             }`,
+            ...pos,
         };
     }
 };
 
-const typeofObject: Func = (args: Array<LangObject>): LangObject => {
-    if (args.length !== 1) return invalidArgument;
+const typeofObject: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator,
+    pos: Position
+): LangObject => {
+    if (args.length !== 1) return invalidArgument(pos);
 
     return {
         kind: ObjectKind.STRING,
@@ -149,10 +158,12 @@ const length: Func = (args: Array<LangObject>): LangObject => {
 
 const deleteEnv: Func = (
     args: Array<LangObject>,
-    env: Enviroment
+    env: Enviroment,
+    t: Evaluator,
+    pos: Position
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument;
+        return invalidArgument(pos);
 
     env.delete(args[0].value);
 
@@ -162,15 +173,17 @@ const deleteEnv: Func = (
 const evalCode: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    t: Evaluator
+    t: Evaluator,
+    pos: Position
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument;
+        return invalidArgument(pos);
 
     if (!t.option.allowEval)
         return {
             kind: ObjectKind.ERROR,
             message: 'allowEval is not allowed',
+            ...pos,
         };
 
     return new Evaluator(
@@ -188,15 +201,17 @@ const evalCode: Func = (
 const evalJSCode: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    t: Evaluator
+    t: Evaluator,
+    pos: Position
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument;
+        return invalidArgument(pos);
 
     if (!t.option.allowJavaScript)
         return {
             kind: ObjectKind.ERROR,
             message: 'allowJavaScript is not allowed',
+            ...pos,
         };
 
     try {
@@ -206,15 +221,21 @@ const evalJSCode: Func = (
             return {
                 kind: ObjectKind.ERROR,
                 message: `Could not eval JS code: ${e.message}`,
+                ...pos,
             };
 
         throw e;
     }
 };
 
-const convert: Func = (args: Array<LangObject>): LangObject => {
+const convert: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator,
+    pos: Position
+): LangObject => {
     if (args.length !== 2 || args[1]?.kind !== ObjectKind.STRING)
-        return invalidArgument;
+        return invalidArgument(pos);
 
     const to = args[1].value.toLowerCase();
 
@@ -297,5 +318,24 @@ const ast: Func = (
         env,
         t.option
     ).eval() as ArrayObject;
+
+const curr: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator,
+    pos: Position
+): LangObject => ({
+    kind: ObjectKind.HASH,
+    pairs: new Map([
+        [
+            { kind: ObjectKind.STRING, value: 'line' },
+            { kind: ObjectKind.NUMBER, value: pos.line },
+        ],
+        [
+            { kind: ObjectKind.STRING, value: 'column' },
+            { kind: ObjectKind.NUMBER, value: pos.column },
+        ],
+    ]),
+});
 
 export { Func, invalidArgument, builtinsEval };

@@ -59,7 +59,7 @@ export default class {
             }).eval();
 
             if (result?.kind === ObjectKind.ERROR) {
-                printError(result.message, stdout, this.option);
+                printError(result, stdout, this.option);
                 return '';
             }
 

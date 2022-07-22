@@ -1,7 +1,7 @@
 import { Enviroment } from '.';
 import { Evaluator } from '../evaluator';
 import { Options } from '../options';
-import { Expression } from '../parser';
+import { Expression, Position } from '../parser';
 
 type LangObject =
     | NumberObject
@@ -167,7 +167,8 @@ interface BuiltinFunction {
     func: (
         args: Array<LangObject>,
         env: Enviroment,
-        t: Evaluator
+        t: Evaluator,
+        pos: Position
     ) => LangObject;
     kind: ObjectKind.BUILTIN;
 }
@@ -180,6 +181,8 @@ interface ReturnValue {
 interface ErrorObject {
     message: string;
     kind: ObjectKind.ERROR;
+    line: number;
+    column: number;
 }
 
 interface Null {

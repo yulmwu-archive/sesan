@@ -1,4 +1,5 @@
 import { Func, invalidArgument } from '.';
+import { Position } from '../../index';
 import { Evaluator, NULL } from '../evaluator';
 import {
     ArrayObject,
@@ -8,9 +9,14 @@ import {
     ObjectKind,
 } from '../object';
 
-const push: Func = (args: Array<LangObject>): LangObject => {
+const push: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator,
+    pos: Position
+): LangObject => {
     if (args.length !== 2 || args[0]?.kind !== ObjectKind.ARRAY)
-        return invalidArgument;
+        return invalidArgument(pos);
 
     return {
         kind: ObjectKind.ARRAY,
@@ -18,9 +24,14 @@ const push: Func = (args: Array<LangObject>): LangObject => {
     };
 };
 
-const pop: Func = (args: Array<LangObject>): LangObject => {
+const pop: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator,
+    pos: Position
+): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.ARRAY)
-        return invalidArgument;
+        return invalidArgument(pos);
 
     return {
         kind: ObjectKind.ARRAY,
@@ -28,9 +39,14 @@ const pop: Func = (args: Array<LangObject>): LangObject => {
     };
 };
 
-const shift: Func = (args: Array<LangObject>): LangObject => {
+const shift: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator,
+    pos: Position
+): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.ARRAY)
-        return invalidArgument;
+        return invalidArgument(pos);
 
     return {
         kind: ObjectKind.ARRAY,
@@ -38,9 +54,14 @@ const shift: Func = (args: Array<LangObject>): LangObject => {
     };
 };
 
-const unshift: Func = (args: Array<LangObject>): LangObject => {
+const unshift: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator,
+    pos: Position
+): LangObject => {
     if (args.length !== 2 || args[0]?.kind !== ObjectKind.ARRAY)
-        return invalidArgument;
+        return invalidArgument(pos);
 
     return {
         kind: ObjectKind.ARRAY,
@@ -48,14 +69,19 @@ const unshift: Func = (args: Array<LangObject>): LangObject => {
     };
 };
 
-const slice: Func = (args: Array<LangObject>): LangObject => {
+const slice: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator,
+    pos: Position
+): LangObject => {
     if (
         args.length !== 3 ||
         args[0]?.kind !== ObjectKind.ARRAY ||
         args[1]?.kind !== ObjectKind.NUMBER ||
         args[2]?.kind !== ObjectKind.NUMBER
     )
-        return invalidArgument;
+        return invalidArgument(pos);
 
     return {
         kind: ObjectKind.ARRAY,
@@ -69,14 +95,15 @@ const slice: Func = (args: Array<LangObject>): LangObject => {
 const forEach: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    t: Evaluator
+    t: Evaluator,
+    pos: Position
 ): LangObject => {
     if (
         args.length !== 2 ||
         args[0]?.kind !== ObjectKind.ARRAY ||
         args[1]?.kind !== ObjectKind.FUNCTION
     )
-        return invalidArgument;
+        return invalidArgument(pos);
 
     const array = args[0] as ArrayObject;
     const func = args[1] as FunctionObject;
@@ -92,7 +119,8 @@ const forEach: Func = (
                     value: index,
                 },
             ],
-            env
+            env,
+            pos
         )
     );
 

@@ -47,6 +47,8 @@ enum TokenType {
 interface Token {
     type: TokenType;
     literal: string;
+    line: number;
+    column: number;
 }
 
 const fromLiteral = (literal: string): TokenType => {

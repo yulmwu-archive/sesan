@@ -1,6 +1,7 @@
 import { Func, invalidArgument } from '.';
 import { Evaluator, NULL, printError as printError_ } from '../evaluator';
 import { Enviroment, LangObject, objectStringify, ObjectKind } from '../object';
+import { Position } from '../parser';
 
 const print: Func = (
     args: Array<LangObject>,
@@ -36,12 +37,20 @@ const readLine: Func = (
 const throwError: Func = (
     args: Array<LangObject>,
     env: Enviroment,
-    t: Evaluator
+    t: Evaluator,
+    pos: Position
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument;
+        return invalidArgument(pos);
 
-    printError_(args[0].value, t.stdio.stderr, t.option);
+    printError_(
+        {
+            ...pos,
+            message: args[0].value,
+        },
+        t.stdio.stderr,
+        t.option
+    );
 
     return NULL;
 };
