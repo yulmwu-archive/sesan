@@ -577,6 +577,20 @@ export default class Evaluator {
         }
     }
 
+    private typeMissmatch(
+        left: LangObject,
+        right: LangObject,
+        pos: Position
+    ): LangObject {
+        return error(
+            `type missmatch [${objectKindStringify(
+                left?.kind ?? ObjectKind.NULL
+            )}] [${objectKindStringify(left?.kind ?? ObjectKind.NULL)}]`,
+            pos.line,
+            pos.column
+        );
+    }
+
     private evalNumberInfix(
         operator: TokenType,
         left: LangObject,
@@ -584,17 +598,14 @@ export default class Evaluator {
         env: Enviroment,
         pos: Position
     ): LangObject {
+        if (operator === TokenType.IN)
+            return this.evalInOperator(left, right, pos);
+
         if (
             left?.kind !== ObjectKind.NUMBER ||
             right?.kind !== ObjectKind.NUMBER
         )
-            return error(
-                `type missmatch [${objectKindStringify(
-                    left?.kind ?? ObjectKind.NULL
-                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`,
-                pos.line,
-                pos.column
-            );
+            return this.typeMissmatch(left, right, pos);
 
         switch (operator) {
             case TokenType.PLUS:
@@ -675,17 +686,14 @@ export default class Evaluator {
         env: Enviroment,
         pos: Position
     ): LangObject {
+        if (operator === TokenType.IN)
+            return this.evalInOperator(left, right, pos);
+
         if (
             left?.kind !== ObjectKind.BOOLEAN ||
             right?.kind !== ObjectKind.BOOLEAN
         )
-            return error(
-                `type missmatch [${objectKindStringify(
-                    left?.kind ?? ObjectKind.NULL
-                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`,
-                pos.line,
-                pos.column
-            );
+            return this.typeMissmatch(left, right, pos);
 
         switch (operator) {
             case TokenType.EQUAL:
@@ -724,17 +732,14 @@ export default class Evaluator {
         env: Enviroment,
         pos: Position
     ): LangObject {
+        if (operator === TokenType.IN)
+            return this.evalInOperator(left, right, pos);
+
         if (
             left?.kind !== ObjectKind.STRING ||
             right?.kind !== ObjectKind.STRING
         )
-            return error(
-                `type missmatch [${objectKindStringify(
-                    left?.kind ?? ObjectKind.NULL
-                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`,
-                pos.line,
-                pos.column
-            );
+            return this.typeMissmatch(left, right, pos);
 
         switch (operator) {
             case TokenType.PLUS:
@@ -767,6 +772,26 @@ export default class Evaluator {
         env: Enviroment,
         pos: Position
     ): LangObject {
+        switch (operator) {
+            case TokenType.ELEMENT: {
+                if (
+                    right?.kind === ObjectKind.NUMBER ||
+                    right?.kind === ObjectKind.STRING
+                ) {
+                    const newMap: Map<string | number, LangObject> = new Map();
+
+                    (left as HashObject).pairs.forEach((value, key) =>
+                        newMap.set(key.value, value)
+                    );
+
+                    return newMap.get(right.value) ?? NULL;
+                } else return NULL;
+            }
+
+            case TokenType.IN:
+                return this.evalInOperator(left, right, pos);
+        }
+
         if (left?.kind !== ObjectKind.HASH || right?.kind !== ObjectKind.HASH)
             return error(
                 `type missmatch [${objectKindStringify(
@@ -805,6 +830,16 @@ export default class Evaluator {
         env: Enviroment,
         pos: Position
     ): LangObject {
+        switch (operator) {
+            case TokenType.ELEMENT:
+                if (right?.kind === ObjectKind.NUMBER)
+                    return this.evalIndex(left, right, pos);
+                else NULL;
+
+            case TokenType.IN:
+                return this.evalInOperator(left, right, pos);
+        }
+
         if (left?.kind !== ObjectKind.ARRAY || right?.kind !== ObjectKind.ARRAY)
             return error(
                 `type missmatch [${objectKindStringify(
@@ -858,6 +893,63 @@ export default class Evaluator {
         }
 
         return null;
+    }
+
+    private evalInOperator(
+        left: LangObject,
+        right: LangObject,
+        pos: Position
+    ): LangObject {
+        switch (right?.kind) {
+            case ObjectKind.ARRAY:
+                return {
+                    kind: ObjectKind.BOOLEAN,
+                    value: right.value
+                        .map((x) => JSON.stringify(x))
+                        .includes(JSON.stringify(left)),
+                };
+
+            case ObjectKind.HASH: {
+                if (
+                    left?.kind === ObjectKind.STRING ||
+                    left?.kind === ObjectKind.NUMBER
+                )
+                    return {
+                        kind: ObjectKind.BOOLEAN,
+                        value: [...right.pairs.keys()]
+                            .map((x) => JSON.stringify(x))
+                            .includes(JSON.stringify(left)),
+                    };
+                else return this.typeMissmatch(left, right, pos);
+            }
+
+            case ObjectKind.STRING:
+                return {
+                    kind: ObjectKind.BOOLEAN,
+                    value: right.value.includes((left as StringObject).value),
+                };
+
+            case ObjectKind.NUMBER:
+                if (left?.kind === ObjectKind.HASH)
+                    return {
+                        kind: ObjectKind.BOOLEAN,
+                        value: [...left.pairs.values()]
+                            .map((x) => JSON.stringify(x))
+                            .includes(JSON.stringify(right)),
+                    };
+                else return this.typeMissmatch(left, right, pos);
+
+            default:
+                return error(
+                    `type missmatch [${objectKindStringify(
+                        left?.kind ?? ObjectKind.NULL
+                    )}] [${objectKindStringify(
+                        right?.kind ?? ObjectKind.NULL
+                    )}]`,
+                    pos.line,
+                    pos.column
+                );
+        }
     }
 
     private evalIfExpression(

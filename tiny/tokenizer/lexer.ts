@@ -41,15 +41,35 @@ export default class Lexer {
     public readIdentifier(): Token {
         let position = this.position;
 
-        while (this.isLetter(this.ch)) this.readChar();
+        if (!this.isDigit(this.ch)) {
+            while (this.isLetter(this.ch) || /[0-9]/.test(this.ch))
+                this.readChar();
 
-        const literal = this.input.substring(position, this.position);
+            const literal = this.input.substring(position, this.position);
 
-        return {
-            type: fromLiteral(literal),
-            literal: literal,
-            ...this.curr(),
-        };
+            return {
+                type: fromLiteral(literal),
+                literal: literal,
+                ...this.curr(),
+            };
+        } else {
+            printError(
+                {
+                    ...this.curr(),
+                    message: 'Invalid identifier',
+                },
+                this.stderr.stderr,
+                {
+                    ...this.stderr,
+                }
+            );
+
+            return {
+                type: TokenType.EOF,
+                literal: 'EOF',
+                ...this.curr(),
+            };
+        }
     }
 
     public readNumber(): Token {
@@ -80,6 +100,7 @@ export default class Lexer {
                 }
                 dot = true;
             }
+
             this.readChar();
         }
 
@@ -121,7 +142,9 @@ export default class Lexer {
 
         return {
             type: TokenType.STRING,
-            literal: this.input.substring(position, this.position),
+            literal: this.input
+                .substring(position, this.position)
+                .replace('\\n', '\n'),
             line: this.line,
             column: this.position - position,
         };
@@ -273,6 +296,13 @@ export default class Lexer {
                         literal: '<=',
                         ...this.curr(),
                     };
+                } else if (this.peekChar() === '-') {
+                    this.readChar();
+                    token = {
+                        type: TokenType.ELEMENT,
+                        literal: '<-',
+                        ...this.curr(),
+                    };
                 } else
                     token = {
                         type: TokenType.LT,
@@ -408,7 +438,7 @@ export default class Lexer {
     }
 
     private isLetter(ch: string): boolean {
-        return /[a-zA-Z]/.test(ch) || ch === '_' || ch === '@' || ch === '#';
+        return /[a-zA-Z]/.test(ch) || ch === '_' || ch === '@';
     }
 
     private isDigit(ch: string): boolean {

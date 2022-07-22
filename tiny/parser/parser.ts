@@ -618,6 +618,8 @@ export default class Parser {
             case TokenType.ASTERISK:
             case TokenType.PERCENT:
             case TokenType.ASSIGN:
+            case TokenType.ELEMENT:
+            case TokenType.IN:
                 return Priority.PRODUCT;
 
             case TokenType.LPAREN:

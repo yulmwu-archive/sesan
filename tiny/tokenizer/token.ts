@@ -9,6 +9,7 @@ enum TokenType {
     FALSE = 'FALSE',
     FUNCTION = 'FUNCTION',
     COMMENT = 'COMMENT',
+    ELEMENT = 'ELEMENT',
 
     ASSIGN = '=',
     PLUS = '+',
@@ -42,6 +43,7 @@ enum TokenType {
     ELSE = 'ELSE',
     RETURN = 'RETURN',
     WHILE = 'WHILE',
+    IN = 'IN',
 }
 
 interface Token {
@@ -76,6 +78,9 @@ const fromLiteral = (literal: string): TokenType => {
 
         case 'while':
             return TokenType.WHILE;
+
+        case 'in': 
+            return TokenType.IN;
 
         default:
             return TokenType.IDENT;
