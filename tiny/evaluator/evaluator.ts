@@ -202,16 +202,17 @@ export default class Evaluator {
             case ExpressionKind.Infix:
                 const infix = expression as unknown as InfixExpression;
 
-                if (infix.operator === TokenType.ASSIGN) {
-                    const right = this.evalExpression(infix.right, env);
-
-                    env.set(
-                        (infix.left as unknown as StringLiteral).value,
-                        right
+                if (infix.operator === TokenType.ASSIGN)
+                    return this.evalIdentInfix(
+                        infix.operator,
+                        infix.left,
+                        infix.right,
+                        env,
+                        {
+                            line: infix.line,
+                            column: infix.column,
+                        }
                     );
-
-                    return right;
-                }
 
                 return this.evalInfix(
                     infix.operator,
@@ -839,6 +840,24 @@ export default class Evaluator {
             default:
                 return null;
         }
+    }
+
+    private evalIdentInfix(
+        operator: TokenType,
+        left: Expression,
+        right: Expression,
+        env: Enviroment,
+        pos: Position
+    ): LangObject {
+        if (operator === TokenType.ASSIGN) {
+            const _right = this.evalExpression(right, env);
+
+            env.set((left as unknown as StringLiteral).value, _right);
+
+            return _right;
+        }
+
+        return null;
     }
 
     private evalIfExpression(
