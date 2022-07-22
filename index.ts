@@ -79,7 +79,7 @@ export default class Tiny {
         ).eval();
 
         if (result?.kind === ObjectKind.ERROR)
-            printError(result.message, this.stdio.stderr, this.option);
+            printError(result, this.stdio.stderr, this.option);
 
         return objectStringify(result);
     }
