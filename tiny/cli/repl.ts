@@ -1,12 +1,22 @@
 import prompt from 'prompt-sync';
 import colors from 'colors';
 
-import { Evaluator, printError } from '../evaluator';
-import { Enviroment, LangObject, objectStringify, ObjectKind } from '../object';
-import { Parser, Program } from '../parser';
-import { Lexer, Token, TokenType } from '../tokenizer';
-import { Options } from '../options';
-import { stdout, stderr } from '../../index';
+import {
+    stdout,
+    stderr,
+    Options,
+    Lexer,
+    Token,
+    TokenType,
+    Parser,
+    Program,
+    Enviroment,
+    LangObject,
+    objectStringify,
+    ObjectKind,
+    Evaluator,
+    printError,
+} from '../../index';
 
 type Mode = 'repl' | 'parser' | 'parser_json' | 'lexer' | 'env';
 

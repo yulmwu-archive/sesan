@@ -1,7 +1,5 @@
 import { existsSync, readFileSync } from 'fs';
-import { Enviroment } from '../object';
-import Tiny from '../../index';
-import parseOptions from '../options';
+import Tiny, { parseOptions, Enviroment } from '../../index';
 import Repl from './repl';
 import prompt from 'prompt-sync';
 

@@ -1,13 +1,14 @@
 import { Func, invalidArgument } from '.';
-import { Position } from '../../index';
-import { Evaluator, NULL } from '../evaluator';
 import {
+    Position,
+    Evaluator,
+    NULL,
     ArrayObject,
     Enviroment,
     FunctionObject,
     LangObject,
     ObjectKind,
-} from '../object';
+} from '../../index';
 
 const push: Func = (
     args: Array<LangObject>,

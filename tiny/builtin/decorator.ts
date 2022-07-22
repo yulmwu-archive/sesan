@@ -1,7 +1,12 @@
 import { Func, invalidArgument } from '.';
-import { Enviroment, Options, Position } from '../../index';
-import { Evaluator, NULL } from '../evaluator';
-import { LangObject, ObjectKind } from '../object';
+import {
+    Enviroment,
+    Position,
+    Evaluator,
+    NULL,
+    LangObject,
+    ObjectKind,
+} from '../../index';
 
 type Decorator = {
     disableCheckArguments: boolean;

@@ -1,4 +1,3 @@
-import { Evaluator, NULL } from '../evaluator';
 import {
     ArrayObject,
     BuiltinFunction,
@@ -9,9 +8,12 @@ import {
     objectKindStringify,
     objectStringify,
     StringObject,
-} from '../object';
-import { Parser, Position } from '../parser';
-import { Lexer } from '../tokenizer';
+    Evaluator,
+    NULL,
+    Parser,
+    Position,
+    Lexer,
+} from '../../index';
 import { readFileSync } from 'fs';
 import { print, readLine, throwError } from './io';
 import { push, pop, shift, unshift, slice, forEach } from './array';
@@ -27,7 +29,7 @@ const invalidArgument = (pos: Position): LangObject => ({
 
 const builtinsEval: Map<string, Func> = new Map();
 
-export default (name: string, env: Enviroment): LangObject | null => {
+const builtinFunction = (name: string, env: Enviroment): LangObject | null => {
     const func: Func | undefined = new Map([
         ...builtinsEval,
         ['import', importEnv],
@@ -338,4 +340,5 @@ const curr: Func = (
     ]),
 });
 
-export { Func, invalidArgument, builtinsEval };
+export * from './decorator';
+export { Func, invalidArgument, builtinsEval, builtinFunction };

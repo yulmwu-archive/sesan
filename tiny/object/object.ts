@@ -1,7 +1,10 @@
-import { Enviroment } from '.';
-import { Evaluator } from '../evaluator';
-import { Options } from '../options';
-import { Expression, Position } from '../parser';
+import {
+    Enviroment,
+    Evaluator,
+    Options,
+    Expression,
+    Position,
+} from '../../index';
 
 type LangObject =
     | NumberObject
@@ -16,7 +19,7 @@ type LangObject =
     | Null
     | null;
 
-enum ObjectKind {
+const enum ObjectKind {
     NUMBER = 300,
     STRING,
     BOOLEAN,

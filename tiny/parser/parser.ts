@@ -1,4 +1,3 @@
-import { Lexer, Token, TokenType } from '../tokenizer';
 import {
     AssignStatement,
     BlockStatement,
@@ -17,7 +16,10 @@ import {
     ReturnStatement,
     Statement,
     WhileStatement,
-} from '.';
+    Lexer,
+    Token,
+    TokenType,
+} from '../../index';
 
 enum Priority {
     LOWEST = 1,

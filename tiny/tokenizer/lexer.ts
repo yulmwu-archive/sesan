@@ -1,7 +1,12 @@
-import { Position, Stdio } from '../../index';
-import { printError } from '../evaluator';
-import { fromLiteral, Token, TokenType } from './token';
-import { Options } from '../options';
+import {
+    Position,
+    Stdio,
+    printError,
+    fromLiteral,
+    Token,
+    TokenType,
+    Options,
+} from '../../index';
 
 interface LexerStderrOptions extends Options {
     stderr: Stdio;

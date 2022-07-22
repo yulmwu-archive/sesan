@@ -1,6 +1,10 @@
-import { LangObject, ObjectKind } from '../object';
-import { ParseError, Stdio } from '../../index';
-import { Options } from '../options';
+import {
+    ParseError,
+    Stdio,
+    Options,
+    LangObject,
+    ObjectKind,
+} from '../../index';
 import colors from 'colors';
 
 colors.enabled = true;

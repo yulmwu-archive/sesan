@@ -1,7 +1,14 @@
 import { Func, invalidArgument } from '.';
-import { Evaluator, NULL, printError as printError_ } from '../evaluator';
-import { Enviroment, LangObject, objectStringify, ObjectKind } from '../object';
-import { Position } from '../parser';
+import {
+    Position,
+    Enviroment,
+    LangObject,
+    objectStringify,
+    ObjectKind,
+    Evaluator,
+    NULL,
+    printError as printError_,
+} from '../../index';
 
 const print: Func = (
     args: Array<LangObject>,

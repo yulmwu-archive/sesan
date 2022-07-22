@@ -11,5 +11,4 @@ const parseOptions = (option?: string): Options =>
               stderrColor: true,
           } as IOptions);
 
-export default parseOptions;
-export { Options };
+export { Options, parseOptions };

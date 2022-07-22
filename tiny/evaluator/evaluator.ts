@@ -1,17 +1,3 @@
-import builtinFunction from '../builtin';
-import {
-    BooleanObject,
-    BuiltinFunction,
-    Enviroment,
-    HashObject,
-    LangObject,
-    NumberObject,
-    ObjectKind,
-    StringObject,
-    newEnclosedEnvironment,
-    objectKindStringify,
-    FunctionObject,
-} from '../object';
 import {
     ArrayExpression,
     BlockStatement,
@@ -33,12 +19,28 @@ import {
     StringLiteral,
     WhileStatement,
     ReturnStatement,
-} from '../parser';
-import { TokenType } from '../tokenizer';
-import { Options } from '../options';
-import { error } from '.';
-import { Decorator } from '../builtin/decorator';
-import { Position, stderr, stdin, StdioOptions, stdout } from '../../index';
+    BooleanObject,
+    BuiltinFunction,
+    Enviroment,
+    HashObject,
+    LangObject,
+    NumberObject,
+    ObjectKind,
+    StringObject,
+    newEnclosedEnvironment,
+    objectKindStringify,
+    FunctionObject,
+    TokenType,
+    Options,
+    error,
+    Position,
+    stderr,
+    stdin,
+    StdioOptions,
+    stdout,
+    builtinFunction,
+    Decorator,
+} from '../../index';
 
 const NULL: LangObject = {
     kind: ObjectKind.NULL,

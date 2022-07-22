@@ -1,4 +1,4 @@
-import { LangObject } from './object';
+import { LangObject } from '../../index';
 
 export default class Enviroment {
     public store: Map<string, LangObject> = new Map<string, LangObject>();

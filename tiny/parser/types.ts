@@ -1,4 +1,4 @@
-import { TokenType } from '../tokenizer';
+import { TokenType } from '../../index';
 
 interface Program {
     statements: Array<Statement>;
