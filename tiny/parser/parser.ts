@@ -1,5 +1,4 @@
 import {
-    AssignStatement,
     BlockStatement,
     Expression,
     ExpressionKind,
@@ -75,9 +74,6 @@ export default class Parser {
                 return null;
 
             default:
-                if (this.peekTokenIs(TokenType.ASSIGN))
-                    return this.parseAssignmentStatement();
-
                 return this.parseExpressionStatement();
         }
     }
@@ -158,34 +154,6 @@ export default class Parser {
             ident,
             value: expression,
             kind: NodeKind.LetStatement,
-            ...this.curr(),
-        };
-    }
-
-    private parseAssignmentStatement(): AssignStatement | null {
-        const ident: IdentExpression = {
-            debug: 'parseAssignStatement>ident',
-            value:
-                this.currToken.type === TokenType.IDENT
-                    ? this.currToken.literal
-                    : '',
-            kind: ExpressionKind.Ident,
-            ...this.curr(),
-        };
-
-        if (!this.expectPeek(TokenType.ASSIGN)) return null;
-
-        this.nextToken();
-
-        const expression = this.parseExpression(Priority.LOWEST);
-
-        if (!this.peekTokenIs(TokenType.SEMICOLON)) this.nextToken();
-
-        return {
-            debug: 'parseAssignStatement>return',
-            ident,
-            value: expression,
-            kind: NodeKind.AssignStatement,
             ...this.curr(),
         };
     }
@@ -649,6 +617,7 @@ export default class Parser {
             case TokenType.SLASH:
             case TokenType.ASTERISK:
             case TokenType.PERCENT:
+            case TokenType.ASSIGN:
                 return Priority.PRODUCT;
 
             case TokenType.LPAREN:

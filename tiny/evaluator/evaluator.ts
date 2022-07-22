@@ -129,26 +129,6 @@ export default class Evaluator {
                 return null;
             }
 
-            case NodeKind.AssignStatement: {
-                const value = this.evalExpression(statement.value, env);
-
-                if (value?.kind === ObjectKind.ERROR) return value;
-
-                const name = (statement.ident as unknown as StringLiteral)
-                    .value;
-
-                if (!env.get(name))
-                    return error(
-                        `identifier '${name}' not defined`,
-                        statement.line,
-                        statement.column
-                    );
-
-                if (statement.ident) env.update(name, value);
-
-                return null;
-            }
-
             case NodeKind.ReturnStatement: {
                 const expression = this.evalExpression(
                     (statement as unknown as ReturnStatement).value,
@@ -221,6 +201,18 @@ export default class Evaluator {
 
             case ExpressionKind.Infix:
                 const infix = expression as unknown as InfixExpression;
+
+                if (infix.operator === TokenType.ASSIGN) {
+                    const right = this.evalExpression(infix.right, env);
+
+                    env.set(
+                        (infix.left as unknown as StringLiteral).value,
+                        right
+                    );
+
+                    return right;
+                }
+
                 return this.evalInfix(
                     infix.operator,
                     infix.left,
