@@ -143,6 +143,7 @@ npm run start:repl [file]
 | `<=`     | `Literal <= Literal` | `number`                                              |
 | `>=`     | `Literal >= Literal` | `number`                                              |
 | `<-`     | `Literal <- Literal` | `array, hash`, `Any`                                  |
+| `??`     | `Literal ?? Literal` | `Any`                                                 |
 | `in`     | `Literal in Literal` | `string, number, hash`, `string, number, hash, array` |
 
 <br>
