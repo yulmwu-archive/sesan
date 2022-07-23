@@ -1,5 +1,5 @@
-import Enviroment, { newEnclosedEnvironment } from './env';
+import Enviroment from './env';
 
-export { Enviroment, newEnclosedEnvironment };
+export { Enviroment };
 
 export * from './object';

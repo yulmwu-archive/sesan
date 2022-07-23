@@ -27,7 +27,6 @@ import {
     NumberObject,
     ObjectKind,
     StringObject,
-    newEnclosedEnvironment,
     objectKindStringify,
     FunctionObject,
     TokenType,
@@ -60,7 +59,7 @@ export default class Evaluator {
             stderr,
         },
         public filename: string,
-        public root: string = './',
+        public root: string = './'
     ) {}
 
     public eval(): LangObject {
@@ -456,7 +455,7 @@ export default class Evaluator {
         env: Enviroment
     ): Enviroment {
         if (func?.kind === ObjectKind.FUNCTION) {
-            const newEnv = newEnclosedEnvironment(env);
+            const newEnv = new Enviroment(env);
 
             func.parameters.forEach((param: Expression, i: number) => {
                 if (param?.kind === ExpressionKind.Ident)

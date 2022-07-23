@@ -221,6 +221,7 @@ export default class Parser {
 
         if (
             expression.kind !== ExpressionKind.If &&
+            expression.kind !== ExpressionKind.Function &&
             !this.expectPeek(TokenType.SEMICOLON)
         )
             return null;

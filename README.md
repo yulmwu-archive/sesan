@@ -102,7 +102,7 @@ npm run start:repl [file]
 
 ## Expressions
 
-Except for `If` Expression, all expressions must be preceded by a semicolon (`;`);
+Except for `If`, `Function` Expression, all expressions must be preceded by a semicolon (`;`);
 
 | Expression | Syntax                            | Expression | Syntax                       |
 | ---------- | --------------------------------- | ---------- | ---------------------------- |

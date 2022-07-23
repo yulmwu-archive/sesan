@@ -1,4 +1,3 @@
-import { readdirSync } from 'fs';
 import { NULL } from './tiny/evaluator';
 import Tiny, { ObjectKind } from './index';
 import express from 'express';
