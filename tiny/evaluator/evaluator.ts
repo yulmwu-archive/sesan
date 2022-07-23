@@ -68,11 +68,6 @@ export default class Evaluator {
         return this.evalStatements(this.p.statements, this.env);
     }
 
-    private getFinalVal(objects: Array<LangObject>): LangObject {
-        if (objects.length === 0) return NULL;
-        return objects[objects.length - 1];
-    }
-
     private evalStatements(
         statements: Array<Statement>,
         env: Enviroment
@@ -91,7 +86,9 @@ export default class Evaluator {
             }
         }
 
-        return this.getFinalVal(results);
+        if (results.length === 0) return NULL;
+
+        return results[results.length - 1];
     }
 
     private evalBlockStatements(
@@ -111,7 +108,7 @@ export default class Evaluator {
             }
         }
 
-        return this.getFinalVal(results);
+        return NULL;
     }
 
     private evalStatement(statement: Statement, env: Enviroment): LangObject {

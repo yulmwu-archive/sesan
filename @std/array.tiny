@@ -2,7 +2,7 @@ func __expect_array(arr, name, callback) {
     if (typeof(arr) != 'ARRAY') {
         throw('invalid argument: ' + name + '() must provide an array');
     } else {
-        callback();
+        return callback();
     }
 };
 
@@ -13,8 +13,8 @@ func __expect_array(arr, name, callback) {
 // push(arr, 4); // [1, 2, 3, 4];
 
 func push(arr, value) {
-    __expect_array(arr, 'push', func() {
-        __builtin_push(arr, value);
+    return __expect_array(arr, 'push', func() {
+        return __builtin_push(arr, value);
     });
 };
 
@@ -25,8 +25,8 @@ func push(arr, value) {
 // pop(arr); // [1, 2];
 
 func pop(arr) {
-    __expect_array(arr, 'pop', func() {
-        __builtin_pop(arr);
+    return __expect_array(arr, 'pop', func() {
+        return __builtin_pop(arr);
     });
 };
 
@@ -37,8 +37,8 @@ func pop(arr) {
 // shift(arr); // [2, 3];
 
 func shift(arr) {
-    __expect_array(arr, 'shift', func() {
-        __builtin_shift(arr);
+    return __expect_array(arr, 'shift', func() {
+        return __builtin_shift(arr);
     });
 };
 
@@ -49,8 +49,8 @@ func shift(arr) {
 // unshift(arr, 0); // [0, 1, 2, 3];
 
 func unshift(arr, value) {
-    __expect_array(arr, 'unshift', func() {
-        __builtin_unshift(arr, value);
+    return __expect_array(arr, 'unshift', func() {
+        return __builtin_unshift(arr, value);
     });
 };
 
@@ -61,8 +61,8 @@ func unshift(arr, value) {
 // slice(arr, 1, 2); // [2];
 
 func slice(arr, start, end) {
-    __expect_array(arr, 'slice', func() {
-        __builtin_slice(arr, start, end);
+    return __expect_array(arr, 'slice', func() {
+        return __builtin_slice(arr, start, end);
     });
 };
 
@@ -75,7 +75,7 @@ func slice(arr, start, end) {
 // });
 
 func forEach(arr, callback) {
-    __builtin_forEach(arr, callback);
+    return __builtin_forEach(arr, callback);
 };
 
 

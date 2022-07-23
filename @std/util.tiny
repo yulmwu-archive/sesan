@@ -1,5 +1,5 @@
 func length(value) {
-    __builtin_length(value);
+    return __builtin_length(value);
 };
 
 
@@ -40,3 +40,8 @@ func string(value) {
 func boolean(value) {
     return convert(value, 'boolean');
 };
+
+func ternary(condition, trueValue, falseValue) {
+    if (condition) { return trueValue; } 
+    else { return falseValue; }
+}
