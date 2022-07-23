@@ -19,6 +19,7 @@ type Stdio = (...x: Array<any>) => any;
 type TinyOption = Options & {
     enviroment?: Enviroment;
     root?: string;
+    filename?: string;
 };
 
 interface StdioOptions {
@@ -31,6 +32,8 @@ const stdin: Stdio = (...x) => NULL;
 const stdout: Stdio = (...x) => process.stdout.write(x.join(' '));
 const stderr: Stdio = (...x) => process.stderr.write(`${x.join(' ')}\n`);
 
+const defaultFilename: string = '<Tiny>';
+
 export default class Tiny {
     public option: TinyOption;
     public builtins: Map<string, Func> = new Map();
@@ -41,10 +44,14 @@ export default class Tiny {
     }
 
     public tokenizer(): Lexer {
-        return new Lexer(this.x, {
-            ...this.option,
-            stderr: this.stdio.stderr,
-        });
+        return new Lexer(
+            this.x,
+            {
+                ...this.option,
+                stderr: this.stdio.stderr,
+            },
+            this.option.filename ?? defaultFilename
+        );
     }
 
     public eval(): string {
@@ -53,24 +60,33 @@ export default class Tiny {
         if (this.option.useStdLibAutomatically)
             new Evaluator(
                 new Parser(
-                    new Lexer(`import('@std/lib');`, {
-                        ...this.option,
-                        stderr: this.stdio.stderr,
-                    })
+                    new Lexer(
+                        `import('@std/lib');`,
+                        {
+                            ...this.option,
+                            stderr: this.stdio.stderr,
+                        },
+                        this.option.filename ?? defaultFilename
+                    )
                 ).parseProgram(),
                 env,
                 this.option,
                 this.stdio,
+                this.option.filename ?? defaultFilename,
                 this.option.root
             ).eval();
 
-        const parser = new Parser(this.tokenizer());
-        const program = parser.parseProgram();
+        const program = new Parser(this.tokenizer()).parseProgram();
 
-        parser.errors.forEach((error) =>
-            printError(error, this.stdio.stderr, {
-                ...this.option,
-            })
+        program.errors.forEach((error) =>
+            printError(
+                error,
+                this.option.filename ?? defaultFilename,
+                this.stdio.stderr,
+                {
+                    ...this.option,
+                }
+            )
         );
 
         const result = new Evaluator(
@@ -78,11 +94,17 @@ export default class Tiny {
             env,
             this.option,
             this.stdio,
+            this.option.filename ?? defaultFilename,
             this.option.root
         ).eval();
 
         if (result?.kind === ObjectKind.ERROR)
-            printError(result, this.stdio.stderr, this.option);
+            printError(
+                result,
+                this.option.filename ?? defaultFilename,
+                this.stdio.stderr,
+                this.option
+            );
 
         return objectStringify(result);
     }
@@ -119,6 +141,12 @@ export default class Tiny {
 
     public setStderr(func: Stdio): Tiny {
         this.stdio = { ...this.stdio, stderr: func };
+
+        return this;
+    }
+
+    public setFileName(filename: string): Tiny {
+        this.option.filename = filename;
 
         return this;
     }
