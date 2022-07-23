@@ -15,6 +15,8 @@ import {
     printError,
     Func,
     invalidArgument,
+    localization,
+    errorFormatter,
 } from '../../index';
 import { readFileSync } from 'fs';
 
@@ -24,7 +26,7 @@ const getArguments: Func = (
     t: Evaluator,
     pos: Position
 ): LangObject => {
-    if (args.length !== 1) return invalidArgument(pos);
+    if (args.length !== 1) return invalidArgument(pos, t.option);
 
     return {
         kind: ObjectKind.ARRAY,
@@ -40,7 +42,7 @@ const importEnv: Func = (
     pos: Position
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument(pos);
+        return invalidArgument(pos, t.option);
 
     try {
         let fileName = (args[0] as StringObject).value;
@@ -55,7 +57,8 @@ const importEnv: Func = (
                     stderr: t.stdio.stderr,
                 },
                 fileName
-            )
+            ),
+            t.option
         ).parseProgram();
 
         parsed.errors.forEach((error) =>
@@ -82,7 +85,7 @@ const typeofObject: Func = (
     t: Evaluator,
     pos: Position
 ): LangObject => {
-    if (args.length !== 1) return invalidArgument(pos);
+    if (args.length !== 1) return invalidArgument(pos, t.option);
 
     return {
         kind: ObjectKind.STRING,
@@ -124,7 +127,7 @@ const deleteEnv: Func = (
     pos: Position
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument(pos);
+        return invalidArgument(pos, t.option);
 
     env.delete(args[0].value);
 
@@ -138,12 +141,12 @@ const evalCode: Func = (
     pos: Position
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument(pos);
+        return invalidArgument(pos, t.option);
 
     if (!t.option.allowEval)
         return {
             kind: ObjectKind.ERROR,
-            message: 'allowEval is not allowed',
+            message: localization(t.option).builtinError.disableAllowEval,
             ...pos,
         };
 
@@ -156,7 +159,8 @@ const evalCode: Func = (
                     stderr: t.stdio.stderr,
                 },
                 t.filename
-            )
+            ),
+            t.option
         ).parseProgram(),
         env,
         t.option,
@@ -172,12 +176,12 @@ const evalJSCode: Func = (
     pos: Position
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument(pos);
+        return invalidArgument(pos, t.option);
 
     if (!t.option.allowJavaScript)
         return {
             kind: ObjectKind.ERROR,
-            message: 'allowJavaScript is not allowed',
+            message: localization(t.option).builtinError.disableAllowJavaScript,
             ...pos,
         };
 
@@ -187,7 +191,10 @@ const evalJSCode: Func = (
         if (e instanceof Error)
             return {
                 kind: ObjectKind.ERROR,
-                message: `Could not eval JS code: ${e.message}`,
+                message: errorFormatter(
+                    localization(t.option).builtinError.couldNotEval,
+                    e.message
+                ),
                 ...pos,
             };
 
@@ -202,7 +209,7 @@ const convert: Func = (
     pos: Position
 ): LangObject => {
     if (args.length !== 2 || args[1]?.kind !== ObjectKind.STRING)
-        return invalidArgument(pos);
+        return invalidArgument(pos, t.option);
 
     const to = args[1].value.toLowerCase();
 
@@ -284,7 +291,8 @@ const ast: Func = (
                     stderr: t.stdio.stderr,
                 },
                 t.filename
-            )
+            ),
+            t.option
         ).parseProgram(),
         env,
         t.option,
@@ -327,7 +335,7 @@ const throwError: Func = (
     pos: Position
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument(pos);
+        return invalidArgument(pos, t.option);
 
     printError(
         {

@@ -18,6 +18,9 @@ import {
     Lexer,
     Token,
     TokenType,
+    localization,
+    errorFormatter,
+    Options,
 } from '../../index';
 
 enum Priority {
@@ -37,9 +40,13 @@ export default class Parser {
     public currLine: number = 1;
     public currColumn: number = 1;
 
+    public messages;
+
     public errors: Array<ParseError> = [];
 
-    constructor(public lexer: Lexer) {
+    constructor(public lexer: Lexer, public option: Options) {
+        this.messages = localization(option);
+
         this.nextToken();
         this.nextToken();
     }
@@ -103,7 +110,11 @@ export default class Parser {
         }
 
         this.pushError(
-            `Expected next token to be ${tokenType}, got ${this.peekToken.type} instead.`
+            errorFormatter(
+                this.messages.parserError.unexpectedToken,
+                tokenType,
+                this.peekToken.type
+            )
         );
 
         return false;
@@ -199,7 +210,10 @@ export default class Parser {
         if (!left) {
             if (!this.currTokenIs(TokenType.SEMICOLON))
                 this.pushError(
-                    `Expected expression, got ${this.currToken.type} instead.`
+                    errorFormatter(
+                        this.messages.parserError.unexpectedExpression,
+                        this.currToken.type
+                    )
                 );
             return null;
         }

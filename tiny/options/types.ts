@@ -4,6 +4,7 @@ export interface IOptions {
     useStdLibAutomatically: boolean;
     stderrPrefix: boolean;
     stderrColor: boolean;
+    locale: string;
 }
 
 type Options = Partial<IOptions>;

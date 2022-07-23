@@ -17,7 +17,7 @@ const push: Func = (
     pos: Position
 ): LangObject => {
     if (args.length !== 2 || args[0]?.kind !== ObjectKind.ARRAY)
-        return invalidArgument(pos);
+        return invalidArgument(pos, t.option);
 
     return {
         kind: ObjectKind.ARRAY,
@@ -32,7 +32,7 @@ const pop: Func = (
     pos: Position
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.ARRAY)
-        return invalidArgument(pos);
+        return invalidArgument(pos, t.option);
 
     return {
         kind: ObjectKind.ARRAY,
@@ -47,7 +47,7 @@ const shift: Func = (
     pos: Position
 ): LangObject => {
     if (args.length !== 1 || args[0]?.kind !== ObjectKind.ARRAY)
-        return invalidArgument(pos);
+        return invalidArgument(pos, t.option);
 
     return {
         kind: ObjectKind.ARRAY,
@@ -62,7 +62,7 @@ const unshift: Func = (
     pos: Position
 ): LangObject => {
     if (args.length !== 2 || args[0]?.kind !== ObjectKind.ARRAY)
-        return invalidArgument(pos);
+        return invalidArgument(pos, t.option);
 
     return {
         kind: ObjectKind.ARRAY,
@@ -82,7 +82,7 @@ const slice: Func = (
         args[1]?.kind !== ObjectKind.NUMBER ||
         args[2]?.kind !== ObjectKind.NUMBER
     )
-        return invalidArgument(pos);
+        return invalidArgument(pos, t.option);
 
     return {
         kind: ObjectKind.ARRAY,
@@ -104,7 +104,7 @@ const forEach: Func = (
         args[0]?.kind !== ObjectKind.ARRAY ||
         args[1]?.kind !== ObjectKind.FUNCTION
     )
-        return invalidArgument(pos);
+        return invalidArgument(pos, t.option);
 
     const array = args[0] as ArrayObject;
     const func = args[1] as FunctionObject;

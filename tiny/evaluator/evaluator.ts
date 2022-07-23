@@ -39,6 +39,8 @@ import {
     stdout,
     builtinFunction,
     Decorator,
+    errorFormatter,
+    localization,
 } from '../../index';
 
 const NULL: LangObject = {
@@ -48,6 +50,7 @@ const NULL: LangObject = {
 export default class Evaluator {
     public __builtin__arguments: Map<string, Array<LangObject>> = new Map();
     public __function__decorator: Decorator = null;
+    public messages;
 
     constructor(
         public p: Program,
@@ -60,7 +63,9 @@ export default class Evaluator {
         },
         public filename: string,
         public root: string = './'
-    ) {}
+    ) {
+        this.messages = localization(option);
+    }
 
     public eval(): LangObject {
         if (this.p.errors.length > 0) return null;
@@ -420,7 +425,12 @@ export default class Evaluator {
 
             if (!func.d && f.parameters.length !== args.length)
                 return error(
-                    `${name} expected ${f.parameters.length} arguments but got ${args.length}`,
+                    errorFormatter(
+                        this.messages.runtimeError.invalidArgument,
+                        name,
+                        f.parameters.length,
+                        args.length
+                    ),
                     pos.line,
                     pos.column
                 );
@@ -443,7 +453,11 @@ export default class Evaluator {
                 pos
             );
 
-        return error(`'${name}' is not a function.`, pos.line, pos.column);
+        return error(
+            errorFormatter(this.messages.runtimeError.invalidFunction, name),
+            pos.line,
+            pos.column
+        );
     }
 
     private extendFunctionEnv(
@@ -478,7 +492,10 @@ export default class Evaluator {
         const builtin = builtinFunction(name, env);
         if (!builtin)
             return error(
-                `identifier '${name}' is not defined.`,
+                errorFormatter(
+                    this.messages.runtimeError.identifierNotDefined_2,
+                    name
+                ),
                 pos.line,
                 pos.column
             );
@@ -572,7 +589,11 @@ export default class Evaluator {
 
             default:
                 return error(
-                    `type missmatch [${left?.kind}] [${right?.kind}]`,
+                    errorFormatter(
+                        this.messages.runtimeError.typeMismatch_2,
+                        left?.kind,
+                        right?.kind
+                    ),
                     pos.line,
                     pos.column
                 );
@@ -585,9 +606,11 @@ export default class Evaluator {
         pos: Position
     ): LangObject {
         return error(
-            `type missmatch [${objectKindStringify(
-                left?.kind ?? ObjectKind.NULL
-            )}] [${objectKindStringify(left?.kind ?? ObjectKind.NULL)}]`,
+            errorFormatter(
+                this.messages.runtimeError.typeMismatch_2,
+                objectKindStringify(left?.kind ?? ObjectKind.NULL),
+                objectKindStringify(left?.kind ?? ObjectKind.NULL)
+            ),
             pos.line,
             pos.column
         );
@@ -796,9 +819,11 @@ export default class Evaluator {
 
         if (left?.kind !== ObjectKind.HASH || right?.kind !== ObjectKind.HASH)
             return error(
-                `type missmatch [${objectKindStringify(
-                    left?.kind ?? ObjectKind.NULL
-                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`,
+                errorFormatter(
+                    this.messages.runtimeError.typeMismatch_2,
+                    objectKindStringify(left?.kind ?? ObjectKind.NULL),
+                    objectKindStringify(right?.kind ?? ObjectKind.NULL)
+                ),
                 pos.line,
                 pos.column
             );
@@ -844,9 +869,11 @@ export default class Evaluator {
 
         if (left?.kind !== ObjectKind.ARRAY || right?.kind !== ObjectKind.ARRAY)
             return error(
-                `type missmatch [${objectKindStringify(
-                    left?.kind ?? ObjectKind.NULL
-                )}] [${objectKindStringify(right?.kind ?? ObjectKind.NULL)}]`,
+                errorFormatter(
+                    this.messages.runtimeError.typeMismatch_2,
+                    objectKindStringify(left?.kind ?? ObjectKind.NULL),
+                    objectKindStringify(right?.kind ?? ObjectKind.NULL)
+                ),
                 pos.line,
                 pos.column
             );
@@ -891,9 +918,10 @@ export default class Evaluator {
 
             if (!env.get((left as unknown as StringLiteral).value))
                 return error(
-                    `${
+                    errorFormatter(
+                        this.messages.runtimeError.identifierNotDefined_1,
                         (left as unknown as StringLiteral).value
-                    } is not defined`,
+                    ),
                     pos.line,
                     pos.column
                 );
@@ -952,11 +980,11 @@ export default class Evaluator {
 
             default:
                 return error(
-                    `type missmatch [${objectKindStringify(
-                        left?.kind ?? ObjectKind.NULL
-                    )}] [${objectKindStringify(
-                        right?.kind ?? ObjectKind.NULL
-                    )}]`,
+                    errorFormatter(
+                        this.messages.runtimeError.typeMismatch_2,
+                        objectKindStringify(left?.kind ?? ObjectKind.NULL),
+                        objectKindStringify(right?.kind ?? ObjectKind.NULL)
+                    ),
                     pos.line,
                     pos.column
                 );
@@ -995,7 +1023,11 @@ export default class Evaluator {
                 if (index?.kind === ObjectKind.NUMBER)
                     return this.evalArrayIndex(left, index, pos);
 
-                return error('type missmatch', pos.line, pos.column);
+                return error(
+                    this.messages.runtimeError.typeMismatch_1,
+                    pos.line,
+                    pos.column
+                );
 
             case ObjectKind.HASH:
                 let key: string | number;
@@ -1005,7 +1037,11 @@ export default class Evaluator {
                         key = index.value;
                         break;
                     default:
-                        return error('type missmatch', pos.line, pos.column);
+                        return error(
+                            this.messages.runtimeError.typeMismatch_1,
+                            pos.line,
+                            pos.column
+                        );
                 }
 
                 const newMap: Map<string | number, LangObject> = new Map();
@@ -1030,10 +1066,18 @@ export default class Evaluator {
             index?.kind !== ObjectKind.NUMBER ||
             left?.kind !== ObjectKind.ARRAY
         )
-            return error('type missmatch', pos.line, pos.column);
+            return error(
+                this.messages.runtimeError.typeMismatch_1,
+                pos.line,
+                pos.column
+            );
 
         if (index.value < 0 || index.value >= left.value.length)
-            return error('index out of range', pos.line, pos.column);
+            return error(
+                this.messages.runtimeError.indexOutOfRange,
+                pos.line,
+                pos.column
+            );
 
         return left.value[index.value];
     }
@@ -1065,7 +1109,11 @@ export default class Evaluator {
 
     private evalMinus(obj: LangObject, pos: Position): LangObject {
         if (obj?.kind !== ObjectKind.NUMBER)
-            return error('type missmatch', pos.line, pos.column);
+            return error(
+                this.messages.runtimeError.typeMismatch_1,
+                pos.line,
+                pos.column
+            );
 
         return {
             kind: ObjectKind.NUMBER,

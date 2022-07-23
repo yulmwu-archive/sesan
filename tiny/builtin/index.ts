@@ -3,8 +3,9 @@ import {
     Enviroment,
     LangObject,
     ObjectKind,
-    NULL,
     Position,
+    localization,
+    Options,
 } from '../../index';
 import { io } from './io';
 import { array } from './array';
@@ -13,9 +14,9 @@ import { builtin } from './builtin';
 
 type Func = Omit<BuiltinFunction, 'kind'>['func'];
 
-const invalidArgument = (pos: Position): LangObject => ({
+const invalidArgument = (pos: Position, option: Options): LangObject => ({
     kind: ObjectKind.ERROR,
-    message: 'Invalid arguments',
+    message: localization(option).builtinError.invalidArgument,
     ...pos,
 });
 

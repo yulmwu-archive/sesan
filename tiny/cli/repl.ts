@@ -120,7 +120,8 @@ export default class {
                             stderr,
                         },
                         defaultFilename
-                    )
+                    ),
+                    this.option
                 ).parseProgram(),
                 this.env,
                 this.option,
@@ -147,7 +148,8 @@ export default class {
                         stderr,
                     },
                     defaultFilename
-                )
+                ),
+                this.option
             );
 
             const executed = this.executeCommand(

@@ -6,11 +6,13 @@ import {
     Token,
     TokenType,
     Options,
+    localization,
+    errorFormatter,
 } from '../../index';
 
-interface LexerStderrOptions extends Options {
+type LexerOptions = Options & {
     stderr: Stdio;
-}
+};
 
 export default class Lexer {
     public position: number = 0;
@@ -19,11 +21,15 @@ export default class Lexer {
     public lineStart: number = 1;
     public ch: string = '';
 
+    public messages;
+
     constructor(
         public input: string,
-        public stderr: LexerStderrOptions,
+        public options: LexerOptions,
         public filename: string
     ) {
+        this.messages = localization(options);
+
         this.readChar();
     }
 
@@ -60,12 +66,12 @@ export default class Lexer {
             printError(
                 {
                     ...this.curr(),
-                    message: 'Invalid identifier',
+                    message: this.messages.lexerError.invalidIdentifier,
                 },
                 this.filename,
-                this.stderr.stderr,
+                this.options.stderr,
                 {
-                    ...this.stderr,
+                    ...this.options,
                 }
             );
 
@@ -88,12 +94,12 @@ export default class Lexer {
                     printError(
                         {
                             ...this.curr(),
-                            message: `[Lexer] Invalid number`,
+                            message: this.messages.lexerError.invalidNumber,
                         },
                         this.filename,
-                        this.stderr.stderr,
+                        this.options.stderr,
                         {
-                            ...this.stderr,
+                            ...this.options,
                         }
                     );
 
@@ -126,15 +132,15 @@ export default class Lexer {
             printError(
                 {
                     ...this.curr(),
-                    message: `[Lexer] Unterminated string: ${this.input.substring(
-                        position - 1,
-                        this.position
-                    )}`,
+                    message: errorFormatter(
+                        this.messages.lexerError.invalidString,
+                        this.input.substring(position - 1, this.position)
+                    ),
                 },
                 this.filename,
-                this.stderr.stderr,
+                this.options.stderr,
                 {
-                    ...this.stderr,
+                    ...this.options,
                 }
             );
 
