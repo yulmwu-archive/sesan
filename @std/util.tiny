@@ -1,4 +1,4 @@
-let length = func(value) {
+func length(value) {
     __builtin_length(value);
 };
 
@@ -15,7 +15,7 @@ let length = func(value) {
 //
 // println(res);
 
-let match = func(value, case, default) {
+func match(value, case, default) {
     let result = null();
 
     forEach(case, func (item, index) {
@@ -29,14 +29,14 @@ let match = func(value, case, default) {
     return result;
 };
 
-let number = func(value) {
+func number(value) {
     return convert(value, 'number');
 };
 
-let string = func(value) {
+func string(value) {
     return convert(value, 'string');
 };
 
-let boolean = func(value) {
+func boolean(value) {
     return convert(value, 'boolean');
 };
