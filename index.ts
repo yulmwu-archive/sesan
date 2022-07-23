@@ -67,7 +67,8 @@ export default class Tiny {
                             stderr: this.stdio.stderr,
                         },
                         this.option.filename ?? defaultFilename
-                    )
+                    ),
+                    this.option
                 ).parseProgram(),
                 env,
                 this.option,
@@ -76,7 +77,10 @@ export default class Tiny {
                 this.option.root
             ).eval();
 
-        const program = new Parser(this.tokenizer()).parseProgram();
+        const program = new Parser(
+            this.tokenizer(),
+            this.option
+        ).parseProgram();
 
         program.errors.forEach((error) =>
             printError(

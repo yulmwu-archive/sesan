@@ -1,3 +1,7 @@
+[English](./README.md) | [한국어](./README_ko-KR.md)
+
+---
+
 -   [**Introduce**](#Introduce)
     -   [How it works?](#how-it-works)
     -   [Start REPL](#start-repl)
@@ -212,6 +216,7 @@ If `tiny.config.json` dose not exist in root (`./`), it extends Default.
 | `allowEval`              | Allow `eval()` feature             | `false` |
 | `allowJavaScript`        | Allow `js()` feature               | `false` |
 | `useStdLibAutomatically` | Use standard library automatically | `false` |
+| `locale`                 | Locale                             | `en`    |
 
 <br>
 
