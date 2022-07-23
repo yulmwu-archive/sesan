@@ -19,7 +19,11 @@ export default class Lexer {
     public lineStart: number = 1;
     public ch: string = '';
 
-    constructor(public input: string, public stderr: LexerStderrOptions) {
+    constructor(
+        public input: string,
+        public stderr: LexerStderrOptions,
+        public filename: string
+    ) {
         this.readChar();
     }
 
@@ -58,6 +62,7 @@ export default class Lexer {
                     ...this.curr(),
                     message: 'Invalid identifier',
                 },
+                this.filename,
                 this.stderr.stderr,
                 {
                     ...this.stderr,
@@ -85,6 +90,7 @@ export default class Lexer {
                             ...this.curr(),
                             message: `[Lexer] Invalid number`,
                         },
+                        this.filename,
                         this.stderr.stderr,
                         {
                             ...this.stderr,
@@ -125,6 +131,7 @@ export default class Lexer {
                         this.position
                     )}`,
                 },
+                this.filename,
                 this.stderr.stderr,
                 {
                     ...this.stderr,

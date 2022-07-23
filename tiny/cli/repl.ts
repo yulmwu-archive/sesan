@@ -20,6 +20,8 @@ import {
 
 type Mode = 'repl' | 'parser' | 'parser_json' | 'lexer' | 'env';
 
+const defaultFilename: string = '<REPL>';
+
 export default class {
     public promptSync = prompt({ sigint: true });
     public mode: Mode = 'repl';
@@ -62,14 +64,20 @@ export default class {
 
         if (commands.has(command)) return commands.get(command)!(...args);
         else {
-            const result = new Evaluator(parsed, env, this.option, {
-                stdin: this.promptSync,
-                stdout,
-                stderr,
-            }).eval();
+            const result = new Evaluator(
+                parsed,
+                env,
+                this.option,
+                {
+                    stdin: this.promptSync,
+                    stdout,
+                    stderr,
+                },
+                defaultFilename
+            ).eval();
 
             if (result?.kind === ObjectKind.ERROR) {
-                printError(result, stdout, this.option);
+                printError(result, defaultFilename, stdout, this.option);
                 return '';
             }
 
@@ -105,10 +113,14 @@ export default class {
         if (this.option.useStdLibAutomatically)
             new Evaluator(
                 new Parser(
-                    new Lexer(`import('@std/lib');`, {
-                        ...this.option,
-                        stderr,
-                    })
+                    new Lexer(
+                        `import('@std/lib');`,
+                        {
+                            ...this.option,
+                            stderr,
+                        },
+                        defaultFilename
+                    )
                 ).parseProgram(),
                 this.env,
                 this.option,
@@ -116,7 +128,8 @@ export default class {
                     stdin: this.promptSync,
                     stdout,
                     stderr,
-                }
+                },
+                defaultFilename
             ).eval();
 
         while (true) {
@@ -127,18 +140,26 @@ export default class {
             );
 
             const parser = new Parser(
-                new Lexer(input, {
-                    ...this.option,
-                    stderr,
-                })
+                new Lexer(
+                    input,
+                    {
+                        ...this.option,
+                        stderr,
+                    },
+                    defaultFilename
+                )
             );
 
             const executed = this.executeCommand(
                 input,
-                new Lexer(input, {
-                    ...this.option,
-                    stderr,
-                }),
+                new Lexer(
+                    input,
+                    {
+                        ...this.option,
+                        stderr,
+                    },
+                    defaultFilename
+                ),
                 parser.parseProgram(),
                 this.env
             );
@@ -146,7 +167,7 @@ export default class {
             if (executed)
                 if (parser.errors.length > 0)
                     parser.errors.forEach((error) =>
-                        printError(error, stderr, this.option)
+                        printError(error, defaultFilename, stderr, this.option)
                     );
 
             console.log(executed, '\n');

@@ -47,6 +47,7 @@ export default class Parser {
     public parseProgram(): Program {
         let program: Program = {
             statements: [],
+            errors: [],
         };
 
         while (this.currToken.type !== TokenType.EOF) {
@@ -55,6 +56,8 @@ export default class Parser {
 
             this.nextToken();
         }
+
+        program.errors = this.errors;
 
         return program;
     }
@@ -216,7 +219,11 @@ export default class Parser {
         const expression = this.parseExpression(Priority.LOWEST);
         if (!expression) return null;
 
-        if (this.peekTokenIs(TokenType.SEMICOLON)) this.nextToken();
+        if (
+            expression.kind !== ExpressionKind.If &&
+            !this.expectPeek(TokenType.SEMICOLON)
+        )
+            return null;
 
         return {
             debug: 'parseExpressionStatement>return',
@@ -543,7 +550,7 @@ export default class Parser {
             if (expression) args.push(expression);
         }
 
-        if (this.expectPeek(end)) return args;
+        if (!this.expectPeek(end)) return args;
 
         return args;
     }

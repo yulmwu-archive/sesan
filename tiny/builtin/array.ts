@@ -128,4 +128,11 @@ const forEach: Func = (
     return NULL;
 };
 
-export { push, pop, shift, unshift, slice, forEach };
+export const array: Map<string, Func> = new Map([
+    ['__builtin_push', push],
+    ['__builtin_pop', pop],
+    ['__builtin_shift', shift],
+    ['__builtin_unshift', unshift],
+    ['__builtin_slice', slice],
+    ['__builtin_forEach', forEach],
+]);

@@ -2,6 +2,7 @@ import { TokenType } from '../../index';
 
 interface Program {
     statements: Array<Statement>;
+    errors: Array<ParseError>;
 }
 
 type Statement =

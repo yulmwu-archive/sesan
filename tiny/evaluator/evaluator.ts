@@ -59,10 +59,13 @@ export default class Evaluator {
             stdout,
             stderr,
         },
-        public root: string = './'
+        public filename: string,
+        public root: string = './',
     ) {}
 
     public eval(): LangObject {
+        if (this.p.errors.length > 0) return null;
+
         return this.evalStatements(this.p.statements, this.env);
     }
 

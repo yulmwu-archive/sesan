@@ -16,7 +16,12 @@ const error = (message: string, line: number, column: number): LangObject => ({
     column,
 });
 
-const printError = (error: ParseError, stderr: Stdio, options: Options) => {
+const printError = (
+    error: ParseError,
+    file: string,
+    stderr: Stdio,
+    options: Options
+) => {
     const { line, column, message } = error;
 
     stderr(
@@ -26,8 +31,8 @@ const printError = (error: ParseError, stderr: Stdio, options: Options) => {
                 : ''
         }${options.stderrColor ? message.red : message} (${
             options.stderrColor
-                ? `${line.toString().yellow}:${column.toString().blue}`
-                : `${line}:${column}`
+                ? `${file} ${`${line}:${column}`.yellow}`
+                : `${file} ${line}:${column}`
         })`
     );
 };

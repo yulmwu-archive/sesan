@@ -8,7 +8,7 @@ import {
     ObjectKind,
 } from '../../index';
 
-type Decorator = {
+export type Decorator = {
     disableCheckArguments: boolean;
 } | null;
 
@@ -28,4 +28,4 @@ const decoratorFunc: Func = (
     return NULL;
 };
 
-export { Decorator, decoratorFunc };
+export const decorator: Map<string, Func> = new Map([['@func', decoratorFunc]]);

@@ -1,13 +1,11 @@
-import { Func, invalidArgument } from '.';
 import {
-    Position,
     Enviroment,
     LangObject,
     objectStringify,
     ObjectKind,
     Evaluator,
     NULL,
-    printError as printError_,
+    Func,
 } from '../../index';
 
 const print: Func = (
@@ -41,25 +39,7 @@ const readLine: Func = (
     };
 };
 
-const throwError: Func = (
-    args: Array<LangObject>,
-    env: Enviroment,
-    t: Evaluator,
-    pos: Position
-): LangObject => {
-    if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument(pos);
-
-    printError_(
-        {
-            ...pos,
-            message: args[0].value,
-        },
-        t.stdio.stderr,
-        t.option
-    );
-
-    return NULL;
-};
-
-export { print, readLine, throwError };
+export const io: Map<string, Func> = new Map([
+    ['__builtin_print', print],
+    ['__builtin_readline', readLine],
+]);

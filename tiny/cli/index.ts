@@ -28,6 +28,7 @@ else {
                     sigint: true,
                 })(x)
             )
+            .setFileName(args[0])
             .eval();
     } catch (e) {
         console.error(`Cannot open file ${args[0]}: ${e}`);
