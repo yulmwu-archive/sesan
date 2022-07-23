@@ -47,7 +47,7 @@ npm run start:repl [file]
 
 ## REPL commands
 
-> `//command ...args`
+`//command ...args`
 
 | Command | Description     |
 | ------- | --------------- |
@@ -101,6 +101,8 @@ npm run start:repl [file]
 <br>
 
 ## Expressions
+
+Except for `If` Expression, all expressions must be preceded by a semicolon (`;`);
 
 | Expression | Syntax                            | Expression | Syntax                       |
 | ---------- | --------------------------------- | ---------- | ---------------------------- |
@@ -232,7 +234,7 @@ console.log(
 );
 ```
 
-> `@std/` must exist in root (`./`).
+`@std/` must exist in root (`./`).
 
 <br>
 
