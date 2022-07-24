@@ -1,0 +1,13 @@
+@func({ disableCheckArguments: true });
+func foo() {
+    let x = join(__builtin_arguments('foo'), ' ');
+
+    capture();
+
+    return func() {
+        println(x);
+    };
+};
+
+foo(1, 2, 3, 'Hello')();
+

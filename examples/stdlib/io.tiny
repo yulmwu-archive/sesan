@@ -1,4 +1,4 @@
 print('Hello, ');
 println('World!');
 
-println(readline('> ')); // `readline()` is only executed locally.
+println(readline('> ')); // ❌ Not working in web playground.

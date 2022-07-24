@@ -8,9 +8,7 @@ println(slice(array, 1, 5));
 
 println(array); // no change
 
-forEach(array, func(value, index) {
-    println(value, index);
-});
+forEach(array, func(value, index) { println(value, index); });
 
 println(repeat('foo', 5));
 println(repeat(3));

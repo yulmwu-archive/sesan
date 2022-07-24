@@ -1,0 +1,10 @@
+let object = {
+    name: 'John',
+    age: 30
+};
+
+// (object <- 'name') = 'Steve'; // ❌ Error
+
+assign(object, 'name', 'Steve'); // ✅ OK
+
+println(object <- 'name'); // 'Steve'
