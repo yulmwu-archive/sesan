@@ -93,6 +93,7 @@ interface LiteralExpression extends Debug, Position {
 
 interface BlockStatement extends Debug, Position {
     statements: Array<Statement>;
+    returnFinal: boolean;
     kind: ExpressionKind.Block;
 }
 

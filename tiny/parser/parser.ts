@@ -192,9 +192,7 @@ export default class Parser {
 
         const condition = this.parseExpression(Priority.LOWEST);
 
-        if (!this.expectPeek(TokenType.LBRACE)) return null;
-
-        const body = this.parseBlockStatement();
+        const body = this.parseBlockStatement(false);
 
         return {
             debug: 'parseWhileStatement>return',
@@ -331,22 +329,16 @@ export default class Parser {
 
                 const condition = this.parseExpression(Priority.LOWEST);
 
-                if (
-                    !this.expectPeek(TokenType.RPAREN) ||
-                    !this.expectPeek(TokenType.LBRACE)
-                )
-                    return null;
+                if (!this.expectPeek(TokenType.RPAREN)) return null;
 
-                const consequence = this.parseBlockStatement();
+                const consequence = this.parseBlockStatement(true);
 
                 let alternative: Expression | null = null;
 
                 if (this.peekTokenIs(TokenType.ELSE)) {
                     this.nextToken();
 
-                    if (!this.expectPeek(TokenType.LBRACE)) return null;
-
-                    alternative = this.parseBlockStatement();
+                    alternative = this.parseBlockStatement(true);
                 }
 
                 return {
@@ -378,9 +370,7 @@ export default class Parser {
 
                 const parameters = this.parseFunctionParameters();
 
-                if (!this.expectPeek(TokenType.LBRACE)) return null;
-
-                const body = this.parseBlockStatement();
+                const body = this.parseBlockStatement(false);
 
                 if (!body) return null;
 
@@ -489,7 +479,31 @@ export default class Parser {
         }
     }
 
-    private parseBlockStatement(): BlockStatement | null {
+    private parseBlockStatement(short: boolean): BlockStatement | null {
+        if (!this.peekTokenIs(TokenType.LBRACE) && !short) {
+            this.pushError(this.messages.parserError.invalidBodyBlock);
+
+            return null;
+        }
+
+        if (!this.peekTokenIs(TokenType.LBRACE)) {
+            this.nextToken();
+
+            const statement = this.parseStatement();
+
+            if (!statement) return null;
+
+            return {
+                debug: 'parseBlockStatement>return',
+                statements: [statement],
+                returnFinal: true,
+                kind: ExpressionKind.Block,
+                ...this.curr(),
+            };
+        }
+
+        this.nextToken();
+
         let statements: Array<Statement> = [];
 
         this.nextToken();
@@ -506,6 +520,7 @@ export default class Parser {
         return {
             debug: 'parseBlockStatement>return',
             statements,
+            returnFinal: false,
             kind: ExpressionKind.Block,
             ...this.curr(),
         };

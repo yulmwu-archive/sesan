@@ -103,9 +103,11 @@ export default class Evaluator {
     }
 
     private evalBlockStatements(
-        statements: Array<Statement>,
+        statement: BlockStatement,
         env: Enviroment
     ): LangObject {
+        const { statements, returnFinal } = statement;
+
         let results: Array<LangObject> = [];
 
         for (const statement of statements) {
@@ -119,7 +121,10 @@ export default class Evaluator {
             }
         }
 
-        return NULL;
+        if (results.length === 0) return NULL;
+
+        if (returnFinal) return results[results.length - 1];
+        else return NULL;
     }
 
     private evalStatement(statement: Statement, env: Enviroment): LangObject {
@@ -237,7 +242,7 @@ export default class Evaluator {
 
             case ExpressionKind.Block:
                 return this.evalBlockStatements(
-                    (expression as unknown as BlockStatement).statements,
+                    expression as unknown as BlockStatement,
                     env
                 );
 

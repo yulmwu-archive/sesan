@@ -22,6 +22,7 @@ const errorsLocale: {
             unexpectedToken:
                 "Expected next token to be '{0}', got '{1}' instead.",
             unexpectedExpression: `Expected expression, got {0} instead.`,
+            invalidBodyBlock: `Invalid body block.`,
         },
         runtimeError: {
             invalidArgument: "'{0}' expected {1} arguments but got {2}.",
@@ -49,6 +50,7 @@ const errorsLocale: {
             unexpectedToken:
                 "'{0}' 을(를) 예상했지만, '{1}' 을(를) 받았습니다.",
             unexpectedExpression: `식을 예상했지만, {0}을(를) 받았습니다.`,
+            invalidBodyBlock: `유효하지 않은 블록입니다.`,
         },
         runtimeError: {
             invalidArgument:
