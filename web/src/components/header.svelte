@@ -92,7 +92,7 @@
             source: '/stdlib/util.tiny',
         },
         {
-            name: 'Standard Library - Utility',
+            name: 'Standard Library - Object',
             source: '/stdlib/object.tiny',
         },
     ];
