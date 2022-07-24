@@ -4,10 +4,10 @@ func match(value, case, default) {
     let result = null();
 
     forEach(case, func (item, index) {
-        if (item[0] == value) { result = item[1](value); }
+        if (item[0] == value) result = item[1](value);
     });
 
-    if (typeof(result) == 'NULL') { result = default(value); }
+    if (typeof(result) == 'NULL') result = default(value);
 
     return result;
 }
@@ -19,6 +19,5 @@ func string(value) { return convert(value, 'string'); }
 func boolean(value) { return convert(value, 'boolean'); }
 
 func ternary(condition, trueValue, falseValue) {
-    if (condition) { return trueValue; } 
-    else { return falseValue; }
+    return if (condition) trueValue; else falseValue;
 }
