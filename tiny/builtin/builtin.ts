@@ -17,6 +17,7 @@ import {
     invalidArgument,
     localization,
     errorFormatter,
+    NumberObject,
 } from '../../index';
 import { readFileSync } from 'fs';
 
@@ -263,6 +264,37 @@ const convert: Func = (
     return { kind: ObjectKind.NULL };
 };
 
+const options: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator
+): LangObject => {
+    const pairs: Map<StringObject, LangObject> = new Map();
+
+    Object.entries(t.option).forEach(([key, value]) =>
+        pairs.set(
+            {
+                kind: ObjectKind.STRING,
+                value: key,
+            },
+            typeof value === 'string'
+                ? {
+                      kind: ObjectKind.STRING,
+                      value: value,
+                  }
+                : {
+                      kind: ObjectKind.BOOLEAN,
+                      value: value,
+                  }
+        )
+    );
+
+    return {
+        kind: ObjectKind.HASH,
+        pairs,
+    };
+};
+
 const newLine: Func = (args: Array<LangObject>): LangObject => ({
     kind: ObjectKind.STRING,
     value: '\n',
@@ -350,6 +382,25 @@ const throwError: Func = (
     return NULL;
 };
 
+const hashThis: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator
+): LangObject => ({
+    kind: ObjectKind.HASH,
+    pairs: t.__hash__this ?? new Map(),
+});
+
+const capture: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator
+): LangObject => {
+    t.__captured__enviroment = env;
+
+    return NULL;
+};
+
 export const builtin: Map<string, Func> = new Map([
     ['import', importEnv],
     ['typeof', typeofObject],
@@ -358,11 +409,24 @@ export const builtin: Map<string, Func> = new Map([
     ['eval', evalCode],
     ['js', evalJSCode],
     ['convert', convert],
+    ['options', options],
     ['null', () => NULL],
+    ['self', hashThis],
+    ['capture', capture],
     ['__builtin_length', length],
-    ['__builtin__arguments', getArguments],
+    ['__builtin_arguments', getArguments],
     ['__root', rootDir],
     ['__ast', ast],
     ['__pos', curr],
     ['__new_line', newLine],
+    [
+        'test',
+        (args: Array<LangObject>, env: Enviroment, t: Evaluator) => {
+            console.log(env);
+            return {
+                kind: ObjectKind.BOOLEAN,
+                value: true,
+            };
+        },
+    ],
 ]);

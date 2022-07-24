@@ -32,21 +32,15 @@ const enum ObjectKind {
     NULL,
 }
 
-const objectStringify = (
-    obj: LangObject,
-    strW: boolean = false,
-    strO: boolean = false
-): string => {
+const objectStringify = (obj: LangObject, strW: boolean = false): string => {
     if (!obj) return 'NULL';
-
-    const quote = (str: string, w: boolean): string => (w ? `"${str}"` : str);
 
     switch (obj.kind) {
         case ObjectKind.NUMBER:
             return obj.value.toString();
 
         case ObjectKind.STRING:
-            return quote(obj.value, strW);
+            return strW ? `"${obj.value}"` : obj.value;
 
         case ObjectKind.BOOLEAN:
             return obj.value ? 'true' : 'false';
@@ -57,37 +51,27 @@ const objectStringify = (
                 .join(', ')}]`;
 
         case ObjectKind.HASH:
-            return JSON.stringify(
-                JSON.parse(
-                    `{ ${[...obj.pairs.entries()]
-                        .map(
-                            ([key, value]) =>
-                                `${objectStringify(
-                                    key,
-                                    true,
-                                    true
-                                )}: ${objectStringify(value, true, true)}`
-                        )
-                        .join(', ')} }`
-                ),
-                null,
-                2
-            );
+            return `{ ${[...obj.pairs.entries()]
+                .map(
+                    ([key, value]) =>
+                        `${objectStringify(key, true)}: ${objectStringify(
+                            value,
+                            true
+                        )}`
+                )
+                .join(', ')} }`;
 
         case ObjectKind.FUNCTION:
-            return quote(
-                `func([${obj.parameters.map((m) => m?.kind).join(', ')}])`,
-                strO
-            );
+            return `func([${obj.parameters.map((m) => m?.kind).join(', ')}])`;
 
         case ObjectKind.BUILTIN:
-            return quote(`builtin`, strO);
+            return 'builtin';
 
         case ObjectKind.NULL:
-            return quote('NULL', strO);
+            return 'NULL';
 
         case ObjectKind.ERROR:
-            return quote(`Error: ${obj.message}`, strO);
+            return `ERROR: ${obj.message}`;
 
         default:
             return `[Unknown]`;

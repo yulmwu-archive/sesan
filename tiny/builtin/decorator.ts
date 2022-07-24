@@ -6,11 +6,12 @@ import {
     NULL,
     LangObject,
     ObjectKind,
+    BooleanObject,
 } from '../../index';
 
-export type Decorator = {
+export interface Decorator {
     disableCheckArguments: boolean;
-} | null;
+}
 
 const decoratorFunc: Func = (
     args: Array<LangObject>,
@@ -18,11 +19,18 @@ const decoratorFunc: Func = (
     t: Evaluator,
     pos: Position
 ): LangObject => {
-    if (!(args.length > 0) || args[0]?.kind !== ObjectKind.BOOLEAN)
+    if (args.length !== 1 || args[0]?.kind !== ObjectKind.HASH)
         return invalidArgument(pos, t.option);
 
+    let data: Map<string | number, LangObject> = new Map();
+
+    args[0].pairs.forEach((value, key) => data.set(key.value, value));
+
+    const get = (key: string | number): boolean =>
+        (data.get(key) as BooleanObject)?.value;
+
     t.__function__decorator = {
-        disableCheckArguments: args[0].value,
+        disableCheckArguments: get('disableCheckArguments'),
     };
 
     return NULL;

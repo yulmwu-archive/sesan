@@ -8,6 +8,7 @@ import {
     FunctionObject,
     LangObject,
     ObjectKind,
+    objectStringify,
 } from '../../index';
 
 const push: Func = (
@@ -93,6 +94,27 @@ const slice: Func = (
     };
 };
 
+const join: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator,
+    pos: Position
+): LangObject => {
+    if (
+        args.length !== 2 ||
+        args[0]?.kind !== ObjectKind.ARRAY ||
+        args[1]?.kind !== ObjectKind.STRING
+    )
+        return invalidArgument(pos, t.option);
+
+    return {
+        kind: ObjectKind.STRING,
+        value: (args[0] as ArrayObject).value
+            .map((v) => objectStringify(v))
+            .join(args[1].value),
+    };
+};
+
 const forEach: Func = (
     args: Array<LangObject>,
     env: Enviroment,
@@ -134,5 +156,6 @@ export const array: Map<string, Func> = new Map([
     ['__builtin_shift', shift],
     ['__builtin_unshift', unshift],
     ['__builtin_slice', slice],
+    ['__builtin_join', join],
     ['__builtin_forEach', forEach],
 ]);

@@ -49,7 +49,13 @@ const NULL: LangObject = {
 
 export default class Evaluator {
     public __builtin__arguments: Map<string, Array<LangObject>> = new Map();
-    public __function__decorator: Decorator = null;
+    public __function__decorator: Decorator = {
+        disableCheckArguments: false,
+    };
+    public __hash__this: Map<NumberObject | StringObject, LangObject> | null =
+        null;
+    public __captured__enviroment: Enviroment | null = null;
+
     public messages;
 
     constructor(
@@ -262,7 +268,7 @@ export default class Evaluator {
                     function: expr.function,
                     parameters: expr.arguments,
                     d:
-                        this.__function__decorator?.disableCheckArguments ??
+                        this.__function__decorator.disableCheckArguments ??
                         false,
                     body: expr.body,
                     env,
@@ -276,7 +282,7 @@ export default class Evaluator {
                         ret
                     );
 
-                this.__function__decorator = null;
+                this.__function__decorator.disableCheckArguments = false;
 
                 return ret;
             }
@@ -390,6 +396,9 @@ export default class Evaluator {
 
             if (key) hash.pairs.set(key_, value);
         });
+
+        this.__hash__this = hash.pairs;
+
         return hash;
     }
 
@@ -466,7 +475,9 @@ export default class Evaluator {
         env: Enviroment
     ): Enviroment {
         if (func?.kind === ObjectKind.FUNCTION) {
-            const newEnv = new Enviroment(env);
+            let newEnv = new Enviroment(env);
+
+            newEnv = this.__captured__enviroment ?? newEnv;
 
             func.parameters.forEach((param: Expression, i: number) => {
                 if (param?.kind === ExpressionKind.Ident)
@@ -490,6 +501,7 @@ export default class Evaluator {
         if (env.get(name)) return env.get(name);
 
         const builtin = builtinFunction(name, env);
+
         if (!builtin)
             return error(
                 errorFormatter(
