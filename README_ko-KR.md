@@ -124,7 +124,7 @@ npm run start:repl [file]
 
 | 연산자 | 문법                 | 지원 유형                                             |
 | ------ | -------------------- | ----------------------------------------------------- |
-| `+`    | `Literal + Literal`  | `number`, `array`, `string`                           |
+| `+`    | `Literal + Literal`  | `number`, `array`, `string`, `hash`                   |
 | `-`    | `Literal - Literal`  | `number`                                              |
 | `*`    | `Literal * Literal`  | `number`                                              |
 | `/`    | `Literal / Literal`  | `number`                                              |

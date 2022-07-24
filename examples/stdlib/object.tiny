@@ -5,6 +5,6 @@ let object = {
 
 // (object <- 'name') = 'Steve'; // ❌ Error
 
-assign(object, 'name', 'Steve'); // ✅ OK
+object = assign(object, 'name', 'Steve'); // ✅ OK
 
 println(object <- 'name'); // 'Steve'

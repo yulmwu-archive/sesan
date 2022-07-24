@@ -124,7 +124,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 | Operator | Syntax               | Literal Type                                          |
 | -------- | -------------------- | ----------------------------------------------------- |
-| `+`      | `Literal + Literal`  | `number`, `array`, `string`                           |
+| `+`      | `Literal + Literal`  | `number`, `array`, `string`, `hash`                   |
 | `-`      | `Literal - Literal`  | `number`                                              |
 | `*`      | `Literal * Literal`  | `number`                                              |
 | `/`      | `Literal / Literal`  | `number`                                              |
