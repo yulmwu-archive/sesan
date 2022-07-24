@@ -1,3 +1,4 @@
 {
-    "useStdLibAutomatically": true
+    "useStdLibAutomatically": true,
+    "allowEval": true
 }

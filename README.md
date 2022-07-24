@@ -165,7 +165,10 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 | `eval`    | `string`  |
 | `js`      | `string`  |
 | `convert` | `Any`     |
+| `options` |           |
 | `null`    |           |
+| `self`    |           |
+| `capture` |           |
 
 <br>
 
@@ -183,6 +186,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
         -   `shift(array)`
         -   `unshift(array, value)`
         -   `slice(array, start, end)`
+        -   `join(array, separator)`
         -   `forEach(array, callback)`
         -   `repeat(value, count)`, `repeat(count)`
     -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
@@ -191,6 +195,9 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
         -   `string(value)`
         -   `number(value)`
         -   `boolean(value)`
+        -   `ternary(condition, trueValue, falseValue)`
+    -   [`object`](https://github.com/tsukiroku/tiny/blob/main/@std/object.tiny)
+        -   `assign(object, key, value)`
 
 <br>
 

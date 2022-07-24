@@ -165,7 +165,10 @@ npm run start:repl [file]
 | `eval`    | `string`  |
 | `js`      | `string`  |
 | `convert` | `Any`     |
+| `options` |           |
 | `null`    |           |
+| `self`    |           |
+| `capture` |           |
 
 <br>
 
@@ -183,6 +186,7 @@ npm run start:repl [file]
         -   `shift(array)`
         -   `unshift(array, value)`
         -   `slice(array, start, end)`
+        -   `join(array, separator)`
         -   `forEach(array, callback)`
         -   `repeat(value, count)`, `repeat(count)`
     -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
@@ -191,6 +195,9 @@ npm run start:repl [file]
         -   `string(value)`
         -   `number(value)`
         -   `boolean(value)`
+        -   `ternary(condition, trueValue, falseValue)`
+    -   [`object`](https://github.com/tsukiroku/tiny/blob/main/@std/object.tiny)
+        -   `assign(object, key, value)`
 
 <br>
 
