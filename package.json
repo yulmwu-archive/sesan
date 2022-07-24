@@ -10,7 +10,8 @@
         "build:windows": "@echo off && IF exist dist ( rd dist; npm run build:tsc ) ELSE ( npm run build:tsc ) && @echo on",
         "build:tsc": "tsc -p tsconfig.json",
         "test": "npm run build && node ./dist/tests/$TEST.test.js # export TEST=something",
-        "npm:publish": "npm run build && npm publish"
+        "npm:publish": "npm run build && npm publish",
+        "git:push": "cd web && npm run publish && cd .. && git push origin"
     },
     "repository": {
         "type": "git",

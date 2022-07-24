@@ -364,7 +364,7 @@ export default class Evaluator {
             const value = this.evalExpression(arg.value, env);
             if (!value) return;
 
-            let key_: StringObject | NumberObject | BooleanObject = {
+            let key_: StringObject | NumberObject = {
                 kind: ObjectKind.STRING,
                 value: '',
             };

@@ -6,7 +6,6 @@
     -   [작동 원리](#작동-원리)
     -   [REPL](#REPL)
         -   [REPL 명령어](#REPL-명령어)
-        -   [REPL 모드](#REPL-모드)
     -   [웹 Playground](#웹-Playground)
 -   [**인터프리터**](#인터프리터)
     -   토크나이저 (Tokenizer)
@@ -53,22 +52,10 @@ npm run start:repl [file]
 
 `//명령어 ...매개 변수`
 
-| 명령어 | 설명           |
-| ------ | -------------- |
-| `exit` | REPL 종료      |
-| `mode` | REPL 모드 변경 |
-
-<br>
-
-## REPL 모드
-
-| Mode          | Description             |
-| ------------- | ----------------------- |
-| `repl`        | REPL 모드               |
-| `lexer`       | Lexer 모드              |
-| `parser`      | Parser 모드             |
-| `parser json` | Parser 모드 (JSON 출력) |
-| `env`         | 환경 변수 모드          |
+| 명령어 | 설명                                              |
+| ------ | ------------------------------------------------- |
+| `exit` | REPL 종료                                         |
+| `mode` | REPL 모드 변경 (`repl`, `lexer`, `parser`, `env`) |
 
 <br>
 

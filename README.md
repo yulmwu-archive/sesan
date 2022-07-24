@@ -6,7 +6,6 @@
     -   [How it works?](#how-it-works)
     -   [Start REPL](#start-repl)
         -   [REPL commands](#repl-commands)
-        -   [REPL mode](#repl-mode)
     -   [Web Playground](#web-playground)
 -   [**Interpreter**](#Interpreter)
     -   Tokenizer
@@ -53,22 +52,10 @@ npm run start:repl [file]
 
 `//command ...args`
 
-| Command | Description     |
-| ------- | --------------- |
-| `exit`  | Exit the repl   |
-| `mode`  | Change the mode |
-
-<br>
-
-## REPL mode
-
-| Mode          | Description                  |
-| ------------- | ---------------------------- |
-| `repl`        | REPL mode                    |
-| `lexer`       | Lexer mode                   |
-| `parser`      | Parser mode                  |
-| `parser json` | Parser mode with JSON output |
-| `env`         | Environment mode             |
+| Command | Description                                        |
+| ------- | -------------------------------------------------- |
+| `exit`  | Exit the repl                                      |
+| `mode`  | Change the mode (`repl`, `lexer`, `parser`, `env`) |
 
 <br>
 

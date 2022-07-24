@@ -576,7 +576,20 @@ export default class Parser {
         while (!this.peekTokenIs(TokenType.RBRACE)) {
             this.nextToken();
 
-            const key = this.parseExpression(Priority.LOWEST);
+            let key = this.parseExpression(Priority.LOWEST);
+
+            if (key?.kind === ExpressionKind.Ident)
+                key = {
+                    debug: 'parseHash>ident>key',
+                    value: {
+                        debug: 'parseHash>ident>key>value',
+                        value: key.value,
+                        kind: LiteralKind.String,
+                        ...this.curr(),
+                    },
+                    kind: ExpressionKind.Literal,
+                    ...this.curr(),
+                };
 
             if (!this.peekTokenIs(TokenType.COLON)) return null;
 

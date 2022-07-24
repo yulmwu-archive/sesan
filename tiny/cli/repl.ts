@@ -18,7 +18,7 @@ import {
     printError,
 } from '../../index';
 
-type Mode = 'repl' | 'parser' | 'parser_json' | 'lexer' | 'env';
+type Mode = 'repl' | 'parser' | 'lexer' | 'env';
 
 const defaultFilename: string = '<REPL>';
 
@@ -48,13 +48,9 @@ export default class {
                         !['repl', 'parser', 'lexer', 'env'].includes(args[0]) ||
                         args.length <= 0
                     )
-                        return 'Invalid mode. valid modes are `repl`, `parser`, `parser json`, `lexer`, and `env`';
-                    if (
-                        args[0] === 'parser' &&
-                        (args.length >= 2 && args[1].toLowerCase()) === 'json'
-                    )
-                        this.mode = 'parser_json';
-                    else this.mode = args[0] as Mode;
+                        return 'Invalid mode. valid modes are `repl`, `parser`, `lexer`, and `env`';
+
+                    this.mode = args[0] as Mode;
 
                     return `Switched to '${this.mode}' mode`;
                 },
@@ -86,9 +82,6 @@ export default class {
                     return objectStringify(result).gray;
 
                 case 'parser':
-                    return parsed;
-
-                case 'parser_json':
                     return JSON.stringify(parsed, null, 2);
 
                 case 'lexer':
