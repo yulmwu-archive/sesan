@@ -857,6 +857,22 @@ export default class Evaluator {
                         JSON.stringify(right.pairs),
                 };
 
+            case TokenType.PLUS:
+                return {
+                    kind: ObjectKind.HASH,
+                    pairs: new Map([
+                        ...[...left.pairs.entries()].filter(
+                            ([k]) =>
+                                !new Map(
+                                    [...right.pairs.entries()]
+                                        .reverse()
+                                        .map(([k, v]) => [JSON.stringify(k), v])
+                                ).has(JSON.stringify(k))
+                        ),
+                        ...right.pairs,
+                    ]),
+                };
+
             default:
                 return null;
         }

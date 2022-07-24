@@ -27,7 +27,7 @@ const errorsLocale: {
             invalidArgument: "'{0}' expected {1} arguments but got {2}.",
             invalidFunction: "'{0}' is not a function.",
             identifierNotDefined_1: "'{0}' is not defined.",
-            identifierNotDefined_2: "identifier '{0}' is not defined.",
+            identifierNotDefined_2: "Identifier '{0}' is not defined.",
             typeMismatch_1: 'Type mismatch.',
             typeMismatch_2: 'Type mismatch: [{0}], [{1}].',
             indexOutOfRange: 'Index out of range.',
