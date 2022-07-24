@@ -3,6 +3,8 @@ import type { IResults } from './types';
 
 let currentLine = writable(1);
 let currentColumn = writable(0);
+let line = writable(0);
+let scrollTop = writable(0);
 let evaluating = writable(false);
 let errors = writable(0);
 let results = writable<IResults>({
@@ -10,4 +12,12 @@ let results = writable<IResults>({
     errors: [],
 });
 
-export { currentLine, currentColumn, evaluating, errors, results };
+export {
+    currentLine,
+    currentColumn,
+    line,
+    scrollTop,
+    evaluating,
+    errors,
+    results,
+};

@@ -27,3 +27,8 @@
 *::-webkit-scrollbar-corner {
     background-color: #252525;
 }
+
+.line {
+    display: inline-block;
+    color: rgb(110, 110, 110);
+}

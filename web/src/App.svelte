@@ -1,11 +1,14 @@
 <script lang="ts">
     import Header from './components/header.svelte';
-    import Editor, { editor } from './components/editor.svelte';
+    import Editor, { editor, onInput } from './components/editor.svelte';
     import Results from './components/results.svelte';
     import Footer from './components/footer.svelte';
     import { onMount } from 'svelte';
 
-    onMount(() => editor.focus());
+    onMount(() => {
+        editor.focus();
+        onInput();
+    });
 </script>
 
 <div class="container">
