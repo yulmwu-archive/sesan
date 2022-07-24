@@ -1,73 +1,20 @@
-// Example:
-//
-// let arr = [1, 2, 3];
-// push(arr, 4); // [1, 2, 3, 4];
+func push(arr, value) { return __builtin_push(arr, value); }
 
-func push(arr, value) {
-    return __builtin_push(arr, value);
-};
+func pop(arr) { return __builtin_pop(arr); }
 
+func shift(arr) { return __builtin_shift(arr); }
 
-// Example:
-//
-// let arr = [1, 2, 3];
-// pop(arr); // [1, 2];
+func unshift(arr, value) { return __builtin_unshift(arr, value); }
 
-func pop(arr) {
-    return __builtin_pop(arr);
-};
+func slice(arr, start, end) { return __builtin_slice(arr, start, end); }
 
+func join(arr, separator) { return __builtin_join(arr, separator); }
 
-// Example:
-//
-// let arr = [1, 2, 3];
-// shift(arr); // [2, 3];
+func forEach(arr, callback) { return __builtin_forEach(arr, callback); }
 
-func shift(arr) {
-    return __builtin_shift(arr);
-};
-
-
-// Example:
-//
-// let arr = [1, 2, 3];
-// unshift(arr, 0); // [0, 1, 2, 3];
-
-func unshift(arr, value) {
-    return __builtin_unshift(arr, value);
-};
-
-
-// Example:
-//
-// let arr = [1, 2, 3];
-// slice(arr, 1, 2); // [2];
-
-func slice(arr, start, end) {
-    return __builtin_slice(arr, start, end);
-};
-
-
-// Example:
-//
-// let arr = [1, 2, 3];
-// forEach(arr, func(value, index) {
-//     println(index, value);
-// });
-
-func forEach(arr, callback) {
-    return __builtin_forEach(arr, callback);
-};
-
-
-// Example:
-//
-// repeat('foo', 3); // ['foo', 'foo', 'foo'];
-// repeat(5); // [NULL, NULL, NULL, NULL, NULL];
-
-@func(true);
+@func({ disableCheckArguments: true });
 func repeat(x, r) {
-    return match(length(__builtin__arguments('repeat')), [
+    return match(length(__builtin_arguments('repeat')), [
         [1, func(value) {
             let _x = 0;
             let result = [];

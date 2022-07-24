@@ -1,16 +1,12 @@
 let nl = __new_line();
 
-@func(true);
+@func({ disableCheckArguments: true });
 func print() {
-    __builtin_print(__builtin__arguments('print'), '');
+    __builtin_print(__builtin_arguments('print'), '');
 };
 
-@func(true);
-func println() {
-    __builtin_print(__builtin__arguments('println'), nl);
-};
+@func({ disableCheckArguments: true });
+func println() { __builtin_print(__builtin_arguments('println'), nl); }
 
-@func(true);
-func readline() {
-    __builtin_readline(__builtin__arguments('readline'));
-};
+@func({ disableCheckArguments: true });
+func readline() { __builtin_readline(__builtin_arguments('readline')); }

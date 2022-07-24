@@ -1,45 +1,22 @@
-func length(value) {
-    return __builtin_length(value);
-};
-
-
-// Example:
-// 
-// let res = match(3, [
-//     [ 1, func(v) { return value + 1; } ], 
-//     [ 2, func(v) { return value + 2; } ]
-// ], func(v) { 
-//     println('... nothing'); 
-//     return v;
-// });
-//
-// println(res);
+func length(value) { return __builtin_length(value); }
 
 func match(value, case, default) {
     let result = null();
 
     forEach(case, func (item, index) {
-        if (item[0] == value) {
-            result = item[1](value);
-        }
+        if (item[0] == value) { result = item[1](value); }
     });
 
     if (typeof(result) == 'NULL') { result = default(value); }
 
     return result;
-};
+}
 
-func number(value) {
-    return convert(value, 'number');
-};
+func number(value) { return convert(value, 'number'); }
 
-func string(value) {
-    return convert(value, 'string');
-};
+func string(value) { return convert(value, 'string'); }
 
-func boolean(value) {
-    return convert(value, 'boolean');
-};
+func boolean(value) { return convert(value, 'boolean'); }
 
 func ternary(condition, trueValue, falseValue) {
     if (condition) { return trueValue; } 

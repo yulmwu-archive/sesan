@@ -1,0 +1,1 @@
+func assign(object, key, value) { return object + { string(key): value }; }
