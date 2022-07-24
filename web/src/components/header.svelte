@@ -76,6 +76,10 @@
             source: 'operators.tiny',
         },
         {
+            name: 'Decorators',
+            source: 'decorators.tiny',
+        },
+        {
             name: 'Standard Library - IO',
             source: '/stdlib/io.tiny',
         },
@@ -86,6 +90,10 @@
         {
             name: 'Standard Library - Utility',
             source: '/stdlib/util.tiny',
+        },
+        {
+            name: 'Standard Library - Utility',
+            source: '/stdlib/object.tiny',
         },
     ];
 
