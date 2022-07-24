@@ -1003,11 +1003,10 @@ export default class Evaluator {
             return conditionExpression;
 
         if (conditionExpression?.kind === ObjectKind.BOOLEAN) {
-            if (conditionExpression.value) {
+            if (conditionExpression.value)
                 return this.evalExpression(consequence, env);
-            } else if (alternative) {
-                return this.evalExpression(alternative, env);
-            } else return NULL;
+            else if (alternative) return this.evalExpression(alternative, env);
+            else return NULL;
         }
 
         return NULL;

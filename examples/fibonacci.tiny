@@ -1,5 +1,5 @@
 let fib = func(n) {
-    match(n, [
+    return match(n, [
         [0, func(v) {
             return 0;
         }], 
