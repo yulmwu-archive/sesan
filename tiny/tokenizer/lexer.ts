@@ -393,6 +393,14 @@ export default class Lexer {
                     };
                 break;
 
+            case '@':
+                token = {
+                    type: TokenType.AT,
+                    literal: '@',
+                    ...this.curr(),
+                };
+                break;
+
             case '"':
                 token = this.readString('"');
                 break;

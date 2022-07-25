@@ -30,6 +30,7 @@ const enum ObjectKind {
     RETURN_VALUE,
     ERROR,
     NULL,
+    DECORATOR,
 }
 
 const objectStringify = (obj: LangObject, strW: boolean = false): string => {
@@ -143,7 +144,7 @@ interface HashObject {
 interface FunctionObject {
     function: Expression;
     parameters: Array<Expression>;
-    d: boolean;
+    decorator?: HashObject;
     body: Expression;
     env: Enviroment;
     option: Options;

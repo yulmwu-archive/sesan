@@ -19,7 +19,6 @@ import {
     StringLiteral,
     WhileStatement,
     ReturnStatement,
-    BooleanObject,
     BuiltinFunction,
     Enviroment,
     HashObject,
@@ -38,9 +37,9 @@ import {
     StdioOptions,
     stdout,
     builtinFunction,
-    Decorator,
     errorFormatter,
     localization,
+    DecoratorStatement,
 } from '../../index';
 
 const NULL: LangObject = {
@@ -49,9 +48,7 @@ const NULL: LangObject = {
 
 export default class Evaluator {
     public __builtin__arguments: Map<string, Array<LangObject>> = new Map();
-    public __function__decorator: Decorator = {
-        disableCheckArguments: false,
-    };
+    public __builtin__decorators: Map<string, HashObject> = new Map();
     public __hash__this: Map<NumberObject | StringObject, LangObject> | null =
         null;
     public __captured__enviroment: Enviroment | null = null;
@@ -190,6 +187,22 @@ export default class Evaluator {
                 return NULL;
             }
 
+            case NodeKind.DecoratorStatement: {
+                const decorator = statement as unknown as DecoratorStatement;
+
+                const value = this.evalExpression(decorator.value, env);
+
+                const func = this.evalFunction(
+                    decorator.function as FunctionExpression,
+                    env,
+                    value
+                );
+
+                if (func?.kind !== ObjectKind.FUNCTION) return null;
+
+                return func;
+            }
+
             default:
                 return NULL;
         }
@@ -197,7 +210,8 @@ export default class Evaluator {
 
     private evalExpression(
         expression: Expression,
-        env: Enviroment
+        env: Enviroment,
+        decorator?: HashObject
     ): LangObject {
         if (!expression) return null;
 
@@ -266,31 +280,11 @@ export default class Evaluator {
                     }
                 );
 
-            case ExpressionKind.Function: {
-                const expr = expression as unknown as FunctionExpression;
-
-                const ret: LangObject = {
-                    function: expr.function,
-                    parameters: expr.arguments,
-                    d:
-                        this.__function__decorator.disableCheckArguments ??
-                        false,
-                    body: expr.body,
-                    env,
-                    option: this.option,
-                    kind: ObjectKind.FUNCTION,
-                };
-
-                if (expr.function)
-                    env.set(
-                        (expr.function as unknown as StringLiteral).value,
-                        ret
-                    );
-
-                this.__function__decorator.disableCheckArguments = false;
-
-                return ret;
-            }
+            case ExpressionKind.Function:
+                return this.evalFunction(
+                    expression as unknown as FunctionExpression,
+                    env
+                );
 
             case ExpressionKind.Call: {
                 const expr = expression as unknown as CallExpression;
@@ -357,6 +351,29 @@ export default class Evaluator {
             default:
                 return null;
         }
+    }
+
+    private evalFunction(
+        expression: FunctionExpression,
+        env: Enviroment,
+        decorator?: LangObject
+    ): LangObject {
+        const expr = expression as unknown as FunctionExpression;
+
+        const ret: LangObject = {
+            function: expr.function,
+            parameters: expr.arguments,
+            body: expr.body,
+            env,
+            option: this.option,
+            decorator: decorator as HashObject,
+            kind: ObjectKind.FUNCTION,
+        };
+
+        if (expr.function)
+            env.set((expr.function as unknown as StringLiteral).value, ret);
+
+        return ret;
     }
 
     private evalHashArguments(
@@ -428,21 +445,40 @@ export default class Evaluator {
     }
 
     public applyFunction(
-        func: LangObject,
+        _func: LangObject,
         name: string,
         args: Array<LangObject>,
         env: Enviroment,
         pos: Position
     ): LangObject {
-        if (func?.kind === ObjectKind.FUNCTION) {
-            const f = func as unknown as FunctionObject;
+        const func = _func as FunctionObject;
 
-            if (!func.d && f.parameters.length !== args.length)
+        func.decorator?.pairs.forEach((value, key) =>
+            this.__builtin__decorators.set(name, value as HashObject)
+        );
+
+        const getPair = (key: string | number): LangObject | null => {
+            if (!func.decorator) return null;
+
+            const newMap: Map<string | number, LangObject> = new Map();
+
+            func.decorator.pairs.forEach((value, key) =>
+                newMap.set(key.value, value)
+            );
+
+            return newMap.get(key) ?? null;
+        };
+
+        if (func?.kind === ObjectKind.FUNCTION) {
+            if (
+                !getPair('skipCheckArguments') &&
+                func.parameters.length !== args.length
+            )
                 return error(
                     errorFormatter(
                         this.messages.runtimeError.invalidArgument,
                         name,
-                        f.parameters.length,
+                        func.parameters.length,
                         args.length
                     ),
                     pos.line,
@@ -450,8 +486,9 @@ export default class Evaluator {
                 );
 
             const res = this.evalExpression(
-                f.body,
-                this.extendFunctionEnv(func, args, env)
+                func.body,
+                this.extendFunctionEnv(func, args, env),
+                func.decorator as HashObject
             );
 
             if (res?.kind === ObjectKind.RETURN_VALUE) return res.value;

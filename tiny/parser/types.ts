@@ -10,7 +10,8 @@ type Statement =
     | ReturnStatement
     | ExpressionStatement
     | BlockStatement
-    | WhileStatement;
+    | WhileStatement
+    | DecoratorStatement;
 
 type Expression =
     | LiteralExpression
@@ -47,6 +48,7 @@ enum NodeKind {
     ReturnStatement,
     ExpressionStatement,
     WhileStatement,
+    DecoratorStatement,
 }
 
 enum LiteralKind {
@@ -79,6 +81,12 @@ interface WhileStatement extends Debug, Position {
     condition: Expression;
     body: Expression;
     kind: NodeKind.WhileStatement;
+}
+
+interface DecoratorStatement extends Debug, Position {
+    value: Expression;
+    function: Expression;
+    kind: NodeKind.DecoratorStatement;
 }
 
 interface ExpressionStatement extends Debug, Position {
@@ -185,6 +193,7 @@ export {
     LetStatement,
     ReturnStatement,
     WhileStatement,
+    DecoratorStatement,
     ExpressionStatement,
     LiteralExpression,
     BlockStatement,

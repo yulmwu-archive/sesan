@@ -9,7 +9,6 @@ import {
 } from '../../index';
 import { io } from './io';
 import { array } from './array';
-import { decorator } from './decorator';
 import { builtin } from './builtin';
 
 type Func = Omit<BuiltinFunction, 'kind'>['func'];
@@ -28,7 +27,6 @@ const builtinFunction = (name: string, env: Enviroment): LangObject | null => {
         ...builtin,
         ...array,
         ...io,
-        ...decorator,
     ]).get(name);
 
     if (!func) return null;
@@ -39,5 +37,4 @@ const builtinFunction = (name: string, env: Enviroment): LangObject | null => {
     };
 };
 
-export { Decorator } from './decorator';
 export { Func, invalidArgument, builtinsEval, builtinFunction };

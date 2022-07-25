@@ -20,6 +20,7 @@ enum TokenType {
     SLASH = '/',
     PERCENT = '%',
     QUESTION = '?',
+    AT = '@',
 
     LT = '<',
     GT = '>',

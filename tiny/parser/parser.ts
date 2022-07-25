@@ -21,6 +21,7 @@ import {
     localization,
     errorFormatter,
     Options,
+    DecoratorStatement,
 } from '../../index';
 
 enum Priority {
@@ -79,6 +80,9 @@ export default class Parser {
 
             case TokenType.WHILE:
                 return this.parseWhileStatement();
+
+            case TokenType.AT:
+                return this.parseDecorator();
 
             case TokenType.COMMENT:
                 return null;
@@ -199,6 +203,32 @@ export default class Parser {
             condition,
             body,
             kind: NodeKind.WhileStatement,
+            ...this.curr(),
+        };
+    }
+
+    private parseDecorator(): DecoratorStatement | null {
+        this.nextToken();
+
+        const value = this.parseExpression(Priority.LOWEST);
+
+        this.nextToken();
+
+        if (this.currTokenIs(TokenType.SEMICOLON)) this.nextToken();
+
+        const func = this.parseExpression(Priority.LOWEST);
+
+        if (func?.kind !== ExpressionKind.Function) {
+            this.pushError(this.messages.parserError.decoratorRequiresFunction);
+
+            return null;
+        }
+
+        return {
+            debug: 'parseDecorator>return',
+            value,
+            function: func,
+            kind: NodeKind.DecoratorStatement,
             ...this.curr(),
         };
     }
@@ -352,36 +382,7 @@ export default class Parser {
             }
 
             case TokenType.FUNCTION: {
-                let name: Expression | null = null;
-
-                if (!this.peekTokenIs(TokenType.IDENT)) name = null;
-                else {
-                    this.nextToken();
-
-                    name = {
-                        debug: 'parsePrefix>case>function>name',
-                        value: this.currToken.literal,
-                        kind: ExpressionKind.Ident,
-                        ...this.curr(),
-                    };
-                }
-
-                if (!this.expectPeek(TokenType.LPAREN)) return null;
-
-                const parameters = this.parseFunctionParameters();
-
-                const body = this.parseBlockStatement(false);
-
-                if (!body) return null;
-
-                return {
-                    debug: 'parsePrefix>case>function',
-                    function: name,
-                    arguments: parameters,
-                    body,
-                    kind: ExpressionKind.Function,
-                    ...this.curr(),
-                };
+                return this.parseFunction();
             }
 
             case TokenType.LBRACKET:
@@ -398,6 +399,39 @@ export default class Parser {
             default:
                 return null;
         }
+    }
+
+    private parseFunction(): Expression | null {
+        let name: Expression | null = null;
+
+        if (!this.peekTokenIs(TokenType.IDENT)) name = null;
+        else {
+            this.nextToken();
+
+            name = {
+                debug: 'parsePrefix>case>function>name',
+                value: this.currToken.literal,
+                kind: ExpressionKind.Ident,
+                ...this.curr(),
+            };
+        }
+
+        if (!this.expectPeek(TokenType.LPAREN)) return null;
+
+        const parameters = this.parseFunctionParameters();
+
+        const body = this.parseBlockStatement(false);
+
+        if (!body) return null;
+
+        return {
+            debug: 'parsePrefix>case>function',
+            function: name,
+            arguments: parameters,
+            body,
+            kind: ExpressionKind.Function,
+            ...this.curr(),
+        };
     }
 
     private prefixParseOps(): PrefixExpression | null {

@@ -401,6 +401,18 @@ const capture: Func = (
     return NULL;
 };
 
+const decorator: Func = (
+    args: Array<LangObject>,
+    env: Enviroment,
+    t: Evaluator,
+    pos: Position
+): LangObject => {
+    if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
+        return invalidArgument(pos, t.option);
+
+    return t.__builtin__decorators.get(args[0].value) ?? NULL;
+};
+
 export const builtin: Map<string, Func> = new Map([
     ['import', importEnv],
     ['typeof', typeofObject],
@@ -413,20 +425,10 @@ export const builtin: Map<string, Func> = new Map([
     ['null', () => NULL],
     ['self', hashThis],
     ['capture', capture],
+    ['decorator', decorator],
     ['__builtin_length', length],
     ['__builtin_arguments', getArguments],
     ['__root', rootDir],
     ['__ast', ast],
     ['__pos', curr],
-    ['__new_line', newLine],
-    [
-        'test',
-        (args: Array<LangObject>, env: Enviroment, t: Evaluator) => {
-            console.log(env);
-            return {
-                kind: ObjectKind.BOOLEAN,
-                value: true,
-            };
-        },
-    ],
 ]);

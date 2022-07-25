@@ -23,6 +23,7 @@ const errorsLocale: {
                 "Expected next token to be '{0}', got '{1}' instead.",
             unexpectedExpression: `Expected expression, got {0} instead.`,
             invalidBodyBlock: `Invalid body block.`,
+            decoratorRequiresFunction: `Decorator requires a function.`,
         },
         runtimeError: {
             invalidArgument: "'{0}' expected {1} arguments but got {2}.",
@@ -51,6 +52,7 @@ const errorsLocale: {
                 "'{0}' 을(를) 예상했지만, '{1}' 을(를) 받았습니다.",
             unexpectedExpression: `식을 예상했지만, {0}을(를) 받았습니다.`,
             invalidBodyBlock: `유효하지 않은 블록입니다.`,
+            decoratorRequiresFunction: `데코레이터는 함수를 요구합니다.`,
         },
         runtimeError: {
             invalidArgument:
