@@ -115,6 +115,15 @@
 
     <p class="share" on:click={share}>Share</p>
 
+    <p
+        class="docs"
+        on:click={() => {
+            window.open('https://github.com/tsukiroku/tiny/tree/main/docs');
+        }}
+    >
+        Docs
+    </p>
+
     <select bind:value={selected} on:change={example}>
         {#each examples as e}
             <option value={e} disabled={e.disabled}>{e.name}</option>
@@ -141,7 +150,13 @@
         padding: 0 10px;
     }
 
+    div.header > .docs {
+        cursor: pointer;
+        display: inline;
+    }
+
     div.header > select {
+        padding: 0 10px;
         display: inline;
         border: none;
         background-color: #151515;
