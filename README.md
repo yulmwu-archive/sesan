@@ -1,4 +1,6 @@
-[English](./README.md) | [한국어](./README_ko-KR.md)
+[English](./README.md) | [한국어](./README_KR.md)
+
+[Docs](./docs/en_us/README.md) | [문서](./docs/ko_kr/README.md)
 
 ---
 

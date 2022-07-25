@@ -21,3 +21,9 @@ func boolean(value) { return convert(value, 'boolean'); }
 func ternary(condition, trueValue, falseValue) {
     return if (condition) trueValue; else falseValue;
 }
+
+func implement() {
+    throw('Not implemented');
+
+    return null();
+}
