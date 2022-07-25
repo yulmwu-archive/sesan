@@ -1,5 +1,10 @@
-@func({ disableCheckArguments: true });
+let skip = { skipCheckArguments: true };
+let custom = { customDecorator: 'hello' };
+
+@skip + custom
 func foo() {
+    println(decorator('foo'));
+
     let x = join(__builtin_arguments('foo'), ' ');
 
     capture();

@@ -158,19 +158,20 @@ npm run start:repl [file]
 
 # 내장 함수 (Built-in Function)
 
-| 함수      | 매개 변수 |
-| --------- | --------- |
-| `import`  | `string`  |
-| `typeof`  | `object`  |
-| `throw`   | `string`  |
-| `delete`  | `string`  |
-| `eval`    | `string`  |
-| `js`      | `string`  |
-| `convert` | `Any`     |
-| `options` |           |
-| `null`    |           |
-| `self`    |           |
-| `capture` |           |
+| 함수        | 매개 변수 |
+| ----------- | --------- |
+| `import`    | `string`  |
+| `typeof`    | `object`  |
+| `throw`     | `string`  |
+| `delete`    | `string`  |
+| `eval`      | `string`  |
+| `js`        | `string`  |
+| `convert`   | `Any`     |
+| `options`   |           |
+| `null`      |           |
+| `self`      |           |
+| `capture`   |           |
+| `decorator` | `string`  |
 
 <br>
 

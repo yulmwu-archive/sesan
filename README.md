@@ -158,19 +158,20 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 # Built-in functions
 
-| Function  | Arguments |
-| --------- | --------- |
-| `import`  | `string`  |
-| `typeof`  | `object`  |
-| `throw`   | `string`  |
-| `delete`  | `string`  |
-| `eval`    | `string`  |
-| `js`      | `string`  |
-| `convert` | `Any`     |
-| `options` |           |
-| `null`    |           |
-| `self`    |           |
-| `capture` |           |
+| Function    | Arguments |
+| ----------- | --------- |
+| `import`    | `string`  |
+| `typeof`    | `object`  |
+| `throw`     | `string`  |
+| `delete`    | `string`  |
+| `eval`      | `string`  |
+| `js`        | `string`  |
+| `convert`   | `Any`     |
+| `options`   |           |
+| `null`      |           |
+| `self`      |           |
+| `capture`   |           |
+| `decorator` | `string`  |
 
 <br>
 
@@ -252,6 +253,8 @@ console.log(
     -   [`Import`](https://github.com/tsukiroku/tiny/blob/main/examples/import.tiny)
     -   [`Variable`](https://github.com/tsukiroku/tiny/blob/main/examples/variable.tiny)
     -   [`Operators`](https://github.com/tsukiroku/tiny/blob/main/examples/operators.tiny)
+    -   [`Built-in functions`](https://github.com/tsukiroku/tiny/blob/main/examples/builtin.tiny)
+    -   [`Decorators`](https://github.com/tsukiroku/tiny/blob/main/examples/decorators.tiny)
     -   [`StdLib`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib)
         -   [`Array`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/array.tiny)
         -   [`IO`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/io.tiny)
