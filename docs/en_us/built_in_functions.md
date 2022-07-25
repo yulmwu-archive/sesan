@@ -105,3 +105,7 @@ func foo() {
 
 foo()();            // 5
 ```
+
+# decorator
+
+> extends [`Examples/Decorator`](../../examples/decorators.tiny)
