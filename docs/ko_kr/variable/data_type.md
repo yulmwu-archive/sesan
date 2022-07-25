@@ -1,11 +1,11 @@
-# string
+# 문자열
 
 ```
 'Hello, World!'
 "안녕, 세상아!"
 ```
 
-# number
+# 숫자
 
 ```
 12345
@@ -13,19 +13,19 @@
 3.141592
 ```
 
-# boolean
+# 논리
 
 ```
 true, false
 ```
 
-# array
+# 배열
 
 ```
 [1, 2, 3, 'Foo', 'Bar', [1, 2, 3]]
 ```
 
-# hash
+# 해시
 
 ```
 {
@@ -40,6 +40,6 @@ true, false
 }
 ```
 
-# function
+# 함수
 
-> extends [`func`](../function.md)
+> [`func`](../function.md) 상속

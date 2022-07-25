@@ -11,7 +11,7 @@ println(match(3, [
     [ 1, func(v) { return value + 1; } ],
     [ 2, func(v) { return value + 2; } ]
 ], func(v) {
-    println('nothing');
+    println('없음');
     return v * 10;
 }));
 ```

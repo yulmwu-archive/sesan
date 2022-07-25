@@ -1,13 +1,13 @@
 # print
 
 ```swift
-println("Hello, World!", 10);
+println("안녕, 세상아!", 10);
 ```
 
 # println
 
 ```swift
-println("Hello, World!");
+println("세상아, 안녕!");
 ```
 
 # readline

@@ -16,7 +16,7 @@ println(x);
 
 <br>
 
-If `.tiny` is not included in path, `.tiny` will be added automatically.
+경로에 `.tiny`가 포함되어 있지 않으면, 자동으로 `.tiny`가 추가됩니다.
 
 # typeof
 
@@ -41,7 +41,7 @@ let x = 5;
 
 delete("x");
 
-println(x); // Identifier 'x' is not defined.
+println(x); // 식별자 'x' 이(가) 정의되지 않았습니다.
 ```
 
 # eval
@@ -52,9 +52,9 @@ eval("5 + 5"); // 10
 
 <br>
 
-`allowEval` must be `true`.
+`allowEval`가 `true`여야만 합니다.
 
-**This feature is a dangerous feature. be careful.**
+**위험한 기능입니다. 사용 시 주의하세요.**
 
 # js
 
@@ -62,13 +62,13 @@ eval("5 + 5"); // 10
 js("console.log('foo')");
 ```
 
-`allowJavaScript` must be `true`.
+`allowJavaScript`가 `true`여야만 합니다.
 
-**This feature is a dangerous feature. be careful.**
+**위험한 기능입니다. 사용 시 주의하세요.**
 
 # convert
 
-> extends [`string()`, `number()`, `boolean()`](./standard_library/util.md#string-number-boolean)
+> [`string()`, `number()`, `boolean()`](./standard_library/util.md#string-number-boolean) 상속
 
 # options
 
@@ -96,12 +96,12 @@ let x = { foo: 5, bar: func () { println(self() <- 'foo'); } };
 func foo() {
 	let x = 5;      // --|
                     //   |
-	capture();      // ----| capture `foo()`'s environment
+	capture();      // ----| `foo()`의 변수를 캡쳐합니다.
                     //     |
 	return func() { //     |
 		println(x); // ----| `x` = 5
 	};              //     |
-}                   //-----| delete `x`
+}                   //-----| `x`가 유효하지 않음.
 
 foo()();            // 5
 ```

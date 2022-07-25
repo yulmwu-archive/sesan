@@ -4,7 +4,7 @@
 <left expression> <operator> <right expression>
 ```
 
-> extends [`<expression>`](./_base/expression.md)
+> [`<expression>`](./_base/expression.md) 상속
 
 ---
 
@@ -19,4 +19,4 @@ null() ?? 1;
 2 ?? 3;
 ```
 
-See [Examples/Operators](../../examples/operators.tiny) for `in` operator.
+`in` 연산자를 확인하려면, [Examples/Operators](../../examples/operators.tiny)을(를) 참조하세요.
