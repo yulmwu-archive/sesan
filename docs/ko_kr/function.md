@@ -8,7 +8,7 @@ func(<arguments>) <block expression>;
 
 > [`<block expression>`](./block_expression.md) 상속
 
---
+---
 
 ```swift
 func foo(a, b) {
