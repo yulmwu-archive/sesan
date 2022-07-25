@@ -212,6 +212,8 @@ If `tiny.config.json` dose not exist in root (`./`), it extends Default.
 | `allowEval`              | `eval()` 기능을 활성화합니다.          | `false` |
 | `allowJavaScript`        | Allow `js()` 기능을 활성화합니다.      | `false` |
 | `useStdLibAutomatically` | 자동으로 표준 라이브러리를 가져옵니다. | `false` |
+| `stderrPrefix`           | 오류 메세지에 접두사를 추가합니다.     | `true`  |
+| `stderrColor`            | 오류 메세지에 색을 추가합니다.         | `true`  |
 | `locale`                 | 지역화                                 | `en`    |
 
 <br>

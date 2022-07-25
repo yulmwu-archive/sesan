@@ -212,6 +212,8 @@ If `tiny.config.json` dose not exist in root (`./`), it extends Default.
 | `allowEval`              | Allow `eval()` feature             | `false` |
 | `allowJavaScript`        | Allow `js()` feature               | `false` |
 | `useStdLibAutomatically` | Use standard library automatically | `false` |
+| `stderrPrefix`           | Prefix for stderr                  | `true`  |
+| `stderrColor`            | Color for stderr                   | `true`  |
 | `locale`                 | Locale                             | `en`    |
 
 <br>
