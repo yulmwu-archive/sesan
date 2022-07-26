@@ -29,4 +29,8 @@ export default class Enviroment {
         if (this.store.has(name)) this.store.set(name, value);
         else if (this.outer) this.outer.update(name, value);
     }
+
+    public has(name: string): boolean {
+        return this.store.has(name) ?? (this.outer && this.outer.has(name));
+    }
 }

@@ -143,7 +143,8 @@ const forEach: Func = (
                 },
             ],
             env,
-            pos
+            pos,
+            NULL
         )
     );
 

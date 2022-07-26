@@ -11,7 +11,7 @@ import { io } from './io';
 import { array } from './array';
 import { builtin } from './builtin';
 
-type Func = Omit<BuiltinFunction, 'kind'>['func'];
+type Func = BuiltinFunction['func'];
 
 const invalidArgument = (pos: Position, option: Options): LangObject => ({
     kind: ObjectKind.ERROR,

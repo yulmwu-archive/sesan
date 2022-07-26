@@ -47,11 +47,8 @@ const NULL: LangObject = {
 };
 
 export default class Evaluator {
-    public __builtin__arguments: Map<string, Array<LangObject>> = new Map();
-    public __builtin__decorators: Map<string, HashObject> = new Map();
     public __hash__this: Map<NumberObject | StringObject, LangObject> | null =
         null;
-    public __captured__enviroment: Enviroment | null = null;
 
     public messages;
 
@@ -210,14 +207,13 @@ export default class Evaluator {
 
     private evalExpression(
         expression: Expression,
-        env: Enviroment,
-        decorator?: HashObject
+        env: Enviroment
     ): LangObject {
         if (!expression) return null;
 
         switch (expression.kind) {
             case ExpressionKind.Literal:
-                return this.evalLiteral(expression as LiteralExpression, env);
+                return this.evalLiteral(expression as LiteralExpression);
 
             case ExpressionKind.Prefix: {
                 const expr = expression as unknown as PrefixExpression;
@@ -231,17 +227,30 @@ export default class Evaluator {
             case ExpressionKind.Infix:
                 const infix = expression as unknown as InfixExpression;
 
-                if (infix.operator === TokenType.ASSIGN)
-                    return this.evalIdentInfix(
-                        infix.operator,
-                        infix.left,
-                        infix.right,
-                        env,
-                        {
-                            line: infix.line,
-                            column: infix.column,
-                        }
-                    );
+                switch (infix.operator) {
+                    case TokenType.ASSIGN:
+                        return this.evalIdentInfix(
+                            infix.operator,
+                            infix.left,
+                            infix.right,
+                            env,
+                            {
+                                line: infix.line,
+                                column: infix.column,
+                            }
+                        );
+
+                    case TokenType.ELEMENT:
+                        return this.evalElementInfix(
+                            infix.left,
+                            infix.right,
+                            env,
+                            {
+                                line: infix.line,
+                                column: infix.column,
+                            }
+                        );
+                }
 
                 return this.evalInfix(
                     infix.operator,
@@ -295,15 +304,44 @@ export default class Evaluator {
 
                 const args = this.evalExpressions(expr.arguments, env);
 
-                this.__builtin__arguments.set(name, args);
-
                 if (args.length == 1 && args[0]?.kind === ObjectKind.ERROR)
                     return args[0];
 
-                return this.applyFunction(functionObject, name, args, env, {
-                    line: expression.line,
-                    column: expression.column,
-                });
+                return this.applyFunction(
+                    functionObject,
+                    name,
+                    args,
+                    env,
+                    {
+                        line: expression.line,
+                        column: expression.column,
+                    },
+                    {
+                        kind: ObjectKind.HASH,
+                        pairs: new Map<StringObject | NumberObject, LangObject>(
+                            [
+                                [
+                                    {
+                                        kind: ObjectKind.STRING,
+                                        value: 'arguments',
+                                    },
+                                    {
+                                        kind: ObjectKind.ARRAY,
+                                        value: args,
+                                    },
+                                ],
+                                [
+                                    {
+                                        kind: ObjectKind.STRING,
+                                        value: 'decorator',
+                                    },
+                                    (functionObject as FunctionObject)
+                                        .decorator ?? NULL,
+                                ],
+                            ]
+                        ),
+                    }
+                );
             }
 
             case ExpressionKind.Array: {
@@ -342,6 +380,7 @@ export default class Evaluator {
                     column: expression.column,
                 });
             }
+
             case ExpressionKind.Hash:
                 return this.evalHashArguments(
                     (expression as unknown as HashExpression).pairs,
@@ -449,13 +488,10 @@ export default class Evaluator {
         name: string,
         args: Array<LangObject>,
         env: Enviroment,
-        pos: Position
+        pos: Position,
+        thisObject: LangObject
     ): LangObject {
         const func = _func as FunctionObject;
-
-        func.decorator?.pairs.forEach((value, key) =>
-            this.__builtin__decorators.set(name, value as HashObject)
-        );
 
         const getPair = (key: string | number): LangObject | null => {
             if (!func.decorator) return null;
@@ -487,8 +523,13 @@ export default class Evaluator {
 
             const res = this.evalExpression(
                 func.body,
-                this.extendFunctionEnv(func, args, env),
-                func.decorator as HashObject
+                this.extendFunctionEnv(
+                    func,
+                    args,
+                    env,
+                    thisObject,
+                    getPair('capture') ? true : false
+                )
             );
 
             if (res?.kind === ObjectKind.RETURN_VALUE) return res.value;
@@ -514,12 +555,14 @@ export default class Evaluator {
     private extendFunctionEnv(
         func: LangObject,
         args: Array<LangObject>,
-        env: Enviroment
+        env: Enviroment,
+        thisObject: LangObject,
+        capture: boolean
     ): Enviroment {
         if (func?.kind === ObjectKind.FUNCTION) {
             let newEnv = new Enviroment(env);
 
-            newEnv = this.__captured__enviroment ?? newEnv;
+            if (capture) newEnv = func.env;
 
             func.parameters.forEach((param: Expression, i: number) => {
                 if (param?.kind === ExpressionKind.Ident)
@@ -528,6 +571,8 @@ export default class Evaluator {
                         args[i]
                     );
             });
+
+            newEnv.set('this', thisObject);
 
             return newEnv;
         }
@@ -557,10 +602,7 @@ export default class Evaluator {
         return builtin;
     }
 
-    private evalLiteral(
-        literal: LiteralExpression,
-        env: Enviroment
-    ): LangObject {
+    private evalLiteral(literal: LiteralExpression): LangObject {
         switch (literal.value.kind) {
             case LiteralKind.Number:
                 return {
@@ -627,19 +669,19 @@ export default class Evaluator {
 
         switch (left?.kind) {
             case ObjectKind.NUMBER:
-                return this.evalNumberInfix(operator, left, right, env, pos);
+                return this.evalNumberInfix(operator, left, right, pos);
 
             case ObjectKind.STRING:
-                return this.evalStringInfix(operator, left, right, env, pos);
+                return this.evalStringInfix(operator, left, right, pos);
 
             case ObjectKind.BOOLEAN:
-                return this.evalBooleanInfix(operator, left, right, env, pos);
+                return this.evalBooleanInfix(operator, left, right, pos);
 
             case ObjectKind.HASH:
-                return this.evalHashInfix(operator, left, right, env, pos);
+                return this.evalHashInfix(operator, left, right, pos);
 
             case ObjectKind.ARRAY:
-                return this.evalArrayInfix(operator, left, right, env, pos);
+                return this.evalArrayInfix(operator, left, right, pos);
 
             default:
                 return error(
@@ -663,7 +705,7 @@ export default class Evaluator {
             errorFormatter(
                 this.messages.runtimeError.typeMismatch_2,
                 objectKindStringify(left?.kind ?? ObjectKind.NULL),
-                objectKindStringify(left?.kind ?? ObjectKind.NULL)
+                objectKindStringify(right?.kind ?? ObjectKind.NULL)
             ),
             pos.line,
             pos.column
@@ -674,7 +716,6 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment,
         pos: Position
     ): LangObject {
         if (operator === TokenType.IN)
@@ -762,7 +803,6 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment,
         pos: Position
     ): LangObject {
         if (operator === TokenType.IN)
@@ -808,7 +848,6 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment,
         pos: Position
     ): LangObject {
         if (operator === TokenType.IN)
@@ -848,25 +887,9 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment,
         pos: Position
     ): LangObject {
         switch (operator) {
-            case TokenType.ELEMENT: {
-                if (
-                    right?.kind === ObjectKind.NUMBER ||
-                    right?.kind === ObjectKind.STRING
-                ) {
-                    const newMap: Map<string | number, LangObject> = new Map();
-
-                    (left as HashObject).pairs.forEach((value, key) =>
-                        newMap.set(key.value, value)
-                    );
-
-                    return newMap.get(right.value) ?? NULL;
-                } else return NULL;
-            }
-
             case TokenType.IN:
                 return this.evalInOperator(left, right, pos);
         }
@@ -924,15 +947,9 @@ export default class Evaluator {
         operator: TokenType,
         left: LangObject,
         right: LangObject,
-        env: Enviroment,
         pos: Position
     ): LangObject {
         switch (operator) {
-            case TokenType.ELEMENT:
-                if (right?.kind === ObjectKind.NUMBER)
-                    return this.evalIndex(left, right, pos);
-                else NULL;
-
             case TokenType.IN:
                 return this.evalInOperator(left, right, pos);
         }
@@ -1002,6 +1019,45 @@ export default class Evaluator {
         }
 
         return null;
+    }
+
+    private evalElementInfix(
+        _left: Expression,
+        _right: Expression,
+        env: Enviroment,
+        pos: Position
+    ): LangObject {
+        const left = this.evalExpression(_left, env);
+
+        if (left?.kind !== ObjectKind.HASH && left?.kind !== ObjectKind.ARRAY)
+            return null;
+
+        let right: LangObject = null;
+
+        if (_right?.kind === ExpressionKind.Ident)
+            right = {
+                kind: ObjectKind.STRING,
+                value: _right.value,
+            };
+        else right = this.evalExpression(_right, env);
+
+        if (left.kind === ObjectKind.ARRAY)
+            if (right?.kind === ObjectKind.NUMBER)
+                return this.evalIndex(left, right, pos);
+            else NULL;
+
+        if (
+            right?.kind === ObjectKind.NUMBER ||
+            right?.kind === ObjectKind.STRING
+        ) {
+            const newMap: Map<string | number, LangObject> = new Map();
+
+            (left as HashObject).pairs.forEach((value, key) =>
+                newMap.set(key.value, value)
+            );
+
+            return newMap.get(right.value) ?? NULL;
+        } else return NULL;
     }
 
     private evalInOperator(

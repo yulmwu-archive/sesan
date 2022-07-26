@@ -21,21 +21,6 @@ import {
 } from '../../index';
 import { readFileSync } from 'fs';
 
-const getArguments: Func = (
-    args: Array<LangObject>,
-    env: Enviroment,
-    t: Evaluator,
-    pos: Position
-): LangObject => {
-    if (args.length !== 1) return invalidArgument(pos, t.option);
-
-    return {
-        kind: ObjectKind.ARRAY,
-        value:
-            t.__builtin__arguments.get((args[0] as StringObject).value) ?? [],
-    };
-};
-
 const importEnv: Func = (
     args: Array<LangObject>,
     env: Enviroment,
@@ -391,28 +376,6 @@ const hashThis: Func = (
     pairs: t.__hash__this ?? new Map(),
 });
 
-const capture: Func = (
-    args: Array<LangObject>,
-    env: Enviroment,
-    t: Evaluator
-): LangObject => {
-    t.__captured__enviroment = env;
-
-    return NULL;
-};
-
-const decorator: Func = (
-    args: Array<LangObject>,
-    env: Enviroment,
-    t: Evaluator,
-    pos: Position
-): LangObject => {
-    if (args.length !== 1 || args[0]?.kind !== ObjectKind.STRING)
-        return invalidArgument(pos, t.option);
-
-    return t.__builtin__decorators.get(args[0].value) ?? NULL;
-};
-
 export const builtin: Map<string, Func> = new Map([
     ['import', importEnv],
     ['typeof', typeofObject],
@@ -424,11 +387,15 @@ export const builtin: Map<string, Func> = new Map([
     ['options', options],
     ['null', () => NULL],
     ['self', hashThis],
-    ['capture', capture],
-    ['decorator', decorator],
     ['__builtin_length', length],
-    ['__builtin_arguments', getArguments],
     ['__root', rootDir],
     ['__ast', ast],
     ['__pos', curr],
+    ['test', (
+        args: Array<LangObject>,
+        env: Enviroment
+    ): LangObject => {
+        console.log(env);
+        return NULL
+    }]
 ]);
