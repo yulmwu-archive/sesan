@@ -14,7 +14,7 @@ func forEach(arr, callback) { return __builtin_forEach(arr, callback); }
 
 @skip;
 func repeat(x, r) {
-    return match(length(__builtin_arguments('repeat')), [
+    return match(length(this <- arguments), [
         [1, func(value) {
             let _x = 0;
             let result = [];

@@ -1,12 +1,12 @@
 let skip = { skipCheckArguments: true };
 
 @skip
-func print() { __builtin_print(__builtin_arguments('print'), ''); }
+func print() { __builtin_print(this <- arguments, ''); }
 
 @skip
-func println() { __builtin_print(__builtin_arguments('println'), '\n'); }
+func println() { __builtin_print(this <- arguments, '\n'); }
 
 @skip
-func readline() { __builtin_readline(__builtin_arguments('readline')); }
+func readline() { __builtin_readline(this <- arguments); }
 
 delete('skip');
