@@ -89,23 +89,3 @@ let x = { foo: 5, bar: func () { println(self() <- 'foo'); } };
 
 (x <- 'bar')();
 ```
-
-# capture
-
-```swift
-func foo() {
-	let x = 5;      // --|
-                    //   |
-	capture();      // ----| `foo()`의 변수를 캡쳐합니다.
-                    //     |
-	return func() { //     |
-		println(x); // ----| `x` = 5
-	};              //     |
-}                   //-----| `x`가 유효하지 않음.
-
-foo()();            // 5
-```
-
-# decorator
-
-> [`Examples/Decorator`](../../examples/decorators.tiny) 상속

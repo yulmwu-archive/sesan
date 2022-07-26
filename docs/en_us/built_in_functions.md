@@ -89,23 +89,3 @@ let x = { foo: 5, bar: func () { println(self() <- 'foo'); } };
 
 (x <- 'bar')();
 ```
-
-# capture
-
-```swift
-func foo() {
-	let x = 5;      // --|
-                    //   |
-	capture();      // ----| capture `foo()`'s environment
-                    //     |
-	return func() { //     |
-		println(x); // ----| `x` = 5
-	};              //     |
-}                   //-----| delete `x`
-
-foo()();            // 5
-```
-
-# decorator
-
-> extends [`Examples/Decorator`](../../examples/decorators.tiny)

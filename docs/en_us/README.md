@@ -6,6 +6,7 @@
     -   [If](./control_flow/if.md)
     -   [While](./control_flow/while.md)
 -   [Import](./built_in_functions.md#import)
+-   [Decorator](./decorator.md)
 -   [Built-in functions](./built_in_functions.md)
 -   [Standard library](./standard_library/README.md)
     -   [IO](./standard_library/io.md)

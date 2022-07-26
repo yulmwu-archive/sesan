@@ -6,6 +6,7 @@
     -   [If](./control_flow/if.md)
     -   [While](./control_flow/while.md)
 -   [Import](./built_in_functions.md#import)
+-   [데코레이터](./decorator.md)
 -   [내장 함수](./built_in_functions.md)
 -   [표준 라이브러리](./standard_library/README.md)
     -   [IO](./standard_library/io.md)
