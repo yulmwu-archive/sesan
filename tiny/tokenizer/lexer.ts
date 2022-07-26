@@ -1,17 +1,7 @@
-import {
-    Position,
-    Stdio,
-    printError,
-    fromLiteral,
-    Token,
-    TokenType,
-    Options,
-    localization,
-    errorFormatter,
-} from '../../index';
+import * as Tiny from '../../index';
 
-type LexerOptions = Options & {
-    stderr: Stdio;
+type LexerOptions = Tiny.Options & {
+    stderr: Tiny.Stdio;
 };
 
 export default class Lexer {
@@ -28,12 +18,12 @@ export default class Lexer {
         public options: LexerOptions,
         public filename: string
     ) {
-        this.messages = localization(options);
+        this.messages = Tiny.localization(options);
 
         this.readChar();
     }
 
-    public curr(): Position {
+    public curr(): Tiny.Position {
         return {
             line: this.line,
             column: this.position - this.lineStart,
@@ -48,7 +38,7 @@ export default class Lexer {
         this.readPosition += 1;
     }
 
-    public readIdentifier(): Token {
+    public readIdentifier(): Tiny.Token {
         let position = this.position;
 
         if (!this.isDigit(this.ch)) {
@@ -58,12 +48,12 @@ export default class Lexer {
             const literal = this.input.substring(position, this.position);
 
             return {
-                type: fromLiteral(literal),
+                type: Tiny.fromLiteral(literal),
                 literal: literal,
                 ...this.curr(),
             };
         } else {
-            printError(
+            Tiny.printError(
                 {
                     ...this.curr(),
                     message: this.messages.lexerError.invalidIdentifier,
@@ -76,14 +66,14 @@ export default class Lexer {
             );
 
             return {
-                type: TokenType.EOF,
+                type: Tiny.TokenType.EOF,
                 literal: 'EOF',
                 ...this.curr(),
             };
         }
     }
 
-    public readNumber(): Token {
+    public readNumber(): Tiny.Token {
         const position = this.position;
 
         let dot = false;
@@ -91,7 +81,7 @@ export default class Lexer {
         while (this.isDigit(this.ch)) {
             if (this.ch === '.') {
                 if (dot) {
-                    printError(
+                    Tiny.printError(
                         {
                             ...this.curr(),
                             message: this.messages.lexerError.invalidNumber,
@@ -104,7 +94,7 @@ export default class Lexer {
                     );
 
                     return {
-                        type: TokenType.EOF,
+                        type: Tiny.TokenType.EOF,
                         literal: 'EOF',
                         line: this.line,
                         column: this.position - position,
@@ -117,22 +107,22 @@ export default class Lexer {
         }
 
         return {
-            type: TokenType.NUMBER,
+            type: Tiny.TokenType.NUMBER,
             literal: this.input.substring(position, this.position),
             ...this.curr(),
         };
     }
 
-    public readString(tok: '"' | "'"): Token {
+    public readString(tok: Tiny.TokenType): Tiny.Token {
         let position = this.position + 1;
 
         while (this.peekChar() !== tok && this.ch !== '\0') this.readChar();
 
         if (this.ch === '\0') {
-            printError(
+            Tiny.printError(
                 {
                     ...this.curr(),
-                    message: errorFormatter(
+                    message: Tiny.errorFormatter(
                         this.messages.lexerError.invalidString,
                         this.input.substring(position - 1, this.position)
                     ),
@@ -145,7 +135,7 @@ export default class Lexer {
             );
 
             return {
-                type: TokenType.EOF,
+                type: Tiny.TokenType.EOF,
                 literal: 'EOF',
                 ...this.curr(),
             };
@@ -154,7 +144,7 @@ export default class Lexer {
         this.readChar();
 
         return {
-            type: TokenType.STRING,
+            type: Tiny.TokenType.STRING,
             literal: this.input
                 .substring(position, this.position)
                 .replace('\\n', '\n'),
@@ -186,20 +176,23 @@ export default class Lexer {
         return this.input[this.readPosition];
     }
 
-    public readComment(): Token {
+    public readComment(): Tiny.Token {
         let position = this.position;
 
         while (this.ch !== '\0' && this.ch !== '\n') this.readChar();
 
         return {
-            type: TokenType.COMMENT,
-            literal: this.input.substring(position, this.position),
+            type: Tiny.TokenType.COMMENT,
+            literal: this.input
+                .substring(position, this.position)
+                .slice(1)
+                .trim(),
             ...this.curr(),
         };
     }
 
-    public nextToken(): Token {
-        let token: Token;
+    public nextToken(): Tiny.Token {
+        let token: Tiny.Token;
 
         this.skipWhitespace();
 
@@ -209,13 +202,13 @@ export default class Lexer {
                     const ch = this.ch;
                     this.readChar();
                     token = {
-                        type: TokenType.EQUAL,
+                        type: Tiny.TokenType.EQUAL,
                         literal: `${ch}${this.ch}`,
                         ...this.curr(),
                     };
                 } else
                     token = {
-                        type: TokenType.ASSIGN,
+                        type: Tiny.TokenType.ASSIGN,
                         literal: '=',
                         ...this.curr(),
                     };
@@ -223,7 +216,7 @@ export default class Lexer {
 
             case '(':
                 token = {
-                    type: TokenType.LPAREN,
+                    type: Tiny.TokenType.LPAREN,
                     literal: '(',
                     ...this.curr(),
                 };
@@ -231,7 +224,7 @@ export default class Lexer {
 
             case ')':
                 token = {
-                    type: TokenType.RPAREN,
+                    type: Tiny.TokenType.RPAREN,
                     literal: ')',
                     ...this.curr(),
                 };
@@ -239,27 +232,39 @@ export default class Lexer {
 
             case ';':
                 token = {
-                    type: TokenType.SEMICOLON,
+                    type: Tiny.TokenType.SEMICOLON,
                     literal: ';',
                     ...this.curr(),
                 };
                 break;
 
             case ',':
-                token = { type: TokenType.COMMA, literal: ',', ...this.curr() };
+                token = {
+                    type: Tiny.TokenType.COMMA,
+                    literal: ',',
+                    ...this.curr(),
+                };
                 break;
 
             case '+':
-                token = { type: TokenType.PLUS, literal: '+', ...this.curr() };
+                token = {
+                    type: Tiny.TokenType.PLUS,
+                    literal: '+',
+                    ...this.curr(),
+                };
                 break;
 
             case '-':
-                token = { type: TokenType.MINUS, literal: '-', ...this.curr() };
+                token = {
+                    type: Tiny.TokenType.MINUS,
+                    literal: '-',
+                    ...this.curr(),
+                };
                 break;
 
             case '*':
                 token = {
-                    type: TokenType.ASTERISK,
+                    type: Tiny.TokenType.ASTERISK,
                     literal: '*',
                     ...this.curr(),
                 };
@@ -268,15 +273,11 @@ export default class Lexer {
             case '/':
                 if (this.peekChar() === '/') {
                     this.readChar();
-                    this.readComment();
-                    token = {
-                        type: TokenType.COMMENT,
-                        literal: '',
-                        ...this.curr(),
-                    };
+
+                    token = this.readComment();
                 } else
                     token = {
-                        type: TokenType.SLASH,
+                        type: Tiny.TokenType.SLASH,
                         literal: '/',
                         ...this.curr(),
                     };
@@ -284,7 +285,7 @@ export default class Lexer {
 
             case '%':
                 token = {
-                    type: TokenType.PERCENT,
+                    type: Tiny.TokenType.PERCENT,
                     literal: '%',
                     ...this.curr(),
                 };
@@ -294,13 +295,13 @@ export default class Lexer {
                 if (this.peekChar() === '=') {
                     this.readChar();
                     token = {
-                        type: TokenType.NOT_EQUAL,
+                        type: Tiny.TokenType.NOT_EQUAL,
                         literal: '!=',
                         ...this.curr(),
                     };
                 } else
                     token = {
-                        type: TokenType.BANG,
+                        type: Tiny.TokenType.BANG,
                         literal: '!',
                         ...this.curr(),
                     };
@@ -310,20 +311,20 @@ export default class Lexer {
                 if (this.peekChar() === '=') {
                     this.readChar();
                     token = {
-                        type: TokenType.LTE,
+                        type: Tiny.TokenType.LTE,
                         literal: '<=',
                         ...this.curr(),
                     };
                 } else if (this.peekChar() === '-') {
                     this.readChar();
                     token = {
-                        type: TokenType.ELEMENT,
+                        type: Tiny.TokenType.ELEMENT,
                         literal: '<-',
                         ...this.curr(),
                     };
                 } else
                     token = {
-                        type: TokenType.LT,
+                        type: Tiny.TokenType.LT,
                         literal: '<',
                         ...this.curr(),
                     };
@@ -333,13 +334,13 @@ export default class Lexer {
                 if (this.peekChar() === '=') {
                     this.readChar();
                     token = {
-                        type: TokenType.GTE,
+                        type: Tiny.TokenType.GTE,
                         literal: '>=',
                         ...this.curr(),
                     };
                 } else
                     token = {
-                        type: TokenType.GT,
+                        type: Tiny.TokenType.GT,
                         literal: '>',
                         ...this.curr(),
                     };
@@ -349,13 +350,13 @@ export default class Lexer {
                 if (this.peekChar() === '&') {
                     this.readChar();
                     token = {
-                        type: TokenType.AND,
+                        type: Tiny.TokenType.AND,
                         literal: '&&',
                         ...this.curr(),
                     };
                 } else
                     token = {
-                        type: TokenType.ILLEGAL,
+                        type: Tiny.TokenType.ILLEGAL,
                         literal: this.ch,
                         ...this.curr(),
                     };
@@ -365,13 +366,13 @@ export default class Lexer {
                 if (this.peekChar() === '|') {
                     this.readChar();
                     token = {
-                        type: TokenType.OR,
+                        type: Tiny.TokenType.OR,
                         literal: '||',
                         ...this.curr(),
                     };
                 } else
                     token = {
-                        type: TokenType.ILLEGAL,
+                        type: Tiny.TokenType.ILLEGAL,
                         literal: this.ch,
                         ...this.curr(),
                     };
@@ -381,13 +382,13 @@ export default class Lexer {
                 if (this.peekChar() === '?') {
                     this.readChar();
                     token = {
-                        type: TokenType.NULLISH,
+                        type: Tiny.TokenType.NULLISH,
                         literal: '??',
                         ...this.curr(),
                     };
                 } else
                     token = {
-                        type: TokenType.QUESTION,
+                        type: Tiny.TokenType.QUESTION,
                         literal: '?',
                         ...this.curr(),
                     };
@@ -395,23 +396,23 @@ export default class Lexer {
 
             case '@':
                 token = {
-                    type: TokenType.AT,
+                    type: Tiny.TokenType.AT,
                     literal: '@',
                     ...this.curr(),
                 };
                 break;
 
             case '"':
-                token = this.readString('"');
+                token = this.readString(Tiny.TokenType.QUOTE);
                 break;
 
             case "'":
-                token = this.readString("'");
+                token = this.readString(Tiny.TokenType.SINGLE_QUOTE);
                 break;
 
             case '{':
                 token = {
-                    type: TokenType.LBRACE,
+                    type: Tiny.TokenType.LBRACE,
                     literal: '{',
                     ...this.curr(),
                 };
@@ -419,7 +420,7 @@ export default class Lexer {
 
             case '}':
                 token = {
-                    type: TokenType.RBRACE,
+                    type: Tiny.TokenType.RBRACE,
                     literal: '}',
                     ...this.curr(),
                 };
@@ -427,7 +428,7 @@ export default class Lexer {
 
             case '[':
                 token = {
-                    type: TokenType.LBRACKET,
+                    type: Tiny.TokenType.LBRACKET,
                     literal: '[',
                     ...this.curr(),
                 };
@@ -435,18 +436,26 @@ export default class Lexer {
 
             case ']':
                 token = {
-                    type: TokenType.RBRACKET,
+                    type: Tiny.TokenType.RBRACKET,
                     literal: ']',
                     ...this.curr(),
                 };
                 break;
 
             case ':':
-                token = { type: TokenType.COLON, literal: ':', ...this.curr() };
+                token = {
+                    type: Tiny.TokenType.COLON,
+                    literal: ':',
+                    ...this.curr(),
+                };
                 break;
 
             case '\0':
-                token = { type: TokenType.EOF, literal: 'EOF', ...this.curr() };
+                token = {
+                    type: Tiny.TokenType.EOF,
+                    literal: 'EOF',
+                    ...this.curr(),
+                };
                 break;
 
             default:
@@ -454,23 +463,23 @@ export default class Lexer {
                 else if (this.isDigit(this.ch)) token = this.readNumber();
                 else
                     token = {
-                        type: TokenType.ILLEGAL,
+                        type: Tiny.TokenType.ILLEGAL,
                         literal: this.ch,
                         ...this.curr(),
                     };
         }
 
         if (
-            token.type === TokenType.LET ||
-            token.type === TokenType.FUNCTION ||
-            token.type === TokenType.TRUE ||
-            token.type === TokenType.FALSE ||
-            token.type === TokenType.IF ||
-            token.type === TokenType.ELSE ||
-            token.type === TokenType.RETURN ||
-            token.type === TokenType.WHILE ||
-            token.type === TokenType.IDENT ||
-            token.type === TokenType.NUMBER
+            token.type === Tiny.TokenType.LET ||
+            token.type === Tiny.TokenType.FUNCTION ||
+            token.type === Tiny.TokenType.TRUE ||
+            token.type === Tiny.TokenType.FALSE ||
+            token.type === Tiny.TokenType.IF ||
+            token.type === Tiny.TokenType.ELSE ||
+            token.type === Tiny.TokenType.RETURN ||
+            token.type === Tiny.TokenType.WHILE ||
+            token.type === Tiny.TokenType.IDENT ||
+            token.type === Tiny.TokenType.NUMBER
         )
             return token;
 

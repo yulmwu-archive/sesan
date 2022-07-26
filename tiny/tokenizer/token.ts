@@ -21,6 +21,8 @@ enum TokenType {
     PERCENT = '%',
     QUESTION = '?',
     AT = '@',
+    QUOTE = '"',
+    SINGLE_QUOTE = "'",
 
     LT = '<',
     GT = '>',
@@ -82,7 +84,7 @@ const fromLiteral = (literal: string): TokenType => {
         case 'while':
             return TokenType.WHILE;
 
-        case 'in': 
+        case 'in':
             return TokenType.IN;
 
         default:
