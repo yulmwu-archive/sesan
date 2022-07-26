@@ -40,6 +40,7 @@ import {
     errorFormatter,
     localization,
     DecoratorStatement,
+    BooleanObject,
 } from '../../index';
 
 const NULL: LangObject = {
@@ -130,7 +131,19 @@ export default class Evaluator {
                 const name = (statement.ident as unknown as StringLiteral)
                     .value;
 
-                if (statement.ident) env.set(name, value);
+                if (statement.ident) {
+                    if (env.has(name))
+                        return error(
+                            errorFormatter(
+                                this.messages.runtimeError
+                                    .identifierAlreadyDefined,
+                                name
+                            ),
+                            statement.line,
+                            statement.column
+                        );
+                    env.set(name, value);
+                }
 
                 return null;
             }
@@ -406,8 +419,19 @@ export default class Evaluator {
             kind: ObjectKind.FUNCTION,
         };
 
+        const name = (expr.function as unknown as StringLiteral).value;
+
         if (expr.function)
-            env.set((expr.function as unknown as StringLiteral).value, ret);
+            if (env.has(name))
+                return error(
+                    errorFormatter(
+                        this.messages.runtimeError.functionAlreadyDefined,
+                        name
+                    ),
+                    expr.line,
+                    expr.column
+                );
+            else env.set(name, ret);
 
         return ret;
     }
@@ -478,6 +502,21 @@ export default class Evaluator {
         return ret;
     }
 
+    private getDecorator(
+        key: string | number,
+        func: FunctionObject
+    ): LangObject | null {
+        if (!func.decorator) return null;
+
+        const newMap: Map<string | number, LangObject> = new Map();
+
+        func.decorator.pairs.forEach((value, key) =>
+            newMap.set(key.value, value)
+        );
+
+        return newMap.get(key) ?? null;
+    }
+
     public applyFunction(
         _func: LangObject,
         name: string,
@@ -488,21 +527,9 @@ export default class Evaluator {
     ): LangObject {
         const func = _func as FunctionObject;
 
-        const getPair = (key: string | number): LangObject | null => {
-            if (!func.decorator) return null;
-
-            const newMap: Map<string | number, LangObject> = new Map();
-
-            func.decorator.pairs.forEach((value, key) =>
-                newMap.set(key.value, value)
-            );
-
-            return newMap.get(key) ?? null;
-        };
-
         if (func?.kind === ObjectKind.FUNCTION) {
             if (
-                !getPair('skipCheckArguments') &&
+                !this.getDecorator('skipCheckArguments', func) &&
                 func.parameters.length !== args.length
             )
                 return error(
@@ -523,7 +550,10 @@ export default class Evaluator {
                     args,
                     env,
                     thisObject,
-                    getPair('capture') ? true : false
+                    this.getDecorator('capture', func)
+                        ? (this.getDecorator('capture', func) as BooleanObject)
+                              .value
+                        : false
                 )
             );
 
