@@ -47,9 +47,6 @@ const NULL: LangObject = {
 };
 
 export default class Evaluator {
-    public __hash__this: Map<NumberObject | StringObject, LangObject> | null =
-        null;
-
     public messages;
 
     constructor(
@@ -457,8 +454,6 @@ export default class Evaluator {
 
             if (key) hash.pairs.set(key_, value);
         });
-
-        this.__hash__this = hash.pairs;
 
         return hash;
     }

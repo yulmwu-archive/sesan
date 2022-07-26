@@ -367,15 +367,6 @@ const throwError: Func = (
     return NULL;
 };
 
-const hashThis: Func = (
-    args: Array<LangObject>,
-    env: Enviroment,
-    t: Evaluator
-): LangObject => ({
-    kind: ObjectKind.HASH,
-    pairs: t.__hash__this ?? new Map(),
-});
-
 export const builtin: Map<string, Func> = new Map([
     ['import', importEnv],
     ['typeof', typeofObject],
@@ -386,16 +377,8 @@ export const builtin: Map<string, Func> = new Map([
     ['convert', convert],
     ['options', options],
     ['null', () => NULL],
-    ['self', hashThis],
     ['__builtin_length', length],
     ['__root', rootDir],
     ['__ast', ast],
-    ['__pos', curr],
-    ['test', (
-        args: Array<LangObject>,
-        env: Enviroment
-    ): LangObject => {
-        console.log(env);
-        return NULL
-    }]
+    ['__pos', curr]
 ]);

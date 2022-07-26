@@ -81,11 +81,3 @@ options(); // hash
 ```swift
 null(); // NULL
 ```
-
-# self
-
-```swift
-let x = { foo: 5, bar: func () { println(self() <- 'foo'); } };
-
-(x <- 'bar')();
-```
