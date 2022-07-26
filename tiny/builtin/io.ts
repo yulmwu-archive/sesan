@@ -1,45 +1,37 @@
-import {
-    Enviroment,
-    LangObject,
-    objectStringify,
-    ObjectKind,
-    Evaluator,
-    NULL,
-    Func,
-} from '../../index';
+import * as Tiny from '../../index';
 
-const print: Func = (
-    args: Array<LangObject>,
-    env: Enviroment,
-    t: Evaluator
-): LangObject => {
-    if (args[0]?.kind !== ObjectKind.ARRAY) return NULL;
+const print: Tiny.Func = (
+    args: Array<Tiny.LangObject>,
+    env: Tiny.Enviroment,
+    t: Tiny.Evaluator
+): Tiny.LangObject => {
+    if (args[0]?.kind !== Tiny.ObjectKind.ARRAY) return Tiny.NULL;
 
     t.stdio.stdout(
         `${args[0]?.value
-            .map((arg) => objectStringify(arg))
-            .join(' ')}${objectStringify(args[1])}`
+            .map((arg) => Tiny.objectStringify(arg))
+            .join(' ')}${Tiny.objectStringify(args[1])}`
     );
 
-    return NULL;
+    return Tiny.NULL;
 };
 
-const readLine: Func = (
-    args: Array<LangObject>,
-    env: Enviroment,
-    t: Evaluator
-): LangObject => {
-    if (args[0]?.kind !== ObjectKind.ARRAY) return NULL;
+const readLine: Tiny.Func = (
+    args: Array<Tiny.LangObject>,
+    env: Tiny.Enviroment,
+    t: Tiny.Evaluator
+): Tiny.LangObject => {
+    if (args[0]?.kind !== Tiny.ObjectKind.ARRAY) return Tiny.NULL;
 
     return {
-        kind: ObjectKind.STRING,
+        kind: Tiny.ObjectKind.STRING,
         value: t.stdio.stdin(
-            args[0]?.value.map((arg) => objectStringify(arg)).join(' ')
+            args[0]?.value.map((arg) => Tiny.objectStringify(arg)).join(' ')
         ),
     };
 };
 
-export const io: Map<string, Func> = new Map([
+export const io: Map<string, Tiny.Func> = new Map([
     ['__builtin_print', print],
     ['__builtin_readline', readLine],
 ]);

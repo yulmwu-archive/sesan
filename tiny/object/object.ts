@@ -1,10 +1,4 @@
-import {
-    Enviroment,
-    Evaluator,
-    Options,
-    Expression,
-    Position,
-} from '../../index';
+import * as Tiny from '../../index';
 
 type LangObject =
     | NumberObject
@@ -142,21 +136,21 @@ interface HashObject {
 }
 
 interface FunctionObject {
-    function: Expression;
-    parameters: Array<Expression>;
+    function: Tiny.Expression;
+    parameters: Array<Tiny.Expression>;
     decorator?: HashObject;
-    body: Expression;
-    env: Enviroment;
-    option: Options;
+    body: Tiny.Expression;
+    env: Tiny.Enviroment;
+    option: Tiny.Options;
     kind: ObjectKind.FUNCTION | ObjectKind.BUILTIN;
 }
 
 interface BuiltinFunction {
     func: (
         args: Array<LangObject>,
-        env: Enviroment,
-        t: Evaluator,
-        pos: Position
+        env: Tiny.Enviroment,
+        t: Tiny.Evaluator,
+        pos: Tiny.Position
     ) => LangObject;
     kind: ObjectKind.BUILTIN;
 }

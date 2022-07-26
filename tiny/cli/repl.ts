@@ -1,22 +1,7 @@
 import prompt from 'prompt-sync';
 import colors from 'colors';
 
-import {
-    stdout,
-    stderr,
-    Options,
-    Lexer,
-    Token,
-    TokenType,
-    Parser,
-    Program,
-    Enviroment,
-    LangObject,
-    objectStringify,
-    ObjectKind,
-    Evaluator,
-    printError,
-} from '../../index';
+import * as Tiny from '../../index';
 
 type Mode = 'repl' | 'parser' | 'lexer' | 'env';
 
@@ -26,20 +11,25 @@ export default class {
     public promptSync = prompt({ sigint: true });
     public mode: Mode = 'repl';
 
-    constructor(public env: Enviroment, public option: Options) {
+    constructor(public env: Tiny.Enviroment, public option: Tiny.Options) {
         colors.enabled = true;
     }
 
     public executeCommand(
         input: string,
-        lexer: Lexer,
-        parsed: Program,
-        env: Enviroment
-    ): LangObject | Program | Array<Token> | Enviroment | string {
+        lexer: Tiny.Lexer,
+        parsed: Tiny.Program,
+        env: Tiny.Enviroment
+    ):
+        | Tiny.LangObject
+        | Tiny.Program
+        | Array<Tiny.Token>
+        | Tiny.Enviroment
+        | string {
         const [command, ...args] = input.split(' ');
         const commands: Map<
             string,
-            (...args: Array<string>) => LangObject | string
+            (...args: Array<string>) => Tiny.LangObject | string
         > = new Map([
             [
                 '//mode',
@@ -60,37 +50,43 @@ export default class {
 
         if (commands.has(command)) return commands.get(command)!(...args);
         else {
-            const result = new Evaluator(
+            const result = new Tiny.Evaluator(
                 parsed,
                 env,
                 this.option,
                 {
                     stdin: this.promptSync,
-                    stdout,
-                    stderr,
+                    stdout: Tiny.stdout,
+                    stderr: Tiny.stderr,
                 },
                 defaultFilename
             ).eval();
 
-            if (result?.kind === ObjectKind.ERROR) {
-                printError(result, defaultFilename, stdout, this.option);
+            if (result?.kind === Tiny.ObjectKind.ERROR) {
+                Tiny.printError(
+                    result,
+                    defaultFilename,
+                    Tiny.stdout,
+                    this.option
+                );
                 return '';
             }
 
             switch (this.mode) {
                 case 'repl':
-                    return objectStringify(result).gray;
+                    return Tiny.objectStringify(result).gray;
 
                 case 'parser':
                     return JSON.stringify(parsed, null, 2);
 
                 case 'lexer':
-                    const tokens: Array<Token> = [];
+                    const tokens: Array<Tiny.Token> = [];
 
-                    let peekToken: Token;
+                    let peekToken: Tiny.Token;
 
                     while (
-                        (peekToken = lexer.nextToken()).type !== TokenType.EOF
+                        (peekToken = lexer.nextToken()).type !==
+                        Tiny.TokenType.EOF
                     )
                         tokens.push(peekToken);
 
@@ -104,13 +100,13 @@ export default class {
 
     public start() {
         if (this.option.useStdLibAutomatically)
-            new Evaluator(
-                new Parser(
-                    new Lexer(
+            new Tiny.Evaluator(
+                new Tiny.Parser(
+                    new Tiny.Lexer(
                         `import('@std/lib');`,
                         {
                             ...this.option,
-                            stderr,
+                            stderr: Tiny.stderr,
                         },
                         defaultFilename
                     ),
@@ -120,8 +116,8 @@ export default class {
                 this.option,
                 {
                     stdin: this.promptSync,
-                    stdout,
-                    stderr,
+                    stdout: Tiny.stdout,
+                    stderr: Tiny.stderr,
                 },
                 defaultFilename
             ).eval();
@@ -133,12 +129,12 @@ export default class {
                 } ${'➜'.red} `
             );
 
-            const parser = new Parser(
-                new Lexer(
+            const parser = new Tiny.Parser(
+                new Tiny.Lexer(
                     input,
                     {
                         ...this.option,
-                        stderr,
+                        stderr: Tiny.stderr,
                     },
                     defaultFilename
                 ),
@@ -147,11 +143,11 @@ export default class {
 
             const executed = this.executeCommand(
                 input,
-                new Lexer(
+                new Tiny.Lexer(
                     input,
                     {
                         ...this.option,
-                        stderr,
+                        stderr: Tiny.stderr,
                     },
                     defaultFilename
                 ),
@@ -162,7 +158,12 @@ export default class {
             if (executed)
                 if (parser.errors.length > 0)
                     parser.errors.forEach((error) =>
-                        printError(error, defaultFilename, stderr, this.option)
+                        Tiny.printError(
+                            error,
+                            defaultFilename,
+                            Tiny.stderr,
+                            this.option
+                        )
                     );
 
             console.log(executed, '\n');

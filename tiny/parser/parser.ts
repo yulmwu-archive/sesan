@@ -1,28 +1,4 @@
-import {
-    BlockStatement,
-    Expression,
-    ExpressionKind,
-    ExpressionStatement,
-    HashExpression,
-    HashPair,
-    IdentExpression,
-    LetStatement,
-    LiteralKind,
-    NodeKind,
-    ParseError,
-    PrefixExpression,
-    Program,
-    ReturnStatement,
-    Statement,
-    WhileStatement,
-    Lexer,
-    Token,
-    TokenType,
-    localization,
-    errorFormatter,
-    Options,
-    DecoratorStatement,
-} from '../../index';
+import * as Tiny from '../../index';
 
 enum Priority {
     LOWEST = 1,
@@ -36,29 +12,29 @@ enum Priority {
 }
 
 export default class Parser {
-    public currToken!: Token;
-    public peekToken!: Token;
+    public currToken!: Tiny.Token;
+    public peekToken!: Tiny.Token;
     public currLine: number = 1;
     public currColumn: number = 1;
 
     public messages;
 
-    public errors: Array<ParseError> = [];
+    public errors: Array<Tiny.ParseError> = [];
 
-    constructor(public lexer: Lexer, public option: Options) {
-        this.messages = localization(option);
+    constructor(public lexer: Tiny.Lexer, public option: Tiny.Options) {
+        this.messages = Tiny.localization(option);
 
         this.nextToken();
         this.nextToken();
     }
 
-    public parseProgram(): Program {
-        let program: Program = {
+    public parseProgram(): Tiny.Program {
+        let program: Tiny.Program = {
             statements: [],
             errors: [],
         };
 
-        while (this.currToken.type !== TokenType.EOF) {
+        while (this.currToken.type !== Tiny.TokenType.EOF) {
             const statement = this.parseStatement();
             if (statement) program.statements.push(statement);
 
@@ -70,21 +46,21 @@ export default class Parser {
         return program;
     }
 
-    private parseStatement(): Statement | null {
+    private parseStatement(): Tiny.Statement | null {
         switch (this.currToken.type) {
-            case TokenType.LET:
+            case Tiny.TokenType.LET:
                 return this.parseLetStatement();
 
-            case TokenType.RETURN:
+            case Tiny.TokenType.RETURN:
                 return this.parseReturnStatement();
 
-            case TokenType.WHILE:
+            case Tiny.TokenType.WHILE:
                 return this.parseWhileStatement();
 
-            case TokenType.AT:
+            case Tiny.TokenType.AT:
                 return this.parseDecorator();
 
-            case TokenType.COMMENT:
+            case Tiny.TokenType.COMMENT:
                 return null;
 
             default:
@@ -106,7 +82,7 @@ export default class Parser {
         };
     }
 
-    private expectPeek(tokenType: TokenType): boolean {
+    private expectPeek(tokenType: Tiny.TokenType): boolean {
         if (this.peekTokenIs(tokenType)) {
             this.nextToken();
 
@@ -114,7 +90,7 @@ export default class Parser {
         }
 
         this.pushError(
-            errorFormatter(
+            Tiny.errorFormatter(
                 this.messages.parserError.unexpectedToken,
                 tokenType,
                 this.peekToken.type
@@ -124,9 +100,9 @@ export default class Parser {
         return false;
     }
 
-    private peekTokenIs(tokenType: TokenType): boolean {
-        if (tokenType === TokenType.IDENT) {
-            if (this.peekToken.type === TokenType.IDENT) return true;
+    private peekTokenIs(tokenType: Tiny.TokenType): boolean {
+        if (tokenType === Tiny.TokenType.IDENT) {
+            if (this.peekToken.type === Tiny.TokenType.IDENT) return true;
 
             return false;
         }
@@ -134,7 +110,7 @@ export default class Parser {
         return this.peekToken.type === tokenType;
     }
 
-    private currTokenIs(tokenType: TokenType): boolean {
+    private currTokenIs(tokenType: Tiny.TokenType): boolean {
         return this.currToken.type === tokenType;
     }
 
@@ -146,53 +122,53 @@ export default class Parser {
         });
     }
 
-    private parseLetStatement(): LetStatement | null {
-        if (!this.expectPeek(TokenType.IDENT)) return null;
+    private parseLetStatement(): Tiny.LetStatement | null {
+        if (!this.expectPeek(Tiny.TokenType.IDENT)) return null;
 
-        const ident: IdentExpression = {
+        const ident: Tiny.IdentExpression = {
             debug: 'parseLetStatement>ident',
             value:
-                this.currToken.type === TokenType.IDENT
+                this.currToken.type === Tiny.TokenType.IDENT
                     ? this.currToken.literal
                     : '',
-            kind: ExpressionKind.Ident,
+            kind: Tiny.ExpressionKind.Ident,
             ...this.curr(),
         };
 
-        if (!this.expectPeek(TokenType.ASSIGN)) return null;
+        if (!this.expectPeek(Tiny.TokenType.ASSIGN)) return null;
 
         this.nextToken();
 
         const expression = this.parseExpression(Priority.LOWEST);
 
-        if (!this.expectPeek(TokenType.SEMICOLON)) return null;
+        if (!this.expectPeek(Tiny.TokenType.SEMICOLON)) return null;
 
         return {
             debug: 'parseLetStatement>return',
             ident,
             value: expression,
-            kind: NodeKind.LetStatement,
+            kind: Tiny.NodeKind.LetStatement,
             ...this.curr(),
         };
     }
 
-    private parseReturnStatement(): ReturnStatement | null {
+    private parseReturnStatement(): Tiny.ReturnStatement | null {
         this.nextToken();
 
         const expression = this.parseExpression(Priority.LOWEST);
 
-        if (this.peekTokenIs(TokenType.SEMICOLON)) this.nextToken();
+        if (this.peekTokenIs(Tiny.TokenType.SEMICOLON)) this.nextToken();
 
         return {
             debug: 'parseReturnStatement>return',
             value: expression,
-            kind: NodeKind.ReturnStatement,
+            kind: Tiny.NodeKind.ReturnStatement,
             ...this.curr(),
         };
     }
 
-    private parseWhileStatement(): WhileStatement | null {
-        if (!this.expectPeek(TokenType.LPAREN)) return null;
+    private parseWhileStatement(): Tiny.WhileStatement | null {
+        if (!this.expectPeek(Tiny.TokenType.LPAREN)) return null;
 
         const condition = this.parseExpression(Priority.LOWEST);
 
@@ -202,23 +178,23 @@ export default class Parser {
             debug: 'parseWhileStatement>return',
             condition,
             body,
-            kind: NodeKind.WhileStatement,
+            kind: Tiny.NodeKind.WhileStatement,
             ...this.curr(),
         };
     }
 
-    private parseDecorator(): DecoratorStatement | null {
+    private parseDecorator(): Tiny.DecoratorStatement | null {
         this.nextToken();
 
         const value = this.parseExpression(Priority.LOWEST);
 
         this.nextToken();
 
-        if (this.currTokenIs(TokenType.SEMICOLON)) this.nextToken();
+        if (this.currTokenIs(Tiny.TokenType.SEMICOLON)) this.nextToken();
 
         const func = this.parseExpression(Priority.LOWEST);
 
-        if (func?.kind !== ExpressionKind.Function) {
+        if (func?.kind !== Tiny.ExpressionKind.Function) {
             this.pushError(this.messages.parserError.decoratorRequiresFunction);
 
             return null;
@@ -228,17 +204,17 @@ export default class Parser {
             debug: 'parseDecorator>return',
             value,
             function: func,
-            kind: NodeKind.DecoratorStatement,
+            kind: Tiny.NodeKind.DecoratorStatement,
             ...this.curr(),
         };
     }
 
-    private parseExpression(priority: Priority): Expression | null {
-        let left: Expression = this.parsePrefix();
+    private parseExpression(priority: Priority): Tiny.Expression | null {
+        let left: Tiny.Expression = this.parsePrefix();
         if (!left) {
-            if (!this.currTokenIs(TokenType.SEMICOLON))
+            if (!this.currTokenIs(Tiny.TokenType.SEMICOLON))
                 this.pushError(
-                    errorFormatter(
+                    Tiny.errorFormatter(
                         this.messages.parserError.unexpectedExpression,
                         this.currToken.type
                     )
@@ -247,7 +223,7 @@ export default class Parser {
         }
 
         while (
-            !this.peekTokenIs(TokenType.SEMICOLON) &&
+            !this.peekTokenIs(Tiny.TokenType.SEMICOLON) &&
             priority < this.peekPriority()
         ) {
             this.nextToken();
@@ -257,115 +233,115 @@ export default class Parser {
         return left;
     }
 
-    private parseExpressionStatement(): ExpressionStatement | null {
+    private parseExpressionStatement(): Tiny.ExpressionStatement | null {
         const expression = this.parseExpression(Priority.LOWEST);
         if (!expression) return null;
 
         if (
-            expression.kind !== ExpressionKind.If &&
-            expression.kind !== ExpressionKind.Function &&
-            !this.expectPeek(TokenType.SEMICOLON)
+            expression.kind !== Tiny.ExpressionKind.If &&
+            expression.kind !== Tiny.ExpressionKind.Function &&
+            !this.expectPeek(Tiny.TokenType.SEMICOLON)
         )
             return null;
 
         return {
             debug: 'parseExpressionStatement>return',
             expression,
-            kind: NodeKind.ExpressionStatement,
+            kind: Tiny.NodeKind.ExpressionStatement,
             ...this.curr(),
         };
     }
 
-    private parsePrefix(): Expression | null {
+    private parsePrefix(): Tiny.Expression | null {
         switch (this.currToken.type) {
-            case TokenType.IDENT:
+            case Tiny.TokenType.IDENT:
                 return {
                     debug: 'parsePrefix>case>ident',
                     value: this.currToken.literal,
-                    kind: ExpressionKind.Ident,
+                    kind: Tiny.ExpressionKind.Ident,
                     ...this.curr(),
                 };
 
-            case TokenType.NUMBER:
+            case Tiny.TokenType.NUMBER:
                 return {
                     debug: 'parsePrefix>case>number',
                     value: {
                         value: Number(this.currToken.literal),
-                        kind: LiteralKind.Number,
+                        kind: Tiny.LiteralKind.Number,
                         ...this.curr(),
                     },
-                    kind: ExpressionKind.Literal,
+                    kind: Tiny.ExpressionKind.Literal,
                     ...this.curr(),
                 };
 
-            case TokenType.STRING:
+            case Tiny.TokenType.STRING:
                 return {
                     debug: 'parsePrefix>case>string',
                     value: {
                         value: this.currToken.literal,
-                        kind: LiteralKind.String,
+                        kind: Tiny.LiteralKind.String,
                         ...this.curr(),
                     },
-                    kind: ExpressionKind.Literal,
+                    kind: Tiny.ExpressionKind.Literal,
                     ...this.curr(),
                 };
 
-            case TokenType.BANG:
+            case Tiny.TokenType.BANG:
                 return this.prefixParseOps();
 
-            case TokenType.MINUS:
+            case Tiny.TokenType.MINUS:
                 return this.prefixParseOps();
 
-            case TokenType.TRUE:
+            case Tiny.TokenType.TRUE:
                 return {
                     debug: 'parsePrefix>case>true',
                     value: {
                         value: true,
-                        kind: LiteralKind.Boolean,
+                        kind: Tiny.LiteralKind.Boolean,
                         ...this.curr(),
                     },
-                    kind: ExpressionKind.Literal,
+                    kind: Tiny.ExpressionKind.Literal,
                     ...this.curr(),
                 };
 
-            case TokenType.FALSE:
+            case Tiny.TokenType.FALSE:
                 return {
                     debug: 'parsePrefix>case>false',
                     value: {
                         value: false,
-                        kind: LiteralKind.Boolean,
+                        kind: Tiny.LiteralKind.Boolean,
                         ...this.curr(),
                     },
-                    kind: ExpressionKind.Literal,
+                    kind: Tiny.ExpressionKind.Literal,
                     ...this.curr(),
                 };
 
-            case TokenType.LPAREN: {
+            case Tiny.TokenType.LPAREN: {
                 this.nextToken();
 
                 const expression = this.parseExpression(Priority.LOWEST);
 
-                if (!this.expectPeek(TokenType.RPAREN)) return null;
+                if (!this.expectPeek(Tiny.TokenType.RPAREN)) return null;
 
                 if (!expression) return null;
 
                 return expression;
             }
 
-            case TokenType.IF: {
-                if (!this.expectPeek(TokenType.LPAREN)) return null;
+            case Tiny.TokenType.IF: {
+                if (!this.expectPeek(Tiny.TokenType.LPAREN)) return null;
 
                 this.nextToken();
 
                 const condition = this.parseExpression(Priority.LOWEST);
 
-                if (!this.expectPeek(TokenType.RPAREN)) return null;
+                if (!this.expectPeek(Tiny.TokenType.RPAREN)) return null;
 
                 const consequence = this.parseBlockStatement(true);
 
-                let alternative: Expression | null = null;
+                let alternative: Tiny.Expression | null = null;
 
-                if (this.peekTokenIs(TokenType.ELSE)) {
+                if (this.peekTokenIs(Tiny.TokenType.ELSE)) {
                     this.nextToken();
 
                     alternative = this.parseBlockStatement(true);
@@ -376,24 +352,26 @@ export default class Parser {
                     condition,
                     consequence,
                     alternative,
-                    kind: ExpressionKind.If,
+                    kind: Tiny.ExpressionKind.If,
                     ...this.curr(),
                 };
             }
 
-            case TokenType.FUNCTION: {
+            case Tiny.TokenType.FUNCTION: {
                 return this.parseFunction();
             }
 
-            case TokenType.LBRACKET:
+            case Tiny.TokenType.LBRACKET:
                 return {
                     debug: 'parsePrefix>case>Lbracket',
-                    elements: this.parseExpressionArguments(TokenType.RBRACKET),
-                    kind: ExpressionKind.Array,
+                    elements: this.parseExpressionArguments(
+                        Tiny.TokenType.RBRACKET
+                    ),
+                    kind: Tiny.ExpressionKind.Array,
                     ...this.curr(),
                 };
 
-            case TokenType.LBRACE:
+            case Tiny.TokenType.LBRACE:
                 return this.parseHash();
 
             default:
@@ -401,22 +379,22 @@ export default class Parser {
         }
     }
 
-    private parseFunction(): Expression | null {
-        let name: Expression | null = null;
+    private parseFunction(): Tiny.Expression | null {
+        let name: Tiny.Expression | null = null;
 
-        if (!this.peekTokenIs(TokenType.IDENT)) name = null;
+        if (!this.peekTokenIs(Tiny.TokenType.IDENT)) name = null;
         else {
             this.nextToken();
 
             name = {
                 debug: 'parsePrefix>case>function>name',
                 value: this.currToken.literal,
-                kind: ExpressionKind.Ident,
+                kind: Tiny.ExpressionKind.Ident,
                 ...this.curr(),
             };
         }
 
-        if (!this.expectPeek(TokenType.LPAREN)) return null;
+        if (!this.expectPeek(Tiny.TokenType.LPAREN)) return null;
 
         const parameters = this.parseFunctionParameters();
 
@@ -429,12 +407,12 @@ export default class Parser {
             function: name,
             arguments: parameters,
             body,
-            kind: ExpressionKind.Function,
+            kind: Tiny.ExpressionKind.Function,
             ...this.curr(),
         };
     }
 
-    private prefixParseOps(): PrefixExpression | null {
+    private prefixParseOps(): Tiny.PrefixExpression | null {
         const token = this.currToken;
 
         this.nextToken();
@@ -443,27 +421,31 @@ export default class Parser {
             debug: 'prefixParseOps>return',
             operator: token.type,
             right: this.parseExpression(Priority.PREFIX),
-            kind: ExpressionKind.Prefix,
+            kind: Tiny.ExpressionKind.Prefix,
             ...this.curr(),
         };
     }
 
-    private parseInfixExpression(left: Expression): Expression | null {
+    private parseInfixExpression(
+        left: Tiny.Expression
+    ): Tiny.Expression | null {
         switch (this.currToken.type) {
-            case TokenType.LPAREN:
+            case Tiny.TokenType.LPAREN:
                 return {
                     debug: 'parseInfixExpression>case>Lparen',
                     function: left,
-                    arguments: this.parseExpressionArguments(TokenType.RPAREN),
-                    kind: ExpressionKind.Call,
+                    arguments: this.parseExpressionArguments(
+                        Tiny.TokenType.RPAREN
+                    ),
+                    kind: Tiny.ExpressionKind.Call,
                     ...this.curr(),
                 };
 
-            case TokenType.LBRACKET: {
+            case Tiny.TokenType.LBRACKET: {
                 this.nextToken();
                 const expression = this.parseExpression(Priority.LOWEST);
 
-                if (!this.expectPeek(TokenType.RBRACKET))
+                if (!this.expectPeek(Tiny.TokenType.RBRACKET))
                     return {
                         debug: 'parseInfixExpression>case>Lbracket',
                         left,
@@ -472,13 +454,13 @@ export default class Parser {
                             value: {
                                 debug: 'parseInfixExpression>case>Lbracket>index>value',
                                 value: 0,
-                                kind: LiteralKind.Number,
+                                kind: Tiny.LiteralKind.Number,
                                 ...this.curr(),
                             },
-                            kind: ExpressionKind.Literal,
+                            kind: Tiny.ExpressionKind.Literal,
                             ...this.curr(),
                         },
-                        kind: ExpressionKind.Index,
+                        kind: Tiny.ExpressionKind.Index,
                         ...this.curr(),
                     };
 
@@ -486,7 +468,7 @@ export default class Parser {
                     debug: 'parseInfixExpression>case>Lbracket',
                     left,
                     index: expression,
-                    kind: ExpressionKind.Index,
+                    kind: Tiny.ExpressionKind.Index,
                     ...this.curr(),
                 };
             }
@@ -506,21 +488,21 @@ export default class Parser {
                     left,
                     operator: operator.type,
                     right,
-                    kind: ExpressionKind.Infix,
+                    kind: Tiny.ExpressionKind.Infix,
                     ...this.curr(),
                 };
             }
         }
     }
 
-    private parseBlockStatement(short: boolean): BlockStatement | null {
-        if (!this.peekTokenIs(TokenType.LBRACE) && !short) {
+    private parseBlockStatement(short: boolean): Tiny.BlockStatement | null {
+        if (!this.peekTokenIs(Tiny.TokenType.LBRACE) && !short) {
             this.pushError(this.messages.parserError.invalidBodyBlock);
 
             return null;
         }
 
-        if (!this.peekTokenIs(TokenType.LBRACE)) {
+        if (!this.peekTokenIs(Tiny.TokenType.LBRACE)) {
             this.nextToken();
 
             const statement = this.parseStatement();
@@ -531,20 +513,20 @@ export default class Parser {
                 debug: 'parseBlockStatement>return',
                 statements: [statement],
                 returnFinal: true,
-                kind: ExpressionKind.Block,
+                kind: Tiny.ExpressionKind.Block,
                 ...this.curr(),
             };
         }
 
         this.nextToken();
 
-        let statements: Array<Statement> = [];
+        let statements: Array<Tiny.Statement> = [];
 
         this.nextToken();
 
         while (
-            !this.currTokenIs(TokenType.RBRACE) &&
-            !this.currTokenIs(TokenType.EOF)
+            !this.currTokenIs(Tiny.TokenType.RBRACE) &&
+            !this.currTokenIs(Tiny.TokenType.EOF)
         ) {
             const statement = this.parseStatement();
             if (statement) statements.push(statement);
@@ -555,15 +537,15 @@ export default class Parser {
             debug: 'parseBlockStatement>return',
             statements,
             returnFinal: false,
-            kind: ExpressionKind.Block,
+            kind: Tiny.ExpressionKind.Block,
             ...this.curr(),
         };
     }
 
-    private parseFunctionParameters(): Array<Expression> {
-        let parameters: Array<Expression> = [];
+    private parseFunctionParameters(): Array<Tiny.Expression> {
+        let parameters: Array<Tiny.Expression> = [];
 
-        if (this.peekTokenIs(TokenType.RPAREN)) {
+        if (this.peekTokenIs(Tiny.TokenType.RPAREN)) {
             this.nextToken();
             return [];
         }
@@ -572,28 +554,30 @@ export default class Parser {
 
         parameters.push({
             value: this.currToken.literal,
-            kind: ExpressionKind.Ident,
+            kind: Tiny.ExpressionKind.Ident,
             ...this.curr(),
         });
 
-        while (this.peekTokenIs(TokenType.COMMA)) {
+        while (this.peekTokenIs(Tiny.TokenType.COMMA)) {
             this.nextToken();
             this.nextToken();
 
             parameters.push({
                 value: this.currToken.literal,
-                kind: ExpressionKind.Ident,
+                kind: Tiny.ExpressionKind.Ident,
                 ...this.curr(),
             });
         }
 
-        if (this.expectPeek(TokenType.RPAREN)) return parameters;
+        if (this.expectPeek(Tiny.TokenType.RPAREN)) return parameters;
 
         return parameters;
     }
 
-    private parseExpressionArguments(end: TokenType): Array<Expression> {
-        const args: Array<Expression> = [];
+    private parseExpressionArguments(
+        end: Tiny.TokenType
+    ): Array<Tiny.Expression> {
+        const args: Array<Tiny.Expression> = [];
 
         if (this.peekTokenIs(end)) {
             this.nextToken();
@@ -606,7 +590,7 @@ export default class Parser {
         const expression = this.parseExpression(Priority.LOWEST);
         if (expression) args.push(expression);
 
-        while (this.peekTokenIs(TokenType.COMMA)) {
+        while (this.peekTokenIs(Tiny.TokenType.COMMA)) {
             this.nextToken();
             this.nextToken();
 
@@ -619,28 +603,28 @@ export default class Parser {
         return args;
     }
 
-    private parseHash(): HashExpression | null {
-        const pairs: Array<HashPair> = [];
+    private parseHash(): Tiny.HashExpression | null {
+        const pairs: Array<Tiny.HashPair> = [];
 
-        while (!this.peekTokenIs(TokenType.RBRACE)) {
+        while (!this.peekTokenIs(Tiny.TokenType.RBRACE)) {
             this.nextToken();
 
             let key = this.parseExpression(Priority.LOWEST);
 
-            if (key?.kind === ExpressionKind.Ident)
+            if (key?.kind === Tiny.ExpressionKind.Ident)
                 key = {
                     debug: 'parseHash>ident>key',
                     value: {
                         debug: 'parseHash>ident>key>value',
                         value: key.value,
-                        kind: LiteralKind.String,
+                        kind: Tiny.LiteralKind.String,
                         ...this.curr(),
                     },
-                    kind: ExpressionKind.Literal,
+                    kind: Tiny.ExpressionKind.Literal,
                     ...this.curr(),
                 };
 
-            if (!this.peekTokenIs(TokenType.COLON)) return null;
+            if (!this.peekTokenIs(Tiny.TokenType.COLON)) return null;
 
             this.nextToken();
             this.nextToken();
@@ -648,8 +632,8 @@ export default class Parser {
             const value = this.parseExpression(Priority.LOWEST);
 
             if (
-                !this.peekTokenIs(TokenType.RBRACE) &&
-                !this.expectPeek(TokenType.COMMA)
+                !this.peekTokenIs(Tiny.TokenType.RBRACE) &&
+                !this.expectPeek(Tiny.TokenType.COMMA)
             )
                 return null;
 
@@ -662,12 +646,12 @@ export default class Parser {
             });
         }
 
-        if (!this.expectPeek(TokenType.RBRACE)) return null;
+        if (!this.expectPeek(Tiny.TokenType.RBRACE)) return null;
 
         return {
             debug: 'parseHash>return',
             pairs,
-            kind: ExpressionKind.Hash,
+            kind: Tiny.ExpressionKind.Hash,
             ...this.curr(),
         };
     }
@@ -680,37 +664,37 @@ export default class Parser {
         return this.getPriority(this.currToken);
     }
 
-    private getPriority(token: Token): Priority {
+    private getPriority(token: Tiny.Token): Priority {
         switch (token.type) {
-            case TokenType.EQUAL:
-            case TokenType.NOT_EQUAL:
-            case TokenType.AND:
-            case TokenType.OR:
-            case TokenType.ASSIGN:
+            case Tiny.TokenType.EQUAL:
+            case Tiny.TokenType.NOT_EQUAL:
+            case Tiny.TokenType.AND:
+            case Tiny.TokenType.OR:
+            case Tiny.TokenType.ASSIGN:
                 return Priority.EQUAL;
 
-            case TokenType.LT:
-            case TokenType.GT:
-            case TokenType.LTE:
-            case TokenType.GTE:
+            case Tiny.TokenType.LT:
+            case Tiny.TokenType.GT:
+            case Tiny.TokenType.LTE:
+            case Tiny.TokenType.GTE:
                 return Priority.LESSGREATER;
 
-            case TokenType.PLUS:
-            case TokenType.MINUS:
+            case Tiny.TokenType.PLUS:
+            case Tiny.TokenType.MINUS:
                 return Priority.SUM;
 
-            case TokenType.SLASH:
-            case TokenType.ASTERISK:
-            case TokenType.PERCENT:
-            case TokenType.ELEMENT:
-            case TokenType.IN:
-            case TokenType.NULLISH:
+            case Tiny.TokenType.SLASH:
+            case Tiny.TokenType.ASTERISK:
+            case Tiny.TokenType.PERCENT:
+            case Tiny.TokenType.ELEMENT:
+            case Tiny.TokenType.IN:
+            case Tiny.TokenType.NULLISH:
                 return Priority.PRODUCT;
 
-            case TokenType.LPAREN:
+            case Tiny.TokenType.LPAREN:
                 return Priority.CALL;
 
-            case TokenType.LBRACKET:
+            case Tiny.TokenType.LBRACKET:
                 return Priority.INDEX;
 
             default:

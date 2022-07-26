@@ -1,10 +1,4 @@
-import {
-    ParseError,
-    Stdio,
-    Options,
-    LangObject,
-    ObjectKind,
-} from '../../index';
+import * as Tiny from '../../index';
 import colors from 'colors';
 
 colors.enabled = true;
@@ -79,7 +73,7 @@ const errorsLocale: {
     },
 };
 
-const localization = (options: Options) =>
+const localization = (options: Tiny.Options) =>
     options.locale
         ? errorsLocale[options.locale] ?? errorsLocale.en
         : errorsLocale.en;
@@ -92,18 +86,22 @@ const errorFormatter = (message: string, ...args: Array<any>): string => {
     return message;
 };
 
-const error = (message: string, line: number, column: number): LangObject => ({
-    kind: ObjectKind.ERROR,
+const error = (
+    message: string,
+    line: number,
+    column: number
+): Tiny.LangObject => ({
+    kind: Tiny.ObjectKind.ERROR,
     message,
     line,
     column,
 });
 
 const printError = (
-    error: ParseError,
+    error: Tiny.ParseError,
     file: string,
-    stderr: Stdio,
-    options: Options
+    stderr: Tiny.Stdio,
+    options: Tiny.Options
 ) => {
     const { line, column, message } = error;
 

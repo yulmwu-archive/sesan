@@ -7,9 +7,8 @@
         "start": "npm run build && node ./dist/api.js",
         "start:repl": "npm run build && node ./dist/tiny/cli/index.js",
         "build": "if [ -d dist ]; then rm -rf dist; npm run build:tsc; else npm run build:tsc; fi",
-        "build:windows": "@echo off && IF exist dist ( rd dist; npm run build:tsc ) ELSE ( npm run build:tsc ) && @echo on",
+        "build:windows": "@echo off && npm run tsc:build && @echo on",
         "build:tsc": "tsc -p tsconfig.json",
-        "test": "npm run build && node ./dist/tests/$TEST.test.js # export TEST=something",
         "npm:publish": "npm run build && npm publish",
         "git:push": "cd web && npm run publish && cd .. && git push origin"
     },
