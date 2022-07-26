@@ -3,15 +3,16 @@ let custom = { customDecorator: 'hello' };
 
 @skip + custom
 func foo() {
-    println(decorator('foo'));
+    println(this <- decorator <- customDecorator);
 
-    let x = join(__builtin_arguments('foo'), ' ');
+    let x = join(this <- arguments, ' ');
 
-    capture();
-
-    return func() {
+    @{ capture: true }
+    func ret() {
         println(x);
     };
+
+    return ret;
 };
 
 foo(1, 2, 3, 'Hello')();

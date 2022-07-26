@@ -170,8 +170,6 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 | `options`   |           |
 | `null`      |           |
 | `self`      |           |
-| `capture`   |           |
-| `decorator` | `string`  |
 
 <br>
 

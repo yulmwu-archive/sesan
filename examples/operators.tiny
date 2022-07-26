@@ -1,16 +1,15 @@
 func expect_true(v, i) {
-    if (!v) { throw('❌'); }
+    if (!v) throw('❌');
 }
 
 forEach([
-    2 == 2, 
-    1 != 2, 
-    1 < 2, 
+    2 == 2,
+    1 != 2,
+    1 < 2,
     2 > 1,
-    1 <= 2, 
+    1 <= 2,
     2 >= 1
 ], expect_true);
-
 
 println('a' + 'b' + 'c');
 println([1, 2, 3] + [4, 5, 6]);
@@ -31,7 +30,8 @@ let dict = {
 };
 
 println(dict['a']);
-println(dict <- 'a');
+println(dict <- a);
+println(dict <- 'b');
 println([1, 2, 3] <- 1);
 
 forEach([

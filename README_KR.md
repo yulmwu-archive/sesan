@@ -170,8 +170,6 @@ npm run start:repl [file]
 | `options`   |           |
 | `null`      |           |
 | `self`      |           |
-| `capture`   |           |
-| `decorator` | `string`  |
 
 <br>
 
