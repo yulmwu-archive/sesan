@@ -71,25 +71,26 @@ npm run start:repl [file]
 
 ## 토큰 (Token)
 
-| 토큰        | 식별자     | 토큰        | 식별자    |
-| ----------- | ---------- | ----------- | --------- |
-| `EOF`       | `EOF`      | `ILLEGAL`   | `ILLEGAL` |
-| `NUMBER`    | `NUMBER`   | `IDENT`     | `IDENT`   |
-| `TRUE`      | `TRUE`     | `STRING`    | `STRING`  |
-| `FUNCTION`  | `FUNCTION` | `FALSE`     | `FALSE`   |
-| `ASSIGN`    | `=`        | `COMMENT`   | `COMMENT` |
-| `MINUS`     | `-`        | `PLUS`      | `+`       |
-| `ASTERISK`  | `*`        | `BANG`      | `!`       |
-| `PERCENT`   | `%`        | `SLASH`     | `/`       |
-| `GT`        | `>`        | `LT`        | `<`       |
-| `NOT_EQUAL` | `!=`       | `EQUAL`     | `==`      |
-| `COLON`     | `:`        | `COMMA`     | `,`       |
-| `LPAREN`    | `(`        | `SEMICOLON` | `;`       |
-| `LBRACE`    | `{`        | `RPAREN`    | `)`       |
-| `LBRACKET`  | `[`        | `RBRACE`    | `}`       |
-| `LET`       | `LET`      | `RBRACKET`  | `]`       |
-| `ELSE`      | `ELSE`     | `IF`        | `IF`      |
-| `WHILE`     | `WHILE`    | `RETURN`    | `RETURN`  |
+| 토큰        | 식별자     | 토큰           | 식별자    |
+| ----------- | ---------- | -------------- | --------- |
+| `EOF`       | `EOF`      | `ILLEGAL`      | `ILLEGAL` |
+| `NUMBER`    | `NUMBER`   | `IDENT`        | `IDENT`   |
+| `TRUE`      | `TRUE`     | `STRING`       | `STRING`  |
+| `FUNCTION`  | `FUNCTION` | `FALSE`        | `FALSE`   |
+| `ASSIGN`    | `=`        | `COMMENT`      | `COMMENT` |
+| `MINUS`     | `-`        | `PLUS`         | `+`       |
+| `ASTERISK`  | `*`        | `BANG`         | `!`       |
+| `PERCENT`   | `%`        | `SLASH`        | `/`       |
+| `GT`        | `>`        | `LT`           | `<`       |
+| `NOT_EQUAL` | `!=`       | `EQUAL`        | `==`      |
+| `COLON`     | `:`        | `COMMA`        | `,`       |
+| `LPAREN`    | `(`        | `SEMICOLON`    | `;`       |
+| `LBRACE`    | `{`        | `RPAREN`       | `)`       |
+| `LBRACKET`  | `[`        | `RBRACE`       | `}`       |
+| `LET`       | `LET`      | `RBRACKET`     | `]`       |
+| `ELSE`      | `ELSE`     | `IF`           | `IF`      |
+| `WHILE`     | `WHILE`    | `RETURN`       | `RETURN`  |
+| `QUOTE`     | `"`        | `SINGLE_QUOTE` | `'`       |
 
 <br>
 
@@ -158,18 +159,18 @@ npm run start:repl [file]
 
 # 내장 함수 (Built-in Function)
 
-| 함수        | 매개 변수 |
-| ----------- | --------- |
-| `import`    | `string`  |
-| `typeof`    | `object`  |
-| `throw`     | `string`  |
-| `delete`    | `string`  |
-| `eval`      | `string`  |
-| `js`        | `string`  |
-| `convert`   | `Any`     |
-| `options`   |           |
-| `null`      |           |
-| `self`      |           |
+| 함수      | 매개 변수 |
+| --------- | --------- |
+| `import`  | `string`  |
+| `typeof`  | `object`  |
+| `throw`   | `string`  |
+| `delete`  | `string`  |
+| `eval`    | `string`  |
+| `js`      | `string`  |
+| `convert` | `Any`     |
+| `options` |           |
+| `null`    |           |
+| `self`    |           |
 
 <br>
 
@@ -191,6 +192,7 @@ npm run start:repl [file]
         -   `forEach(array, callback)`
         -   `repeat(value, count)`, `repeat(count)`
     -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
+        -   `funcTools`
         -   `length(array)`
         -   `match(value, [pattern], default)`
         -   `string(value)`

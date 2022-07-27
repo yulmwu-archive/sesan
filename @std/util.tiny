@@ -1,3 +1,8 @@
+let funcTools = {
+    capture: { capture: true },
+    skip: { skipCheckArguments: true }
+};
+
 func length(value) { return __builtin_length(value); }
 
 func match(value, case, default) {

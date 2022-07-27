@@ -1,7 +1,6 @@
-let skip = { skipCheckArguments: true };
 let custom = { customDecorator: 'hello' };
 
-@skip + custom
+@(funcTools <- skip) + custom
 func foo() {
     println(this <- decorator <- customDecorator);
 

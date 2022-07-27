@@ -374,7 +374,7 @@ export default class Evaluator {
         const expr = expression as unknown as Tiny.FunctionExpression;
 
         const ret: Tiny.LangObject = {
-            function: expr.function,
+            function: expr.function ?? null,
             parameters: expr.arguments,
             body: expr.body,
             env,
@@ -383,9 +383,11 @@ export default class Evaluator {
             kind: Tiny.ObjectKind.FUNCTION,
         };
 
-        const name = (expr.function as unknown as Tiny.StringLiteral).value;
+        const name = ret.function
+            ? (ret.function as unknown as Tiny.StringLiteral).value ?? null
+            : null;
 
-        if (expr.function)
+        if (expr.function && name)
             if (env.has(name))
                 return Tiny.error(
                     Tiny.errorFormatter(

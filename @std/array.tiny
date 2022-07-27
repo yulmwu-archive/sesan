@@ -12,7 +12,7 @@ func join(arr, separator) { return __builtin_join(arr, separator); }
 
 func forEach(arr, callback) { return __builtin_forEach(arr, callback); }
 
-@skip;
+@funcTools <- skip;
 func repeat(x, r) {
     return match(length(this <- arguments), [
         [1, func(value) {
@@ -40,4 +40,4 @@ func repeat(x, r) {
     ], func(value) {
         return null();
     });
-};
+}

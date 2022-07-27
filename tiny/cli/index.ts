@@ -13,7 +13,7 @@ const option = existsSync('./tiny.config.json')
 
 if (args.length <= 0) new Repl(env, option).start();
 else {
-    try {
+    //try {
         const file = readFileSync(args[0], 'utf8');
 
         new Tiny(file, { enviroment: env, ...option })
@@ -24,7 +24,7 @@ else {
             )
             .setFileName(args[0])
             .eval();
-    } catch (e) {
-        console.error(`Cannot open file ${args[0]}: ${e}`);
-    }
+    //} catch (e) {
+      //  console.error(`Cannot open file ${args[0]}: ${e}`);
+    //}
 }

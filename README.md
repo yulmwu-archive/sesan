@@ -71,25 +71,26 @@ npm run start:repl [file]
 
 ## Tokens
 
-| Token       | Identifier | Token       | Identifier |
-| ----------- | ---------- | ----------- | ---------- |
-| `EOF`       | `EOF`      | `ILLEGAL`   | `ILLEGAL`  |
-| `NUMBER`    | `NUMBER`   | `IDENT`     | `IDENT`    |
-| `TRUE`      | `TRUE`     | `STRING`    | `STRING`   |
-| `FUNCTION`  | `FUNCTION` | `FALSE`     | `FALSE`    |
-| `ASSIGN`    | `=`        | `COMMENT`   | `COMMENT`  |
-| `MINUS`     | `-`        | `PLUS`      | `+`        |
-| `ASTERISK`  | `*`        | `BANG`      | `!`        |
-| `PERCENT`   | `%`        | `SLASH`     | `/`        |
-| `GT`        | `>`        | `LT`        | `<`        |
-| `NOT_EQUAL` | `!=`       | `EQUAL`     | `==`       |
-| `COLON`     | `:`        | `COMMA`     | `,`        |
-| `LPAREN`    | `(`        | `SEMICOLON` | `;`        |
-| `LBRACE`    | `{`        | `RPAREN`    | `)`        |
-| `LBRACKET`  | `[`        | `RBRACE`    | `}`        |
-| `LET`       | `LET`      | `RBRACKET`  | `]`        |
-| `ELSE`      | `ELSE`     | `IF`        | `IF`       |
-| `WHILE`     | `WHILE`    | `RETURN`    | `RETURN`   |
+| Token       | Identifier | Token          | Identifier |
+| ----------- | ---------- | -------------- | ---------- |
+| `EOF`       | `EOF`      | `ILLEGAL`      | `ILLEGAL`  |
+| `NUMBER`    | `NUMBER`   | `IDENT`        | `IDENT`    |
+| `TRUE`      | `TRUE`     | `STRING`       | `STRING`   |
+| `FUNCTION`  | `FUNCTION` | `FALSE`        | `FALSE`    |
+| `ASSIGN`    | `=`        | `COMMENT`      | `COMMENT`  |
+| `MINUS`     | `-`        | `PLUS`         | `+`        |
+| `ASTERISK`  | `*`        | `BANG`         | `!`        |
+| `PERCENT`   | `%`        | `SLASH`        | `/`        |
+| `GT`        | `>`        | `LT`           | `<`        |
+| `NOT_EQUAL` | `!=`       | `EQUAL`        | `==`       |
+| `COLON`     | `:`        | `COMMA`        | `,`        |
+| `LPAREN`    | `(`        | `SEMICOLON`    | `;`        |
+| `LBRACE`    | `{`        | `RPAREN`       | `)`        |
+| `LBRACKET`  | `[`        | `RBRACE`       | `}`        |
+| `LET`       | `LET`      | `RBRACKET`     | `]`        |
+| `ELSE`      | `ELSE`     | `IF`           | `IF`       |
+| `WHILE`     | `WHILE`    | `RETURN`       | `RETURN`   |
+| `QUOTE`     | `"`        | `SINGLE_QUOTE` | `'`        |
 
 <br>
 
@@ -158,18 +159,18 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 # Built-in functions
 
-| Function    | Arguments |
-| ----------- | --------- |
-| `import`    | `string`  |
-| `typeof`    | `object`  |
-| `throw`     | `string`  |
-| `delete`    | `string`  |
-| `eval`      | `string`  |
-| `js`        | `string`  |
-| `convert`   | `Any`     |
-| `options`   |           |
-| `null`      |           |
-| `self`      |           |
+| Function  | Arguments |
+| --------- | --------- |
+| `import`  | `string`  |
+| `typeof`  | `object`  |
+| `throw`   | `string`  |
+| `delete`  | `string`  |
+| `eval`    | `string`  |
+| `js`      | `string`  |
+| `convert` | `Any`     |
+| `options` |           |
+| `null`    |           |
+| `self`    |           |
 
 <br>
 
@@ -191,6 +192,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
         -   `forEach(array, callback)`
         -   `repeat(value, count)`, `repeat(count)`
     -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
+        -   `funcTools`
         -   `length(array)`
         -   `match(value, [pattern], default)`
         -   `string(value)`

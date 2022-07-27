@@ -1,12 +1,10 @@
-let skip = { skipCheckArguments: true };
+import('@std/util');
 
-@skip
+@funcTools <- skip;
 func print() { __builtin_print(this <- arguments, ''); }
 
-@skip
+@funcTools <- skip;
 func println() { __builtin_print(this <- arguments, '\n'); }
 
-@skip
+@funcTools <- skip;
 func readline() { __builtin_readline(this <- arguments); }
-
-delete('skip');
