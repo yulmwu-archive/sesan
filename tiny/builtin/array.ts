@@ -113,30 +113,58 @@ const forEach: Func = (
 ): Tiny.LangObject => {
     if (
         args.length !== 2 ||
-        args[0]?.kind !== Tiny.ObjectKind.ARRAY ||
+        (args[0]?.kind !== Tiny.ObjectKind.ARRAY &&
+            args[0]?.kind !== Tiny.ObjectKind.BOOLEAN) ||
         args[1]?.kind !== Tiny.ObjectKind.FUNCTION
     )
         return invalidArgument(pos, t.option);
 
-    const array = args[0] as Tiny.ArrayObject;
     const func = args[1] as Tiny.FunctionObject;
 
-    array.value.forEach((value, index) =>
-        t.applyFunction(
-            func,
-            '',
-            [
-                value,
-                {
-                    kind: Tiny.ObjectKind.NUMBER,
-                    value: index,
-                },
-            ],
-            env,
-            pos,
-            Tiny.NULL
-        )
-    );
+    if (args[0].kind === Tiny.ObjectKind.ARRAY) {
+        const array = args[0] as Tiny.ArrayObject;
+
+        for (const [index, value] of array.value.entries()) {
+            const result = t.applyFunction(
+                func,
+                '',
+                [
+                    value,
+                    {
+                        kind: Tiny.ObjectKind.NUMBER,
+                        value: index,
+                    },
+                ],
+                env,
+                pos,
+                Tiny.NULL
+            );
+
+            if (result?.kind === Tiny.ObjectKind.BOOLEAN && !result.value)
+                break;
+        }
+    } else {
+        const boolean = args[0] as Tiny.BooleanObject;
+
+        for (let i = 0; true; i++) {
+            const result = t.applyFunction(
+                func,
+                '',
+                [
+                    {
+                        kind: Tiny.ObjectKind.NUMBER,
+                        value: i,
+                    },
+                ],
+                env,
+                pos,
+                Tiny.NULL
+            );
+
+            if (result?.kind === Tiny.ObjectKind.BOOLEAN && !result.value)
+                break;
+        }
+    }
 
     return Tiny.NULL;
 };
