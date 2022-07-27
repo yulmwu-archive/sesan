@@ -162,15 +162,10 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 | Function  | Arguments |
 | --------- | --------- |
 | `import`  | `string`  |
-| `typeof`  | `object`  |
-| `throw`   | `string`  |
-| `delete`  | `string`  |
 | `eval`    | `string`  |
 | `js`      | `string`  |
 | `convert` | `Any`     |
 | `options` |           |
-| `null`    |           |
-| `self`    |           |
 
 <br>
 
@@ -199,6 +194,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
         -   `number(value)`
         -   `boolean(value)`
         -   `ternary(condition, trueValue, falseValue)`
+        -   `concat(args*)`
     -   [`object`](https://github.com/tsukiroku/tiny/blob/main/@std/object.tiny)
         -   `assign(object, key, value)`
 

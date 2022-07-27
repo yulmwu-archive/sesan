@@ -162,15 +162,10 @@ npm run start:repl [file]
 | 함수      | 매개 변수 |
 | --------- | --------- |
 | `import`  | `string`  |
-| `typeof`  | `object`  |
-| `throw`   | `string`  |
-| `delete`  | `string`  |
 | `eval`    | `string`  |
 | `js`      | `string`  |
 | `convert` | `Any`     |
 | `options` |           |
-| `null`    |           |
-| `self`    |           |
 
 <br>
 
@@ -199,6 +194,7 @@ npm run start:repl [file]
         -   `number(value)`
         -   `boolean(value)`
         -   `ternary(condition, trueValue, falseValue)`
+        -   `concat(args*)`
     -   [`object`](https://github.com/tsukiroku/tiny/blob/main/@std/object.tiny)
         -   `assign(object, key, value)`
 
