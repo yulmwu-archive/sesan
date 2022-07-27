@@ -482,6 +482,7 @@ export default class Lexer {
             token.type === Tiny.TokenType.TYPEOF ||
             token.type === Tiny.TokenType.THROW ||
             token.type === Tiny.TokenType.DELETE ||
+            token.type === Tiny.TokenType.USE ||
             token.type === Tiny.TokenType.IDENT ||
             token.type === Tiny.TokenType.NUMBER
         )

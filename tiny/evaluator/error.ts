@@ -31,6 +31,7 @@ const errorsLocale: {
             indexOutOfRange: 'Index out of range.',
             deleteRequiresIdentifier:
                 "'delete' can only be used on identifiers.",
+            useRequiresString: "'use' can only be used on strings.",
         },
         builtinError: {
             invalidArgument: 'Invalid argument.',
@@ -66,6 +67,7 @@ const errorsLocale: {
             indexOutOfRange: '인덱스가 범위를 벗어났습니다.',
             deleteRequiresIdentifier:
                 "'delete' 는 식별자만 사용할 수 있습니다.",
+            useRequiresString: "'use' 는 문자열만 사용할 수 있습니다.",
         },
         builtinError: {
             invalidArgument: '유효하지 않은 인수입니다.',

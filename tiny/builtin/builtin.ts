@@ -1,5 +1,4 @@
 import * as Tiny from '../../index';
-import { readFileSync } from 'fs';
 
 const importEnv: Tiny.Func = (
     args: Array<Tiny.LangObject>,
@@ -10,45 +9,7 @@ const importEnv: Tiny.Func = (
     if (args.length !== 1 || args[0]?.kind !== Tiny.ObjectKind.STRING)
         return Tiny.invalidArgument(pos, t.option);
 
-    try {
-        let fileName = (args[0] as Tiny.StringObject).value;
-
-        if (!fileName.endsWith('.tiny')) fileName += '.tiny';
-
-        const parsed = new Tiny.Parser(
-            new Tiny.Lexer(
-                readFileSync(`${t.root}${fileName}`, 'utf8'),
-                {
-                    ...t.option,
-                    stderr: t.stdio.stderr,
-                },
-                fileName
-            ),
-            t.option
-        ).parseProgram();
-
-        parsed.errors.forEach((error) =>
-            Tiny.printError(error, fileName, t.stdio.stderr, {
-                ...t.option,
-            })
-        );
-
-        return new Tiny.Evaluator(
-            parsed,
-            env,
-            t.option,
-            t.stdio,
-            t.root
-        ).eval();
-    } catch (e) {
-        return {
-            kind: Tiny.ObjectKind.ERROR,
-            message: `Could not import file: ${
-                (args[0] as Tiny.StringObject).value
-            }`,
-            ...pos,
-        };
-    }
+    return t.importEnv((args[0] as Tiny.StringObject).value, env, t, pos);
 };
 
 const length: Tiny.Func = (args: Array<Tiny.LangObject>): Tiny.LangObject => {

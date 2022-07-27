@@ -417,7 +417,7 @@ export default class Parser {
             }
 
             case Tiny.TokenType.DELETE: {
-                this.nextToken();
+                if (!this.expectPeek(Tiny.TokenType.IDENT)) return null;
 
                 const expression = this.parseExpression(Priority.LOWEST);
 
@@ -427,6 +427,21 @@ export default class Parser {
                     debug: 'parsePrefix>case>delete',
                     value: expression,
                     kind: Tiny.ExpressionKind.Delete,
+                    ...this.curr(),
+                };
+            }
+
+            case Tiny.TokenType.USE: {
+                if (!this.expectPeek(Tiny.TokenType.STRING)) return null;
+
+                const expression = this.parseExpression(Priority.LOWEST);
+
+                if (!expression) return null;
+
+                return {
+                    debug: 'parsePrefix>case>use',
+                    path: expression,
+                    kind: Tiny.ExpressionKind.Use,
                     ...this.curr(),
                 };
             }
@@ -681,12 +696,16 @@ export default class Parser {
                     ...this.curr(),
                 };
 
-            if (!this.peekTokenIs(Tiny.TokenType.COLON)) return null;
+            let value: Tiny.Expression = null;
 
-            this.nextToken();
-            this.nextToken();
+            if (!this.peekTokenIs(Tiny.TokenType.COLON))
+                value = this.parseExpression(Priority.LOWEST);
+            else {
+                this.nextToken();
+                this.nextToken();
 
-            const value = this.parseExpression(Priority.LOWEST);
+                value = this.parseExpression(Priority.LOWEST);
+            }
 
             if (
                 !this.peekTokenIs(Tiny.TokenType.RBRACE) &&

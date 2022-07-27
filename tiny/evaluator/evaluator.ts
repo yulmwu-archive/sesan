@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import * as Tiny from '../../index';
 
 const NULL: Tiny.LangObject = {
@@ -6,6 +7,7 @@ const NULL: Tiny.LangObject = {
 
 export default class Evaluator {
     public messages;
+    public exportEnviroment: Tiny.Enviroment | null = null;
 
     constructor(
         public p: Tiny.Program,
@@ -410,8 +412,76 @@ export default class Evaluator {
                 return NULL;
             }
 
+            case Tiny.ExpressionKind.Use: {
+                const expr = expression as unknown as Tiny.UseExpression;
+
+                const path = this.evalExpression(expr.path, env);
+
+                if (path?.kind === Tiny.ObjectKind.ERROR) return path;
+
+                if (path?.kind !== Tiny.ObjectKind.STRING)
+                    return Tiny.error(
+                        this.messages.runtimeError.useRequiresString,
+                        expr.line,
+                        expr.column
+                    );
+
+                return this.importEnv(
+                    (path as unknown as Tiny.StringObject).value,
+                    env,
+                    this,
+                    {
+                        line: expr.line,
+                        column: expr.column,
+                    }
+                );
+            }
+
             default:
                 return null;
+        }
+    }
+
+    public importEnv(
+        path: string,
+        env: Tiny.Enviroment,
+        t: Evaluator,
+        pos: Tiny.Position
+    ): Tiny.LangObject {
+        try {
+            if (!path.endsWith('.tiny')) path += '.tiny';
+
+            const parsed = new Tiny.Parser(
+                new Tiny.Lexer(
+                    readFileSync(`${t.root}${path}`, 'utf8'),
+                    {
+                        ...t.option,
+                        stderr: t.stdio.stderr,
+                    },
+                    path
+                ),
+                t.option
+            ).parseProgram();
+
+            parsed.errors.forEach((error) =>
+                Tiny.printError(error, path, t.stdio.stderr, {
+                    ...t.option,
+                })
+            );
+
+            return new Tiny.Evaluator(
+                parsed,
+                env,
+                t.option,
+                t.stdio,
+                t.root
+            ).eval();
+        } catch (e) {
+            return {
+                kind: Tiny.ObjectKind.ERROR,
+                message: `Could not import file: ${t.root}${path}`,
+                ...pos,
+            };
         }
     }
 
