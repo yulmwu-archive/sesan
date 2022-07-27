@@ -1,0 +1,32 @@
+let capture = { capture: true };
+
+func tokenizer(input) {
+    let eof = null;
+
+    let current = {
+        pos: 0,
+        readPos: 0,
+        ch: ''
+    };
+
+    @capture
+    func readChar() {
+        if (current <- readPos >= length(input)) current = assign(current, 'ch', null);
+        else current = assign(current, 'ch', split(input, '') <- (current <- readPos));
+
+        current = assign(current, 'pos', current <- readPos);
+        current = assign(current, 'readPos', current <- readPos + 1);
+
+        return current;
+    }
+
+
+    return { readChar };
+}
+
+let t = tokenizer('abc');
+
+println((t <- readChar)());
+println((t <- readChar)());
+println((t <- readChar)());
+println((t <- readChar)());
