@@ -31,6 +31,12 @@ ternary(true, "foo", "bar"); // "foo"
 ternary(false, "foo", "bar"); // "bar"
 ```
 
+# split
+
+```swift
+split("foo bar baz", " "); // ["foo", "bar", "baz"]
+```
+
 # concat
 
 ```swift

@@ -194,6 +194,7 @@ npm run start:repl [file]
         -   `number(value)`
         -   `boolean(value)`
         -   `ternary(condition, trueValue, falseValue)`
+        -   `split(string, separator)`
         -   `concat(args*)`
     -   [`object`](https://github.com/tsukiroku/tiny/blob/main/@std/object.tiny)
         -   `assign(object, key, value)`

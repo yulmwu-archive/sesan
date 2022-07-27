@@ -27,6 +27,8 @@ func ternary(condition, trueValue, falseValue) {
     return if (!!condition) trueValue; else falseValue;
 }
 
+func split(value, separator) { return __builtin_split(value, separator); }
+
 @funcTools <- skip
 func concat() {
     return join(this <- arguments, ' ');
