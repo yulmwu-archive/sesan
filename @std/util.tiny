@@ -6,13 +6,13 @@ let funcTools = {
 func length(value) { return __builtin_length(value); }
 
 func match(value, case, default) {
-    let result = null();
+    let result = null;
 
     forEach(case, func (item, index) {
         if (item[0] == value) result = item[1](value);
     });
 
-    if (typeof(result) == 'NULL') result = default(value);
+    if ((typeof result) == 'NULL') result = default(value);
 
     return result;
 }
@@ -24,11 +24,16 @@ func string(value) { return convert(value, 'string'); }
 func boolean(value) { return convert(value, 'boolean'); }
 
 func ternary(condition, trueValue, falseValue) {
-    return if (condition) trueValue; else falseValue;
+    return if (!!condition) trueValue; else falseValue;
+}
+
+@funcTools <- skip
+func concat() {
+    return join(this <- arguments, ' ');
 }
 
 func implement() {
-    throw('Not implemented');
+    throw 'Not implemented';
 
-    return null();
+    return null;
 }

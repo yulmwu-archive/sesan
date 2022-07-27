@@ -20,7 +20,7 @@ func repeat(x, r) {
             let result = [];
 
             while (_x < x) {
-                result = push(result, null());
+                result = push(result, null);
                 _x = _x + 1;
             }
 
@@ -38,6 +38,6 @@ func repeat(x, r) {
             return result;
         }]
     ], func(value) {
-        return null();
+        return null;
     });
 }
