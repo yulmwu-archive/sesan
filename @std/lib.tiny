@@ -1,4 +1,4 @@
 use '@std/io';
 use '@std/array';
-use '@std/util';
 use '@std/object';
+use '@std/util';
