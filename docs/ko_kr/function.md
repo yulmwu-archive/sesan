@@ -6,7 +6,7 @@ func <identifier>(<arguments>) <block expression>;
 func(<arguments>) <block expression>;
 ```
 
-> [`<block expression>`](./block_expression.md) 상속
+> [`<block expression>`](./_base/block_expression.md) 상속
 
 ---
 
