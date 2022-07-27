@@ -1,4 +1,4 @@
-import('@std/util');
+use '@std/util';
 
 @funcTools <- skip;
 func print() { __builtin_print(this <- arguments, ''); }

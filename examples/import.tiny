@@ -1,3 +1,5 @@
-import('./examples/function'); // Examples -> Function
+// import('./examples/function'); // Examples -> Function
+
+use './examples/function';        // Examples -> Function
 
 println(my_function(1, 2));
