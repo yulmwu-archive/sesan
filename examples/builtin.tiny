@@ -1,31 +1,19 @@
-import('@std/lib');
-
 let x = 5 * 2;
 
-if (typeof(x) == 'NUMBER') { x = x + 1; }
-
-delete('x');
-
-// println(x); // ❌ Error
+if ((typeof x) == 'NUMBER') { x = x + 1; }
 
 let option = options();
 
-if (option <- 'allowEval') { 
-    eval('println("안녕, 세상아!");');
-}
-if (option <- 'allowJavaScript') { 
-    js('console.log("こんにちは、世界！");'); 
-}
+if (option <- 'allowEval') eval('println("안녕, 세상아!");');
+if (option <- 'allowJavaScript') js('console.log("こんにちは、世界！");');
 
 // For `convert` Function, See Examples -> Utility (`string`, `number`, `boolean`).
 
 let hash = {
     name: 'John',
     age: 30,
-    girlFriend: null(),
-    hello: func () { println('Hello, ' + self() <- 'name'); }
+    girlFriend: null,
+    hello: func () { println('Hello, ' + hash <- 'name'); }
 };
 
-(hash <- 'hello')();
-
-// For `capture` Function, See Examples -> Decorators (`foo()`).
+(hash <- hello)();

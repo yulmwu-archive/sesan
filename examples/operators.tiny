@@ -1,5 +1,5 @@
 func expect_true(v, i) {
-    if (!v) throw('❌');
+    if (!v) throw '❌';
 }
 
 forEach([
@@ -42,5 +42,5 @@ forEach([
     { 'a': 1, 'b': 2, 'c': 3 } in 3
 ], expect_true);
 
-println(null() ?? 5);
+println(null ?? 5);
 println(10 ?? 5);
