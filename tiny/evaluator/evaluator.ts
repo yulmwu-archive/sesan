@@ -161,6 +161,8 @@ export default class Evaluator {
 
                 const value = this.evalExpression(decorator.value, env);
 
+                if (value?.kind === Tiny.ObjectKind.ERROR) return value;
+
                 const func = this.evalFunction(
                     decorator.function as Tiny.FunctionExpression,
                     env,
