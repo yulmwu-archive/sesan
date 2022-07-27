@@ -39,6 +39,26 @@ const length: Tiny.Func = (args: Array<Tiny.LangObject>): Tiny.LangObject => {
     };
 };
 
+const split: Tiny.Func = (
+    args: Array<Tiny.LangObject>,
+    env: Tiny.Enviroment,
+    t: Tiny.Evaluator,
+    pos: Tiny.Position
+): Tiny.LangObject => {
+    if (args.length !== 2 || args[0]?.kind !== Tiny.ObjectKind.STRING)
+        return Tiny.invalidArgument(pos, t.option);
+
+    return {
+        kind: Tiny.ObjectKind.ARRAY,
+        value: (args[0] as Tiny.StringObject).value
+            .split((args[1] as Tiny.StringObject).value)
+            .map((s) => ({
+                kind: Tiny.ObjectKind.STRING,
+                value: s,
+            })),
+    };
+};
+
 const evalCode: Tiny.Func = (
     args: Array<Tiny.LangObject>,
     env: Tiny.Enviroment,
@@ -269,6 +289,7 @@ export const builtin: Map<string, Tiny.Func> = new Map([
     ['convert', convert],
     ['options', options],
     ['__builtin_length', length],
+    ['__builtin_split', split],
     ['__root', rootDir],
     ['__ast', ast],
     ['__pos', curr],
