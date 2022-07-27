@@ -316,6 +316,17 @@ export default class Parser {
                     ...this.curr(),
                 };
 
+            case Tiny.TokenType.NULL:
+                return {
+                    debug: 'parsePrefix>case>null',
+                    value: {
+                        kind: Tiny.LiteralKind.Null,
+                        ...this.curr(),
+                    },
+                    kind: Tiny.ExpressionKind.Literal,
+                    ...this.curr(),
+                };
+
             case Tiny.TokenType.LPAREN: {
                 this.nextToken();
 
@@ -373,6 +384,52 @@ export default class Parser {
 
             case Tiny.TokenType.LBRACE:
                 return this.parseHash();
+
+            case Tiny.TokenType.TYPEOF: {
+                this.nextToken();
+
+                const expression = this.parseExpression(Priority.LOWEST);
+
+                if (!expression) return null;
+
+                return {
+                    debug: 'parsePrefix>case>typeof',
+                    value: expression,
+                    kind: Tiny.ExpressionKind.Typeof,
+                    ...this.curr(),
+                };
+            }
+
+            case Tiny.TokenType.THROW: {
+                this.nextToken();
+
+                const expression = this.parseExpression(Priority.LOWEST);
+
+                if (!expression) return null;
+
+                return {
+                    debug: 'parsePrefix>case>throw',
+                    message: expression,
+                    line: this.curr().line,
+                    column: this.curr().column,
+                    kind: Tiny.ExpressionKind.Throw,
+                };
+            }
+
+            case Tiny.TokenType.DELETE: {
+                this.nextToken();
+
+                const expression = this.parseExpression(Priority.LOWEST);
+
+                if (!expression) return null;
+
+                return {
+                    debug: 'parsePrefix>case>delete',
+                    value: expression,
+                    kind: Tiny.ExpressionKind.Delete,
+                    ...this.curr(),
+                };
+            }
 
             default:
                 return null;

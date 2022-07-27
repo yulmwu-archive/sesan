@@ -29,6 +29,8 @@ const errorsLocale: {
             typeMismatch_1: 'Type mismatch.',
             typeMismatch_2: 'Type mismatch: [{0}], [{1}].',
             indexOutOfRange: 'Index out of range.',
+            deleteRequiresIdentifier:
+                "'delete' can only be used on identifiers.",
         },
         builtinError: {
             invalidArgument: 'Invalid argument.',
@@ -62,6 +64,8 @@ const errorsLocale: {
             typeMismatch_1: '유형이 일치하지 않습니다.',
             typeMismatch_2: '유형이 일치하지 않습니다: [{0}], [{1}].',
             indexOutOfRange: '인덱스가 범위를 벗어났습니다.',
+            deleteRequiresIdentifier:
+                "'delete' 는 식별자만 사용할 수 있습니다.",
         },
         builtinError: {
             invalidArgument: '유효하지 않은 인수입니다.',

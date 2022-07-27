@@ -474,10 +474,14 @@ export default class Lexer {
             token.type === Tiny.TokenType.FUNCTION ||
             token.type === Tiny.TokenType.TRUE ||
             token.type === Tiny.TokenType.FALSE ||
+            token.type === Tiny.TokenType.NULL ||
             token.type === Tiny.TokenType.IF ||
             token.type === Tiny.TokenType.ELSE ||
             token.type === Tiny.TokenType.RETURN ||
             token.type === Tiny.TokenType.WHILE ||
+            token.type === Tiny.TokenType.TYPEOF ||
+            token.type === Tiny.TokenType.THROW ||
+            token.type === Tiny.TokenType.DELETE ||
             token.type === Tiny.TokenType.IDENT ||
             token.type === Tiny.TokenType.NUMBER
         )

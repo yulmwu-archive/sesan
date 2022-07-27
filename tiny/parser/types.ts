@@ -25,6 +25,9 @@ type Expression =
     | ArrayExpression
     | IndexExpression
     | HashExpression
+    | TypeofExpression
+    | ThrowExpression
+    | DeleteExpression
     | null;
 
 enum ExpressionKind {
@@ -39,6 +42,9 @@ enum ExpressionKind {
     Array,
     Index,
     Hash,
+    Typeof,
+    Throw,
+    Delete,
     Null,
 }
 
@@ -55,6 +61,7 @@ enum LiteralKind {
     String = 200,
     Number,
     Boolean,
+    Null,
 }
 
 interface Debug {
@@ -95,7 +102,7 @@ interface ExpressionStatement extends Debug, Position {
 }
 
 interface LiteralExpression extends Debug, Position {
-    value: NumberLiteral | StringLiteral | BooleanLiteral;
+    value: NumberLiteral | StringLiteral | BooleanLiteral | NullLiteral;
     kind: ExpressionKind.Literal;
 }
 
@@ -164,6 +171,23 @@ interface HashPair extends Debug, Position {
     value: Expression;
 }
 
+interface TypeofExpression extends Debug, Position {
+    value: Expression;
+    kind: ExpressionKind.Typeof;
+}
+
+interface ThrowExpression extends Debug, Position {
+    message: Expression;
+    line: number;
+    column: number;
+    kind: ExpressionKind.Throw;
+}
+
+interface DeleteExpression extends Debug, Position {
+    value: Expression;
+    kind: ExpressionKind.Delete;
+}
+
 interface NumberLiteral extends Debug, Position {
     value: number;
     kind: LiteralKind.Number;
@@ -177,6 +201,10 @@ interface StringLiteral extends Debug, Position {
 interface BooleanLiteral extends Debug, Position {
     value: boolean;
     kind: LiteralKind.Boolean;
+}
+
+interface NullLiteral extends Debug, Position {
+    kind: LiteralKind.Null;
 }
 
 interface ParseError extends Position {
@@ -207,9 +235,13 @@ export {
     IdentExpression,
     HashExpression,
     HashPair,
+    TypeofExpression,
+    ThrowExpression,
+    DeleteExpression,
     NumberLiteral,
     StringLiteral,
     BooleanLiteral,
+    NullLiteral,
     ParseError,
     Position,
 };

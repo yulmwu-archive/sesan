@@ -51,20 +51,6 @@ const importEnv: Tiny.Func = (
     }
 };
 
-const typeofObject: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
-): Tiny.LangObject => {
-    if (args.length !== 1) return Tiny.invalidArgument(pos, t.option);
-
-    return {
-        kind: Tiny.ObjectKind.STRING,
-        value: Tiny.objectKindStringify(args[0]?.kind ?? Tiny.ObjectKind.NULL),
-    };
-};
-
 const length: Tiny.Func = (args: Array<Tiny.LangObject>): Tiny.LangObject => {
     if (
         args.length !== 1 ||
@@ -90,20 +76,6 @@ const length: Tiny.Func = (args: Array<Tiny.LangObject>): Tiny.LangObject => {
         kind: Tiny.ObjectKind.NUMBER,
         value: (args[0] as Tiny.HashObject).pairs.size,
     };
-};
-
-const deleteEnv: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
-): Tiny.LangObject => {
-    if (args.length !== 1 || args[0]?.kind !== Tiny.ObjectKind.STRING)
-        return Tiny.invalidArgument(pos, t.option);
-
-    env.delete(args[0].value);
-
-    return Tiny.NULL;
 };
 
 const evalCode: Tiny.Func = (
@@ -329,38 +301,12 @@ const filename: Tiny.Func = (
     value: t.filename,
 });
 
-const throwError: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
-): Tiny.LangObject => {
-    if (args.length !== 1 || args[0]?.kind !== Tiny.ObjectKind.STRING)
-        return Tiny.invalidArgument(pos, t.option);
-
-    Tiny.printError(
-        {
-            ...pos,
-            message: args[0].value,
-        },
-        t.filename,
-        t.stdio.stderr,
-        t.option
-    );
-
-    return Tiny.NULL;
-};
-
 export const builtin: Map<string, Tiny.Func> = new Map([
     ['import', importEnv],
-    ['typeof', typeofObject],
-    ['throw', throwError],
-    ['delete', deleteEnv],
     ['eval', evalCode],
     ['js', evalJSCode],
     ['convert', convert],
     ['options', options],
-    ['null', () => Tiny.NULL],
     ['__builtin_length', length],
     ['__root', rootDir],
     ['__ast', ast],

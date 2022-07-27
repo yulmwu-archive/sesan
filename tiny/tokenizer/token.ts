@@ -7,6 +7,7 @@ enum TokenType {
     STRING = 'STRING',
     TRUE = 'TRUE',
     FALSE = 'FALSE',
+    NULL = 'NULL',
     FUNCTION = 'FUNCTION',
     COMMENT = 'COMMENT',
     ELEMENT = 'ELEMENT',
@@ -49,6 +50,9 @@ enum TokenType {
     RETURN = 'RETURN',
     WHILE = 'WHILE',
     IN = 'IN',
+    TYPEOF = 'TYPEOF',
+    THROW = 'THROW',
+    DELETE = 'DELETE',
 }
 
 interface Token {
@@ -72,6 +76,9 @@ const fromLiteral = (literal: string): TokenType => {
         case 'false':
             return TokenType.FALSE;
 
+        case 'null':
+            return TokenType.NULL;
+
         case 'if':
             return TokenType.IF;
 
@@ -86,6 +93,15 @@ const fromLiteral = (literal: string): TokenType => {
 
         case 'in':
             return TokenType.IN;
+
+        case 'typeof':
+            return TokenType.TYPEOF;
+
+        case 'throw':
+            return TokenType.THROW;
+
+        case 'delete':
+            return TokenType.DELETE;
 
         default:
             return TokenType.IDENT;

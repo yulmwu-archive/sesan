@@ -243,6 +243,7 @@ export default class Evaluator {
 
             case Tiny.ExpressionKind.If: {
                 const expr = expression as unknown as Tiny.IfExpression;
+
                 return this.evalIfExpression(
                     expr.condition,
                     expr.consequence,
@@ -360,6 +361,52 @@ export default class Evaluator {
                     (expression as unknown as Tiny.HashExpression).pairs,
                     env
                 );
+
+            case Tiny.ExpressionKind.Typeof: {
+                const expr = expression as unknown as Tiny.TypeofExpression;
+
+                const value = this.evalExpression(expr.value, env);
+
+                if (value?.kind === Tiny.ObjectKind.ERROR) return value;
+
+                if (!value) return NULL;
+
+                return {
+                    kind: Tiny.ObjectKind.STRING,
+                    value: Tiny.objectKindStringify(value.kind),
+                };
+            }
+
+            case Tiny.ExpressionKind.Throw: {
+                const expr = expression as unknown as Tiny.ThrowExpression;
+
+                const message = this.evalExpression(expr.message, env);
+
+                if (message?.kind === Tiny.ObjectKind.ERROR) return message;
+
+                if (!message) return NULL;
+
+                return Tiny.error(
+                    Tiny.objectStringify(message),
+                    expr.line,
+                    expr.column
+                );
+            }
+
+            case Tiny.ExpressionKind.Delete: {
+                const expr = expression as unknown as Tiny.DeleteExpression;
+
+                if (expr.value?.kind !== Tiny.ExpressionKind.Ident)
+                    return Tiny.error(
+                        this.messages.runtimeError.deleteRequiresIdentifier,
+                        expr.line,
+                        expr.column
+                    );
+
+                env.delete((expr.value as unknown as Tiny.StringLiteral).value);
+
+                return NULL;
+            }
 
             default:
                 return null;
