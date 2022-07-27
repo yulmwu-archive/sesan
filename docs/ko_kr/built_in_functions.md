@@ -18,22 +18,6 @@ println(x);
 
 경로에 `.tiny`가 포함되어 있지 않으면, 자동으로 `.tiny`가 추가됩니다.
 
-# typeof
-
-```swift
-typeof(5); // NUMBER
-typeof(true); // BOOLEAN
-typeof("foo"); // STRING
-
-// ...
-```
-
-# throw
-
-```swift
-throw("error");
-```
-
 # delete
 
 ```swift
@@ -74,10 +58,4 @@ js("console.log('foo')");
 
 ```swift
 options(); // hash
-```
-
-# null
-
-```swift
-null(); // NULL
 ```

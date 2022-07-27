@@ -18,22 +18,6 @@ println(x);
 
 If `.tiny` is not included in path, `.tiny` will be added automatically.
 
-# typeof
-
-```swift
-typeof(5); // NUMBER
-typeof(true); // BOOLEAN
-typeof("foo"); // STRING
-
-// ...
-```
-
-# throw
-
-```swift
-throw("error");
-```
-
 # delete
 
 ```swift
@@ -74,10 +58,4 @@ js("console.log('foo')");
 
 ```swift
 options(); // hash
-```
-
-# null
-
-```swift
-null(); // NULL
 ```

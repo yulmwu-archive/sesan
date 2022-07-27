@@ -30,3 +30,9 @@ boolean(0); // false
 ternary(true, "foo", "bar"); // "foo"
 ternary(false, "foo", "bar"); // "bar"
 ```
+
+# concat
+
+```swift
+concat("foo", "bar"); // "foo bar"
+```
