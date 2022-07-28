@@ -47,6 +47,7 @@ require(['vs/editor/editor.main'], () => {
                 [/"([^"\\]|\\.)*"/, 'string'],
                 [/'([^'\\]|\\.)*'/, 'string'],
                 [/\d+/, 'number'],
+                [/@.*$/, 'decorator'],
             ],
         },
     });
@@ -61,6 +62,7 @@ require(['vs/editor/editor.main'], () => {
                 token: 'operator',
                 foreground: '#BBBBBB',
             },
+            { token: 'decorator', foreground: '#b366ff' },
         ],
     });
 
