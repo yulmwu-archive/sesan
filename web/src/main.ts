@@ -71,7 +71,7 @@ require(['vs/editor/editor.main'], () => {
 // Enjoy!
 
 println("Hello, World!");
-    `,
+`,
         language: 'tiny',
         theme: 'tinyTheme',
         automaticLayout: true,
