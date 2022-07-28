@@ -31,6 +31,7 @@ require(['vs/editor/editor.main'], () => {
             'null',
             'throw',
             'delete',
+            'use',
         ],
         tokenizer: {
             root: [
