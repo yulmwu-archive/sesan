@@ -44,6 +44,9 @@ require(['vs/editor/editor.main'], () => {
                     },
                 ],
                 [/\/\/.*$/, 'comment'],
+                [/"([^"\\]|\\.)*"/, 'string'],
+                [/'([^'\\]|\\.)*'/, 'string'],
+                [/\d+/, 'number'],
             ],
         },
     });
