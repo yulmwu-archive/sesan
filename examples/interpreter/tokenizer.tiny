@@ -1,32 +1,94 @@
 let capture = { capture: true };
 
 func tokenizer(input) {
-    let eof = null;
-
-    let current = {
-        pos: 0,
-        readPos: 0,
-        ch: ''
-    };
+    let current = { pos: 0, readPos: 0, ch: '' };
 
     @capture
     func readChar() {
-        if (current <- readPos >= length(input)) current = assign(current, 'ch', null);
+        if (current <- readPos >= length(input)) 
+            current = assign(current, 'ch', '\0');
         else current = assign(current, 'ch', split(input, '') <- (current <- readPos));
 
         current = assign(current, 'pos', current <- readPos);
         current = assign(current, 'readPos', current <- readPos + 1);
-
-        return current;
     }
 
+    @capture
+    func skipWhitespace() {
+        while (
+            (current <- ch == ' ') || (current <- ch == '\t') ||
+            (current <- ch == '\n') || (current <- ch == '\r')
+        ) {
+            readChar();
+        }
+    }
 
-    return { readChar };
+    @capture
+    func peekChar() {
+        if (current <- readPos >= length(input)) { return '\0'; }
+        else { return split(input, '') <- (current <- readPos); }
+    }
+
+    @capture
+    func nextToken() {
+        let _token = { type: '', literal: '' };
+
+        skipWhitespace();
+
+        let _ch = current <- ch;
+
+        func _expect(value) { return _ch == value; }
+
+        if (_expect('\0')) _token = { type: 'EOF', literal: '' };
+        else if (_expect('호')) {
+            if (peekChar() == '엥') {
+                readChar();
+
+                _token = { type: '호엥', literal: '호엥' };
+            } 
+            else if (peekChar() == '에') {
+                readChar();
+
+                if (peekChar() == '에') {
+                    readChar();
+
+                    _token = { type: '호에에', literal: '호에에' };
+                } 
+                else _token = { type: '호에', literal: '호에' };
+            } 
+            else _token = { type: '호', literal: '호' };
+        }
+        else if (_expect('미')) {
+            if (peekChar() == '쿠') {
+                readChar();
+
+                if (peekChar() == '쟝') {
+                    readChar();
+
+                    _token = { type: '미쿠쟝', literal: '미쿠쟝' };
+                } 
+                else _token = { type: '미쿠', literal: '미쿠' };
+            } 
+            else _token = { type: '미', literal: '미' };
+        }
+        else _token = { type: 'UNKNOWN', literal: _ch };
+
+        readChar();
+
+        return _token;
+    }
+
+    nextToken();
+
+    return { readChar, skipWhitespace, nextToken };
 }
 
-let t = tokenizer('abc');
+let t = tokenizer('호엥 호에 호에에 미쿠쟝');
 
-println((t <- readChar)());
-println((t <- readChar)());
-println((t <- readChar)());
-println((t <- readChar)());
+forEach(true, func (_) {
+    let token = (t <- nextToken)();
+
+    println(token);
+
+    if ((token <- type) == 'EOF') return false;
+});
