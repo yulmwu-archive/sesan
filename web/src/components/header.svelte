@@ -1,6 +1,6 @@
 <script lang="ts">
     import { results, evaluating, errors } from '../stores';
-    import { editor } from './editor.svelte';
+    import { editor } from '../main';
     import type { IExamples } from '../types';
     import axios from 'axios';
 
@@ -16,7 +16,8 @@
             axios
                 .get(
                     `https://tiny-tsukiroku.vercel.app/eval/${encodeURIComponent(
-                        editor.value
+                        // @ts-ignore
+                        editor.getValue()
                     )}`
                 )
                 .then((res) => results.update(() => res.data))
@@ -104,10 +105,14 @@
             .get(
                 `https://raw.githubusercontent.com/tsukiroku/tiny/main/examples/${selected.source}`
             )
-            .then((res) => (editor.value = res.data));
+            // @ts-ignore
+            .then((res) => (editor.setValue(res.data)));
 
     const share = () =>
-        (window.location.href = `#${encodeURIComponent(editor.value)}`);
+        (window.location.href = `#${encodeURIComponent(
+            // @ts-ignore
+            editor.getValue()
+        )}`);
 </script>
 
 <div class="header">

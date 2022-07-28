@@ -75,7 +75,7 @@ func tokenizer(input) {
 
         readChar();
 
-        return _token;
+        return _token;ㅌ
     }
 
     nextToken();

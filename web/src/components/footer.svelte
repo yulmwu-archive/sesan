@@ -1,9 +1,7 @@
 <script lang="ts">
-    import { currentLine, currentColumn, evaluating, errors } from '../stores.js';
-    let [_curr, _column, _e, _errs] = [1, 0, false, 0];
+    import { evaluating, errors } from '../stores.js';
+    let [_e, _errs] = [false, 0];
 
-    currentLine.subscribe((v) => (_curr = v));
-    currentColumn.subscribe((v) => (_column = v));
     evaluating.subscribe((v) => (_e = v));
     errors.subscribe((v) => (_errs = v));
 </script>
@@ -25,7 +23,6 @@
     {:else}
         <p class="evaluating">Evaluating...</p>
     {/if}
-    <p class="curr">Ln {_curr}, Col {_column}</p>
 </div>
 
 <style>
@@ -68,11 +65,5 @@
         display: inline;
         float: left;
         cursor: pointer;
-    }
-
-    div.footer > .curr {
-        margin-right: 10px;
-        display: inline;
-        float: right;
     }
 </style>
