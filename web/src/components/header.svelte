@@ -166,10 +166,11 @@
         border: none;
         background-color: #151515;
         color: rgb(252, 255, 54);
-        font-size: 14px;
+        font-size: 15px;
         outline: none;
         appearance: none;
         cursor: pointer;
+        width: 100px;
     }
 
     div.header > select::-ms-expand {

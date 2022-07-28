@@ -65,12 +65,12 @@ require(['vs/editor/editor.main'], () => {
         value: window.location.hash
             ? decodeURIComponent(window.location.hash.substr(1))
             : `// Std is automatically imported.
-    // you can check examples from the \`Examples\` menu.
-    // click \`Run\` to execute the code. (Cannot run while evaluating)
-    // click \`Share\` to share the code. (Copy the URL)
-    // Enjoy!
-    
-    println("Hello, World!");
+// you can check examples from the \`Examples\` menu.
+// click \`Run\` to execute the code. (Cannot run while evaluating)
+// click \`Share\` to share the code. (Copy the URL)
+// Enjoy!
+
+println("Hello, World!");
     `,
         language: 'tiny',
         theme: 'tinyTheme',
