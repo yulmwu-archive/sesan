@@ -94,7 +94,7 @@ export default class Evaluator {
                     .value;
 
                 if (statement.ident) {
-                    if (env.has(name))
+                    if (env.has(name) && !name.startsWith('_'))
                         return Tiny.error(
                             Tiny.errorFormatter(
                                 this.messages.runtimeError
@@ -507,7 +507,7 @@ export default class Evaluator {
             : null;
 
         if (expr.function && name)
-            if (env.has(name))
+            if (env.has(name) && !name.startsWith('_'))
                 return Tiny.error(
                     Tiny.errorFormatter(
                         this.messages.runtimeError.functionAlreadyDefined,

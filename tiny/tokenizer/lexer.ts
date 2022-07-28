@@ -147,7 +147,16 @@ export default class Lexer {
             type: Tiny.TokenType.STRING,
             literal: this.input
                 .substring(position, this.position)
-                .replace('\\n', '\n'),
+                .replaceAll('\\"', '"')
+                .replaceAll("\\'", "'")
+                .replaceAll('\\\\', '\\')
+                .replaceAll('\\0', '\0')
+                .replaceAll('\\b', '\b')
+                .replaceAll('\\f', '\f')
+                .replaceAll('\\v', '\v')
+                .replaceAll('\\n', '\n')
+                .replaceAll('\\r', '\r')
+                .replaceAll('\\t', '\t'),
             line: this.line,
             column: this.position - position,
         };
