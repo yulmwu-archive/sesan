@@ -130,7 +130,7 @@
     <p
         class="docs"
         on:click={() => {
-            window.open('https://github.com/tsukiroku/tiny/tree/main/docs');
+            window.open('https://github.com/tsukiroku/tiny#documentation');
         }}
     >
         Docs
