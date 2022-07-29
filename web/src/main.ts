@@ -28,25 +28,60 @@ require(['vs/editor/editor.main'], () => {
         'use',
     ];
 
+    const stds = [
+        'print',
+        'println',
+        'readline',
+        'push',
+        'pop',
+        'shift',
+        'unshift',
+        'slice',
+        'join',
+        'forEach',
+        'repeat',
+        'funcTools',
+        'length',
+        'match',
+        'string',
+        'number',
+        'boolean',
+        'ternary',
+        'split',
+        'concat',
+    ];
+
     monaco.languages.register({ id: 'tiny' });
 
     monaco.languages.setMonarchTokensProvider('tiny', {
         keywords,
+        stds,
         tokenizer: {
             root: [
                 [/\/\/.*$/, 'comment'],
                 [/\@.*$/, 'decorator'],
+                [/[{}()\[\]]/, 'bracket'],
                 [
                     /@?[a-zA-Z][\w$]*/,
                     {
                         cases: {
                             '@keywords': 'keyword',
+                            '@stds': 'function',
+                            '@default': 'identifier',
                         },
                     },
                 ],
                 [/"([^"\\]|\\.)*"/, 'string'],
                 [/'([^'\\]|\\.)*'/, 'string'],
                 [/\d+/, 'number'],
+                [/[<>](?!@)/, 'delimiter'],
+                [/@?[=!+\-*%&|^~/]/, 'delimiter'],
+                [/[?:;.,]/, 'delimiter'],
+                [/[<>]=?/, 'operator'],
+                [/&&|\|\|/, 'operator'],
+                [/[+\-*\/%]/, 'operator'],
+                [/[!=]=?/, 'operator'],
+                [/\s+/, 'white'],
             ],
         },
     });
@@ -55,12 +90,15 @@ require(['vs/editor/editor.main'], () => {
         base: 'vs-dark',
         inherit: true,
         rules: [
-            { token: 'identifier', foreground: '#C9C9C9' },
+            { token: 'identifier', foreground: '#BBBBBB' },
             {
                 token: 'operator',
                 foreground: '#BBBBBB',
             },
             { token: 'decorator', foreground: '#b366ff' },
+            { token: 'delimiter', foreground: '#BBBBBB' },
+            { token: 'bracket', foreground: '#BBBBBB' },
+            { token: 'function', foreground: '#dcdc90' },
         ],
     });
 
