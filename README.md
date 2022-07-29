@@ -1,6 +1,6 @@
 [English](./README.md) | [한국어](./README_KR.md)
 
-[Docs](./docs/en_us/README.md) | [문서](./docs/ko_kr/README.md)
+[Docs](#documentation) | [문서](./README_KR.md#문서)
 
 ---
 
@@ -256,3 +256,530 @@ console.log(
         -   [`Array`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/array.tiny)
         -   [`IO`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/io.tiny)
         -   [`Utility`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/util.tiny)
+
+<br>
+
+---
+
+<br>
+
+# Documentation
+
+-   [Variable](#variables)
+    -   [Data type](#data-types)
+-   [Function](#function)
+-   [Operator](#operators-1)
+-   [Control flow](#control-flow)
+    -   [If](#if)
+    -   [While](#while)
+-   [Import](#import)
+-   [Decorator](#decorator)
+-   [Built-in functions](#built-in-functions-1)
+-   [Standard library](#standard-library-1)
+    -   [IO](#io)
+    -   [Utility](#utility)
+    -   [Array](#array)
+    -   [Object](#object)
+
+For examples, see [`Examples`](./examples/README.md)
+
+# Variables
+
+```
+let <identifier> = <expression>;
+
+<identifier> = <expression>;
+```
+
+> extends [`<expression>`](#expression)
+
+---
+
+```swift
+let foo = 1;
+
+foo = 2;
+```
+
+# Data types
+
+## string
+
+```
+'Hello, World!'
+"안녕, 세상아!"
+```
+
+## number
+
+```
+12345
+
+3.141592
+```
+
+## boolean
+
+```
+true, false
+```
+
+## array
+
+```
+[1, 2, 3, 'Foo', 'Bar', [1, 2, 3]]
+```
+
+## hash
+
+```
+{
+    'foo': 'bar',
+    bar: false,
+    baz: [1, 2, 3],
+    5: {
+        x: func() {
+            return 1;
+        }
+    }
+}
+```
+
+## function
+
+```
+<arguments>: <identifier>, <identifier>, ...
+
+func <identifier>(<arguments>) <block expression>;
+
+func(<arguments>) <block expression>;
+```
+
+> extends [`<block expression>`](#block-expression)
+
+---
+
+```swift
+func foo(a, b) {
+    return a + b;
+}
+
+let bar = func(a, b) {
+    return a + b;
+};
+```
+
+# Operators
+
+```
+<operator>: +, -, *, /, %, ==, !=, <, >, <=, >=, <-, ??, in
+
+<left expression> <operator> <right expression>
+```
+
+> extends [`<expression>`](#expression)
+
+---
+
+```swift
+let x = {
+    foo: 5
+};
+
+x <- "foo";
+
+null() ?? 1;
+2 ?? 3;
+```
+
+See [Examples/Operators](./examples/operators.tiny) for `in` operator.
+
+# Control flow
+
+## If
+
+```
+if <condition expression [boolean]> <block expression>
+else <block expression>
+```
+
+> extends [`<block expression>`](#block-expression)
+
+---
+
+```swift
+if (condition) {
+    implement();
+} else if (condition) {
+    implement();
+} else implement();
+```
+
+## While
+
+```
+while <condition expression [boolean]> <block expression>
+```
+
+> extends [`<block expression>`](#block-expression)
+
+---
+
+```swift
+while (condition) {
+    implement();
+}
+```
+
+# Import
+
+> extends [`import()`](#import-1)
+
+---
+
+```
+<use> <string>;
+```
+
+> extends [`string`](#string)
+
+---
+
+```perl
+use './module/myLib';
+```
+
+# Decorator
+
+```
+@<hash>
+<function> // func <identifier>(<arguments>) <block expression>;
+```
+
+> extends [`<hash>`](#hash), [`<function>`](#function)
+
+---
+
+```swift
+let myHash = {
+    foo: 'bar',
+};
+
+@myHash
+func myFunc() {
+    println(this <- decorator <- foo);
+}
+
+myFunc();
+```
+
+# Built-in functions
+
+## import
+
+```swift
+// file.tiny
+
+let x = 5;
+```
+
+<br>
+
+```swift
+import("file");
+
+println(x);
+```
+
+<br>
+
+If `.tiny` is not included in path, `.tiny` will be added automatically.
+
+## delete
+
+```swift
+let x = 5;
+
+delete("x");
+
+println(x); // Identifier 'x' is not defined.
+```
+
+## eval
+
+```swift
+eval("5 + 5"); // 10
+```
+
+<br>
+
+`allowEval` must be `true`.
+
+**This feature is a dangerous feature. be careful.**
+
+## js
+
+```swift
+js("console.log('foo')");
+```
+
+`allowJavaScript` must be `true`.
+
+**This feature is a dangerous feature. be careful.**
+
+## convert
+
+> extends [`string()`, `number()`, `boolean()`](#string-number-boolean)
+
+## options
+
+```swift
+options(); // hash
+```
+
+# Standard library
+
+# IO
+
+## print
+
+```swift
+println("Hello, World!", 10);
+```
+
+## println
+
+```swift
+println("Hello, World!");
+```
+
+## readline
+
+```swift
+let line = readline();
+
+println(line);
+```
+
+# Utility
+
+## length
+
+```swift
+length([1, 2, 3]); // 3
+```
+
+## match
+
+```swift
+println(match(3, [
+    [ 1, func(v) { return value + 1; } ],
+    [ 2, func(v) { return value + 2; } ]
+], func(v) {
+    println('nothing');
+    return v * 10;
+}));
+```
+
+## string, number, boolean
+
+```swift
+string(5); // "5"
+number("5"); // 5
+boolean(0); // false
+```
+
+## ternary
+
+```swift
+ternary(true, "foo", "bar"); // "foo"
+ternary(false, "foo", "bar"); // "bar"
+```
+
+## split
+
+```swift
+split("foo bar baz", " "); // ["foo", "bar", "baz"]
+```
+
+## concat
+
+```swift
+concat("foo", "bar"); // "foo bar"
+```
+
+# Array
+
+```swift
+let arr = [1, 2, 3];
+```
+
+## push
+
+```swift
+push(array, 4); // [1, 2, 3, 4]
+```
+
+## pop
+
+```swift
+pop(array); // [1, 2]
+```
+
+## shift
+
+```swift
+shift(array); // [2, 3]
+```
+
+## unshift
+
+```swift
+unshift(array, 0); // [0, 1, 2, 3]
+```
+
+## slice
+
+```swift
+slice(array, 1, 3); // [2, 3]
+```
+
+## join
+
+```swift
+join(array, ", "); // "1, 2, 3"
+```
+
+## forEach
+
+```swift
+forEach(array, func(value, index) {
+    println(index, value);
+});
+```
+
+## repeat
+
+```swift
+repeat(5); // [NULL, NULL, NULL, NULL, NULL]
+
+repeat("foo", 3); // ["foo", "foo", "foo"]
+```
+
+# Object
+
+## assign
+
+```swift
+let x = {
+    a: 5,
+};
+
+// (x <- "a") = 10; // Error
+
+x = assign(x, "a", 10);
+```
+
+---
+
+# Expression
+
+```
+<expression>;
+```
+
+# Block Expression
+
+```
+<keywords> {
+    implement();
+}
+
+<if> implement(); // only `if` body
+```
+
+> extends [`<keywords>`](#keywords), [`<if>`](#if)
+
+# Statement
+
+```
+<let>, <return>, <while>, <block expression>, <expression statement>
+```
+
+> extends [`<let>`](#variables), [`<return>`](./return), [`<while>`](#while), [`<block expression>`](#block-expression), [`<expression statement>`](#expression)
+
+# Keywords
+
+```
+<let>, <func>, <true>, <false>, <if>, <else>, <return>, <while>, <in>, <typeof>, <null>, <throw>, <delete>, <use>
+```
+
+> extends [`<let>`](#variables), [`<func>`](#function), [`<true>`](#boolean), [`<false>`](#boolean), [`<if>`](#if), [`<else>`](#if), [`<return>`](#return), [`<while>`](#while), [`<in>`](#operators-1), [`<use>`](#import-1)
+
+---
+
+## typeof
+
+```
+<typeof> <expr>
+```
+
+<br>
+
+```js
+typeof 10; // NUMBER
+typeof 'foo'; // STRING
+typeof true; // BOOLEAN
+typeof {}; // HASH
+typeof []; // ARRAY
+typeof null; // NULL
+typeof func() {}; // FUNCTION
+```
+
+## null
+
+```swift
+null; // NULL
+```
+
+## throw
+
+```
+<throw> <expr>
+```
+
+<br>
+
+```swift
+throw 'Error'; // Error
+```
+
+## delete
+
+```
+<delete> <expr>
+```
+
+<br>
+
+```js
+let a = 10;
+
+delete a;
+
+a; // Identifier 'a' is not defined.
+```
+
+# Return
+
+```
+<keywords> {
+    implement();
+
+    return null();
+} // `NULL`
+
+<if> null(); // `NULL`
+```
+
+> extends [`<keywords>`](#keywords), [`<if>`](#if), [`<block expression>`](#block-expression)
