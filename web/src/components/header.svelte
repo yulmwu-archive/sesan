@@ -181,7 +181,7 @@
         outline: none;
         appearance: none;
         cursor: pointer;
-        width: 100%;
+        width: none;
     }
 
     div.header > select::-ms-expand {
