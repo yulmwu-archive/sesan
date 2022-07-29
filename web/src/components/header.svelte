@@ -181,7 +181,7 @@
         outline: none;
         appearance: none;
         cursor: pointer;
-        width: 100px;
+        width: 100%;
     }
 
     div.header > select::-ms-expand {
@@ -198,5 +198,11 @@
 
     div.header > select option:disabled {
         color: rgb(200, 200, 200);
+    }
+
+    @media (max-width: 940px) {
+        div.header > select {
+            width: 100px;
+        }
     }
 </style>
