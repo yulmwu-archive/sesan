@@ -1,0 +1,130 @@
+// Tiny interpreter in Tiny language
+// WIP, For reference only.
+
+let capture = { capture: true };
+
+func tokenizer(input) {
+    let current = { pos: 0, readPos: 0, ch: '' };
+
+    @capture
+    func readChar() {
+        if (current <- readPos >= length(input)) 
+            current = assign(current, 'ch', '\0');
+        else current = assign(current, 'ch', split(input, '') <- (current <- readPos));
+
+        current = assign(current, 'pos', current <- readPos);
+        current = assign(current, 'readPos', current <- readPos + 1);
+    }
+
+    @capture
+    func skipWhitespace() {
+        while (
+            (current <- ch == ' ') || (current <- ch == '\t') ||
+            (current <- ch == '\n') || (current <- ch == '\r')
+        ) {
+            readChar();
+        }
+    }
+
+    @capture
+    func peekChar() {
+        if (current <- readPos >= length(input)) { return '\0'; }
+        else { return split(input, '') <- (current <- readPos); }
+    }
+
+    @capture
+    func readIdent() {
+        let _pos = current <- pos;
+
+        if (!isDigit(current <- ch)) {
+            while (isLetter(current <- ch) || regex('test', '[0-9]', current <- ch)) {
+                readChar();
+            }
+
+            let literal = join(slice(split(input, ''), _pos, current <- pos), '');
+
+            return {
+                type: (
+                        if (ch == 'let') 'LET';
+                        else 'IDENT';
+                    ),
+                literal
+            };
+        } else throw 'Error';
+    }
+
+    @capture
+    func readNumber() {
+        let _pos = current <- pos;
+
+        let _isFloat = false;
+
+        while (isDigit(current <- ch)) {
+            if (current <- ch == '.') {
+                if (_isFloat) throw 'Error';
+
+                _isFloat = true;
+            }
+
+            readChar();
+        }
+
+        return {
+            type: 'NUMBER',
+            literal: join(slice(split(input, ''), _pos, current <- pos), '')
+        };
+    }
+
+    @capture
+    func isLetter(ch) {
+        return !!regex('test', '[a-zA-Z]', ch) || (ch == '_');
+    }
+
+    @capture
+    func isDigit(ch) {
+        return !!regex('test', '[0-9]', ch) || (ch == '.');
+    }
+
+    @capture
+    func nextToken() {
+        let _token = { type: '', literal: '' };
+
+        skipWhitespace();
+
+        let _ch = current <- ch;
+
+        func _expect(value) { return _ch == value; }
+
+        if (_expect('\0'))      _token = { type: 'EOF', literal: '' };
+        else if (_expect('='))  _token = { type: 'ASSIGN', literal: '=' };
+        else if (_expect(';'))  _token = { type: 'SEMICOLON', literal: ';' };
+        else if (isLetter(_ch)) _token = readIdent();
+        else if (isDigit(_ch))  _token = readNumber();
+        else                    _token = { type: 'ILLEGAL', literal: _ch };
+
+        if (
+            ((_token <- type) == 'IDENT') || 
+            ((_token <- type) == 'LET') || 
+            ((_token <- type) == 'NUMBER')) {
+            return _token;
+        }
+
+        readChar();
+
+        return _token;
+    }
+
+    nextToken();
+
+    return { readChar, skipWhitespace, nextToken };
+}
+
+let t = tokenizer('let x = 3.14;');
+
+forEach(true, func (_) {
+    let token = (t <- nextToken)();
+
+    println(token);
+
+    if ((token <- type) == 'EOF') return false;
+});

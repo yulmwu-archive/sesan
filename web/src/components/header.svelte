@@ -81,6 +81,10 @@
             source: 'decorators.tiny',
         },
         {
+            name: 'Tiny interpreter',
+            source: 'interpreter.tiny',
+        },
+        {
             name: 'Standard Library - IO',
             source: '/stdlib/io.tiny',
         },
