@@ -99,14 +99,17 @@
     ];
 
     let selected = examples[0];
+    let exampleOptions: HTMLSelectElement;
 
-    const example = () =>
+    const example = () => {
+        exampleOptions.options[0].selected = true;
+
         axios
             .get(
                 `https://raw.githubusercontent.com/tsukiroku/tiny/main/examples/${selected.source}`
             )
-            // @ts-ignore
-            .then((res) => (editor.setValue(res.data)));
+            .then((res) => editor.setValue(res.data));
+    };
 
     const share = () =>
         (window.location.href = `#${encodeURIComponent(
@@ -129,7 +132,11 @@
         Docs
     </p>
 
-    <select bind:value={selected} on:change={example}>
+    <select
+        bind:value={selected}
+        on:change={example}
+        bind:this={exampleOptions}
+    >
         {#each examples as e}
             <option value={e} disabled={e.disabled}>{e.name}</option>
         {/each}
