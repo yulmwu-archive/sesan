@@ -177,19 +177,26 @@ require(['vs/editor/editor.main'], () => {
     editor = monaco.editor.create(document.getElementById('editor'), {
         value: window.location.hash
             ? decodeURIComponent(window.location.hash.substr(1))
-            : `// Std is automatically imported.
-// you can check examples from the \`Examples\` menu.
-// click \`Run\` to execute the code. (Cannot run while evaluating)
-// click \`Share\` to share the code. (Copy the URL)
+            : `// Welcome to the Tiny language playground.
+// Try writing some code, try running it.
+// you can run it by clicking the 'Run' button.
+
+// Try it
+// - Share    : you can share your code by url.
+// - Docs     : https://github.com/tsukiroku/tiny/tree/main/docs
+// - Examples : you can find some examples here.
+
 // Enjoy!
 
-println("Hello, World!");
+let someVariable = 'Hello, World!';
+println(someVariable);
 `,
         language: 'tiny',
         theme: 'tinyTheme',
         automaticLayout: true,
         fontSize: 17,
         fontFamily: 'Fira Code',
+        fontLigatures: true,
     });
 });
 

@@ -111,11 +111,15 @@
             .then((res) => editor.setValue(res.data));
     };
 
-    const share = () =>
-        (window.location.href = `#${encodeURIComponent(
+    const share = () => {
+        const url = `#${encodeURIComponent(
             // @ts-ignore
             editor.getValue()
-        )}`);
+        )}`;
+
+        navigator.clipboard.writeText(url);
+        window.location.href = url;
+    };
 </script>
 
 <div class="header">
