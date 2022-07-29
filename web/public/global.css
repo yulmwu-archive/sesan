@@ -8,6 +8,10 @@
     font-family: 'Fira Code';
 }
 
+body {
+    background-color: #1e1e1e;
+}
+
 *::-webkit-scrollbar {
     width: 10px;
 }
