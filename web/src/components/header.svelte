@@ -93,12 +93,16 @@
             source: '/stdlib/array.tiny',
         },
         {
-            name: 'Standard Library - Utility',
-            source: '/stdlib/util.tiny',
+            name: 'Standard Library - String',
+            source: '/stdlib/string.tiny',
         },
         {
             name: 'Standard Library - Object',
             source: '/stdlib/object.tiny',
+        },
+        {
+            name: 'Standard Library - Utility',
+            source: '/stdlib/util.tiny',
         },
     ];
 
