@@ -222,6 +222,45 @@ const options: Tiny.Func = (
     };
 };
 
+const setOption: Tiny.Func = (
+    args: Array<Tiny.LangObject>,
+    env: Tiny.Enviroment,
+    t: Tiny.Evaluator,
+    pos: Tiny.Position
+): Tiny.LangObject => {
+    if (
+        args.length !== 2 ||
+        args[0]?.kind !== Tiny.ObjectKind.STRING ||
+        (args[1]?.kind !== Tiny.ObjectKind.STRING &&
+            args[1]?.kind !== Tiny.ObjectKind.BOOLEAN)
+    )
+        return Tiny.invalidArgument(pos, t.option);
+
+    type T = {
+        [key: string]: string | boolean;
+    };
+
+    const key = args[0].value;
+
+    if (
+        (t.option as T)[key] &&
+        key !== 'allowEval' &&
+        key !== 'allowJavaScript'
+    )
+        (t.option as T)[key] = args[1].value;
+    else {
+        return {
+            kind: Tiny.ObjectKind.BOOLEAN,
+            value: false,
+        };
+    }
+
+    return {
+        kind: Tiny.ObjectKind.BOOLEAN,
+        value: true,
+    };
+};
+
 const rootDir: Tiny.Func = (
     args: Array<Tiny.LangObject>,
     env: Tiny.Enviroment,
@@ -288,6 +327,7 @@ export const builtin: Map<string, Tiny.Func> = new Map([
     ['js', evalJSCode],
     ['convert', convert],
     ['options', options],
+    ['setOption', setOption],
     ['__builtin_length', length],
     ['__builtin_split', split],
     ['__root', rootDir],

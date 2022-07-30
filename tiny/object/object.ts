@@ -142,7 +142,7 @@ interface FunctionObject {
     body: Tiny.Expression;
     env: Tiny.Enviroment;
     option: Tiny.Options;
-    kind: ObjectKind.FUNCTION | ObjectKind.BUILTIN;
+    kind: ObjectKind.FUNCTION;
 }
 
 interface BuiltinFunction {

@@ -9,6 +9,7 @@ const parseOptions = (option?: string): Options =>
               useStdLibAutomatically: false,
               stderrPrefix: true,
               stderrColor: true,
+              strictMode: false,
               locale: 'en',
           } as IOptions);
 
