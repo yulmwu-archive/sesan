@@ -284,6 +284,9 @@ export default class Evaluator {
 
                 const functionObject = this.evalExpression(expr.function, env);
 
+                if (functionObject?.kind === Tiny.ObjectKind.ERROR)
+                    return functionObject;
+
                 const args = this.evalExpressions(expr.arguments, env);
 
                 if (args.length == 1 && args[0]?.kind === Tiny.ObjectKind.ERROR)
@@ -542,8 +545,12 @@ export default class Evaluator {
             const key = this.evalExpression(arg.key, env);
             if (!key) return;
 
+            if (key.kind === Tiny.ObjectKind.ERROR) return key;
+
             const value = this.evalExpression(arg.value, env);
             if (!value) return;
+
+            if (value.kind === Tiny.ObjectKind.ERROR) return key;
 
             let key_: Tiny.StringObject | Tiny.NumberObject = {
                 kind: Tiny.ObjectKind.STRING,
@@ -655,6 +662,8 @@ export default class Evaluator {
             );
 
             if (res?.kind === Tiny.ObjectKind.RETURN_VALUE) return res.value;
+
+            if (res?.kind === Tiny.ObjectKind.ERROR) return res;
 
             return res;
         }
@@ -1143,19 +1152,156 @@ export default class Evaluator {
         if (operator === Tiny.TokenType.ASSIGN) {
             const _right = this.evalExpression(right, env);
 
-            if (!env.get((left as unknown as Tiny.StringLiteral).value))
+            if (_right?.kind === Tiny.ObjectKind.ERROR) return _right;
+
+            if (
+                left?.kind !== Tiny.ExpressionKind.Ident &&
+                left?.kind !== Tiny.ExpressionKind.Index
+            )
                 return Tiny.error(
-                    Tiny.errorFormatter(
-                        this.messages.runtimeError.identifierNotDefined_1,
-                        (left as unknown as Tiny.StringLiteral).value
-                    ),
+                    this.messages.runtimeError.typeMismatch_1,
                     pos.line,
                     pos.column
                 );
 
-            env.update((left as unknown as Tiny.StringLiteral).value, _right);
+            switch (left.kind) {
+                case Tiny.ExpressionKind.Ident: {
+                    if (!env.get((left as unknown as Tiny.StringLiteral).value))
+                        return Tiny.error(
+                            Tiny.errorFormatter(
+                                this.messages.runtimeError
+                                    .identifierNotDefined_1,
+                                (left as unknown as Tiny.StringLiteral).value
+                            ),
+                            pos.line,
+                            pos.column
+                        );
 
-            return _right;
+                    env.update(
+                        (left as unknown as Tiny.StringLiteral).value,
+                        _right
+                    );
+
+                    return _right;
+                }
+
+                case Tiny.ExpressionKind.Index: {
+                    const index = (left as unknown as Tiny.IndexExpression)
+                        .index;
+
+                    const _left = this.evalExpression(
+                        (left as unknown as Tiny.IndexExpression).left,
+                        env
+                    );
+
+                    if (_left?.kind === Tiny.ObjectKind.ERROR) return _left;
+
+                    if (
+                        _left?.kind !== Tiny.ObjectKind.ARRAY &&
+                        _left?.kind !== Tiny.ObjectKind.HASH
+                    )
+                        return Tiny.error(
+                            Tiny.errorFormatter(
+                                this.messages.runtimeError.typeMismatch_2,
+                                Tiny.objectKindStringify(
+                                    _left?.kind ?? Tiny.ObjectKind.NULL
+                                ),
+                                Tiny.objectKindStringify(Tiny.ObjectKind.ARRAY)
+                            ),
+                            pos.line,
+                            pos.column
+                        );
+
+                    if (_left?.kind === Tiny.ObjectKind.ARRAY) {
+                        const _index = this.evalExpression(index, env);
+
+                        if (_index?.kind === Tiny.ObjectKind.ERROR)
+                            return _index;
+
+                        if (_index?.kind !== Tiny.ObjectKind.NUMBER)
+                            return Tiny.error(
+                                this.messages.runtimeError.typeMismatch_1,
+                                pos.line,
+                                pos.column
+                            );
+
+                        const _value = this.evalExpression(right, env);
+
+                        if (_value?.kind === Tiny.ObjectKind.ERROR)
+                            return _value;
+
+                        if (_value?.kind !== Tiny.ObjectKind.NUMBER)
+                            return Tiny.error(
+                                this.messages.runtimeError.typeMismatch_2,
+                                pos.line,
+                                pos.column
+                            );
+
+                        (_left as unknown as Tiny.ArrayObject).value[
+                            _index.value
+                        ] = _value;
+
+                        return _value;
+                    } else {
+                        const _index = this.evalExpression(index, env);
+
+                        if (_index?.kind === Tiny.ObjectKind.ERROR)
+                            return _index;
+
+                        if (
+                            _index?.kind !== Tiny.ObjectKind.STRING &&
+                            _index?.kind !== Tiny.ObjectKind.NUMBER
+                        )
+                            return Tiny.error(
+                                this.messages.runtimeError.typeMismatch_1,
+                                pos.line,
+                                pos.column
+                            );
+
+                        const _value = this.evalExpression(right, env);
+
+                        if (_value?.kind === Tiny.ObjectKind.ERROR)
+                            return _value;
+
+                        if (
+                            _value?.kind !== Tiny.ObjectKind.STRING &&
+                            _value?.kind !== Tiny.ObjectKind.NUMBER
+                        )
+                            return Tiny.error(
+                                this.messages.runtimeError.typeMismatch_1,
+                                pos.line,
+                                pos.column
+                            );
+
+                        _left.pairs = new Map(
+                            Array.from(
+                                new Map([
+                                    ...new Map(
+                                        [..._left.pairs].map(([k, v]) => [
+                                            k.value,
+                                            v,
+                                        ])
+                                    ),
+                                    [_index.value, _value],
+                                ]).entries()
+                            ).map(([k, v]) => [
+                                typeof k === 'string'
+                                    ? {
+                                          value: k,
+                                          kind: Tiny.ObjectKind.STRING,
+                                      }
+                                    : {
+                                          value: k,
+                                          kind: Tiny.ObjectKind.NUMBER,
+                                      },
+                                v,
+                            ])
+                        );
+
+                        return _value;
+                    }
+                }
+            }
         }
 
         return null;
@@ -1168,6 +1314,8 @@ export default class Evaluator {
         pos: Tiny.Position
     ): Tiny.LangObject {
         const left = this.evalExpression(_left, env);
+
+        if (left?.kind === Tiny.ObjectKind.ERROR) return left;
 
         if (
             left?.kind !== Tiny.ObjectKind.HASH &&
@@ -1183,6 +1331,8 @@ export default class Evaluator {
                 value: _right.value,
             };
         else right = this.evalExpression(_right, env);
+
+        if (right?.kind === Tiny.ObjectKind.ERROR) return right;
 
         if (left.kind === Tiny.ObjectKind.ARRAY)
             if (right?.kind === Tiny.ObjectKind.NUMBER)
