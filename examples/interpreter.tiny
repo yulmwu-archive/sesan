@@ -6,12 +6,12 @@ func tokenizer(input) {
 
     @funcTools <- capture
     func readChar() {
-        if (current <- readPos >= length(input)) 
-            current = assign(current, 'ch', '\0');
-        else current = assign(current, 'ch', split(input, '') <- (current <- readPos));
+        if (current <- readPos >= length(input))
+            current['ch'] = '\0';
+        else current['ch'] = split(input, '') <- (current <- readPos);
 
-        current = assign(current, 'pos', current <- readPos);
-        current = assign(current, 'readPos', current <- readPos + 1);
+        current['pos'] = current <- readPos;
+        current['readPos'] = current <- readPos + 1;
     }
 
     @funcTools <- capture

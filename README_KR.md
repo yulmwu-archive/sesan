@@ -105,7 +105,7 @@ npm run start:repl [file]
 | `If`      | `if (expr) [block] else [block];` | `Function` | `func [name?](args) [block]` |
 | `Call`    | `ident(args)`                     | `Ident`    |                              |
 | `Array`   | `[expr, expr, ...]`               | `Index`    | `ident[number]`              |
-| `Hash`    | `{ string: expr, ... }`           | `Assign`   | `ident = expr`               |
+| `Hash`    | `{ string: expr, ... }`           | `Assign`   | `[ident / index] = expr`     |
 
 <br>
 
