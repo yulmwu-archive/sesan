@@ -2,6 +2,7 @@ import * as Tiny from '../../index';
 import { io } from './io';
 import { array } from './array';
 import { builtin } from './builtin';
+import { strings } from './string';
 
 type Func = Tiny.BuiltinFunction['func'];
 
@@ -25,6 +26,7 @@ const builtinFunction = (
         ...builtin,
         ...array,
         ...io,
+        ...strings,
     ]).get(name);
 
     if (!func) return null;
