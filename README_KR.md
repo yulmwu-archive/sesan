@@ -20,6 +20,7 @@
 -   [**내장 함수 (Built-in Functions)**](#내장-함수-built-in-functions)
 -   [**표준 라이브러리**](#표준-라이브러리)
 -   [**옵션**](#옵션)
+    -   [**엄격 모드**](#엄격-모드)
 -   [**Npm 패키지**](#Npm-패키지)
 -   [**예제**](#예제)
 
@@ -159,13 +160,15 @@ npm run start:repl [file]
 
 # 내장 함수 (Built-in Function)
 
-| 함수      | 매개 변수 |
-| --------- | --------- |
-| `import`  | `string`  |
-| `eval`    | `string`  |
-| `js`      | `string`  |
-| `convert` | `Any`     |
-| `options` |           |
+| 함수              | 매개 변수          |
+| ----------------- | ------------------ |
+| `import`          | `string`           |
+| `eval`            | `string`           |
+| `js`              | `string`           |
+| `convert`         | `Any`              |
+| `options`         |                    |
+| `setOption`       | `string`, `string` |
+| [`regex`](#rtest) |                    |
 
 <br>
 
@@ -217,7 +220,15 @@ If `tiny.config.json` dose not exist in root (`./`), it Default.
 | `useStdLibAutomatically` | 자동으로 표준 라이브러리를 가져옵니다. | `false` |
 | `stderrPrefix`           | 오류 메세지에 접두사를 추가합니다.     | `true`  |
 | `stderrColor`            | 오류 메세지에 색을 추가합니다.         | `true`  |
+| `strictMode`             | 엄격 모드를 설정합니다.                | `false` |
 | `locale`                 | 지역화                                 | `en`    |
+
+## 엄격 모드
+
+```diff
++ 변수 재선언 불가능
++ 함수 재선언 불가능
+```
 
 <br>
 

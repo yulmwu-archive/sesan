@@ -20,6 +20,7 @@
 -   [**Built-in functions**](#Built-in-functions)
 -   [**Standard library**](#Standard-library)
 -   [**Options**](#Options)
+    -   [**Strict mode**](#Strict-mode)
 -   [**Npm package**](#Npm-Package)
 -   [**Examples**](#Examples)
 
@@ -159,13 +160,15 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 # Built-in functions
 
-| Function  | Arguments |
-| --------- | --------- |
-| `import`  | `string`  |
-| `eval`    | `string`  |
-| `js`      | `string`  |
-| `convert` | `Any`     |
-| `options` |           |
+| Function          | Arguments          |
+| ----------------- | ------------------ |
+| `import`          | `string`           |
+| `eval`            | `string`           |
+| `js`              | `string`           |
+| `convert`         | `Any`              |
+| `options`         |                    |
+| `setOption`       | `string`, `string` |
+| [`regex`](#rtest) |                    |
 
 <br>
 
@@ -217,7 +220,15 @@ If `tiny.config.json` dose not exist in root (`./`), it extends Default.
 | `useStdLibAutomatically` | Use standard library automatically | `false` |
 | `stderrPrefix`           | Prefix for stderr                  | `true`  |
 | `stderrColor`            | Color for stderr                   | `true`  |
+| `strictMode`             | Strict mode                        | `false` |
 | `locale`                 | Locale                             | `en`    |
+
+## Strict mode
+
+```diff
++ Variables cannot be redeclared.
++ Functions cannot be redeclared.
+```
 
 <br>
 
