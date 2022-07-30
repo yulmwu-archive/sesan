@@ -1,0 +1,13 @@
+let myString = "foo bar baz";
+
+println(split(myString, " "));
+
+println(concat("foo", "bar", "baz"));
+
+println(replace(myString, " ", ", "));
+
+println(subString(myString, 4, 7));
+
+println(rTest("[A-Z]", "ABCD"));
+
+println(rMatch("[A-Z]", "ABCD"));
