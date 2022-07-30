@@ -47,11 +47,33 @@ require(['vs/editor/editor.main'], () => {
         'number',
         'boolean',
         'ternary',
+        'subString',
+        'rMatch',
+        'rTest',
+        'replace',
         'split',
         'concat',
     ];
 
     monaco.languages.register({ id: 'tiny' });
+
+    monaco.languages.setLanguageConfiguration('tiny', {
+        autoClosingPairs: [
+            { open: '{', close: '}' },
+            { open: '[', close: ']' },
+            { open: '(', close: ')' },
+            { open: '"', close: '"' },
+            { open: "'", close: "'" },
+        ],
+        brackets: [
+            ['{', '}'],
+            ['[', ']'],
+            ['(', ')'],
+        ],
+        comments: {
+            lineComment: '//',
+        },
+    });
 
     monaco.languages.setMonarchTokensProvider('tiny', {
         keywords,
@@ -71,16 +93,13 @@ require(['vs/editor/editor.main'], () => {
                         },
                     },
                 ],
+                [/[a-zA-Z_][a-zA-Z0-9_]*\(/, 'function'],
                 [/"([^"\\]|\\.)*"/, 'string'],
                 [/'([^'\\]|\\.)*'/, 'string'],
                 [/\d+/, 'number'],
                 [/[<>](?!@)/, 'delimiter'],
                 [/@?[=!+\-*%&|^~/]/, 'delimiter'],
                 [/[?:;.,]/, 'delimiter'],
-                [/[<>]=?/, 'operator'],
-                [/&&|\|\|/, 'operator'],
-                [/[+\-*\/%]/, 'operator'],
-                [/[!=]=?/, 'operator'],
                 [/\s+/, 'white'],
             ],
         },
@@ -91,10 +110,6 @@ require(['vs/editor/editor.main'], () => {
         inherit: true,
         rules: [
             { token: 'identifier', foreground: '#BBBBBB' },
-            {
-                token: 'operator',
-                foreground: '#BBBBBB',
-            },
             { token: 'decorator', foreground: '#b366ff' },
             { token: 'delimiter', foreground: '#BBBBBB' },
             { token: 'bracket', foreground: '#BBBBBB' },
