@@ -194,8 +194,13 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
         -   `number(value)`
         -   `boolean(value)`
         -   `ternary(condition, trueValue, falseValue)`
+    -   [`string`]
         -   `split(string, separator)`
         -   `concat(args*)`
+        -   `replace(string, pattern, replacement)`
+        -   `subString(string, start, end)`
+        -   `rTest(string, pattern)`
+        -   `rMatch(string, pattern)`
     -   [`object`](https://github.com/tsukiroku/tiny/blob/main/@std/object.tiny)
         -   `assign(object, key, value)`
 
@@ -280,6 +285,7 @@ console.log(
     -   [Utility](#utility)
     -   [Array](#array)
     -   [Object](#object)
+    -   [String](#string-1)
 
 For examples, see [`Examples`](./examples/README.md)
 
@@ -596,18 +602,6 @@ ternary(true, "foo", "bar"); // "foo"
 ternary(false, "foo", "bar"); // "bar"
 ```
 
-## split
-
-```swift
-split("foo bar baz", " "); // ["foo", "bar", "baz"]
-```
-
-## concat
-
-```swift
-concat("foo", "bar"); // "foo bar"
-```
-
 # Array
 
 ```swift
@@ -678,6 +672,45 @@ let x = {
 // (x <- "a") = 10; // Error
 
 x = assign(x, "a", 10);
+```
+
+# String
+
+## split
+
+```swift
+split("foo bar baz", " "); // ["foo", "bar", "baz"]
+```
+
+## concat
+
+```swift
+concat("foo", "bar", "baz"); // "foobarbaz"
+```
+
+## replace
+
+```swift
+replace("foo bar baz", " ", ", "); // "foo, bar, baz"
+```
+
+## subString
+
+```swift
+subString("foo bar baz", 4, 7); // "bar"
+```
+
+## rTest
+
+```swift
+rTest("[A-Z]", "ABCD"); // true
+rTest("[A-Z]", "abcd"); // false
+```
+
+## rMatch
+
+```swift
+rMatch("[A-Z]", "ABCD"); // ["A", "B", "C", "D"]
 ```
 
 ---
