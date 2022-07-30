@@ -1,4 +1,5 @@
 use '@std/io';
 use '@std/array';
 use '@std/object';
+use '@std/string';
 use '@std/util';
