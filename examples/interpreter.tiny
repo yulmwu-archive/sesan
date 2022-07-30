@@ -1,12 +1,10 @@
 // Tiny interpreter in Tiny language
 // WIP, For reference only.
 
-let capture = { capture: true };
-
 func tokenizer(input) {
     let current = { pos: 0, readPos: 0, ch: '' };
 
-    @capture
+    @funcTools <- capture
     func readChar() {
         if (current <- readPos >= length(input)) 
             current = assign(current, 'ch', '\0');
@@ -16,7 +14,7 @@ func tokenizer(input) {
         current = assign(current, 'readPos', current <- readPos + 1);
     }
 
-    @capture
+    @funcTools <- capture
     func skipWhitespace() {
         while (
             (current <- ch == ' ') || (current <- ch == '\t') ||
@@ -26,22 +24,22 @@ func tokenizer(input) {
         }
     }
 
-    @capture
+    @funcTools <- capture
     func peekChar() {
         if (current <- readPos >= length(input)) { return '\0'; }
         else { return split(input, '') <- (current <- readPos); }
     }
 
-    @capture
+    @funcTools <- capture
     func readIdent() {
-        let _pos = current <- pos;
+        let pos = current <- pos;
 
         if (!isDigit(current <- ch)) {
             while (isLetter(current <- ch) || regex('test', '[0-9]', current <- ch)) {
                 readChar();
             }
 
-            let literal = join(slice(split(input, ''), _pos, current <- pos), '');
+            let literal = join(slice(split(input, ''), pos, current <- pos), '');
 
             return {
                 type: (
@@ -53,17 +51,17 @@ func tokenizer(input) {
         } else throw 'Error';
     }
 
-    @capture
+    @funcTools <- capture
     func readNumber() {
-        let _pos = current <- pos;
+        let pos = current <- pos;
 
-        let _isFloat = false;
+        let isFloat = false;
 
         while (isDigit(current <- ch)) {
             if (current <- ch == '.') {
-                if (_isFloat) throw 'Error';
+                if (isFloat) throw 'Error';
 
-                _isFloat = true;
+                isFloat = true;
             }
 
             readChar();
@@ -71,52 +69,52 @@ func tokenizer(input) {
 
         return {
             type: 'NUMBER',
-            literal: join(slice(split(input, ''), _pos, current <- pos), '')
+            literal: number(subString(input, pos, current <- pos))
         };
     }
 
-    @capture
+    @funcTools <- capture
     func isLetter(ch) {
         return !!regex('test', '[a-zA-Z]', ch) || (ch == '_');
     }
 
-    @capture
+    @funcTools <- capture
     func isDigit(ch) {
         return !!regex('test', '[0-9]', ch) || (ch == '.');
     }
 
-    @capture
+    @funcTools <- capture
     func nextToken() {
-        let _token = { type: '', literal: '' };
+        let token = { type: '', literal: '' };
 
         skipWhitespace();
 
         let _ch = current <- ch;
 
-        func _expect(value) { return _ch == value; }
+        func expect(value) { return _ch == value; }
 
-        if (_expect('\0'))      _token = { type: 'EOF', literal: '' };
-        else if (_expect('='))  _token = { type: 'ASSIGN', literal: '=' };
-        else if (_expect(';'))  _token = { type: 'SEMICOLON', literal: ';' };
-        else if (isLetter(_ch)) _token = readIdent();
-        else if (isDigit(_ch))  _token = readNumber();
-        else                    _token = { type: 'ILLEGAL', literal: _ch };
+        if (expect('\0'))       token = { type: 'EOF', literal: '' };
+        else if (expect('='))   token = { type: 'ASSIGN', literal: '=' };
+        else if (expect(';'))   token = { type: 'SEMICOLON', literal: ';' };
+        else if (isLetter(_ch)) token = readIdent();
+        else if (isDigit(_ch))  token = readNumber();
+        else                    token = { type: 'ILLEGAL', literal: _ch };
 
         if (
-            ((_token <- type) == 'IDENT') || 
-            ((_token <- type) == 'LET') || 
-            ((_token <- type) == 'NUMBER')) {
-            return _token;
+            ((token <- type) == 'IDENT') || 
+            ((token <- type) == 'LET') || 
+            ((token <- type) == 'NUMBER')) {
+            return token;
         }
 
         readChar();
 
-        return _token;
+        return token;
     }
 
     nextToken();
 
-    return { readChar, skipWhitespace, nextToken };
+    return { readChar, skipWhitespace, nextToken, peekChar };
 }
 
 let t = tokenizer('let x = 3.14;');
