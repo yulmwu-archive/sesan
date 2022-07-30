@@ -270,29 +270,6 @@ const rootDir: Tiny.Func = (
     value: t.root,
 });
 
-const ast: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator
-): Tiny.LangObject =>
-    new Tiny.Evaluator(
-        new Tiny.Parser(
-            new Tiny.Lexer(
-                JSON.stringify(t.p.statements),
-                {
-                    ...t.option,
-                    stderr: t.stdio.stderr,
-                },
-                t.filename
-            ),
-            t.option
-        ).parseProgram(),
-        env,
-        t.option,
-        t.stdio,
-        t.filename
-    ).eval() as Tiny.ArrayObject;
-
 const curr: Tiny.Func = (
     args: Array<Tiny.LangObject>,
     env: Tiny.Enviroment,
@@ -331,7 +308,6 @@ export const builtin: Map<string, Tiny.Func> = new Map([
     ['__builtin_length', length],
     ['__builtin_split', split],
     ['__root', rootDir],
-    ['__ast', ast],
     ['__pos', curr],
     ['__filename', filename],
 ]);
