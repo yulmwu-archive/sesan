@@ -29,9 +29,11 @@ require(['vs/editor/editor.main'], () => {
     ];
 
     const stds = [
+        // IO
         'print',
         'println',
         'readline',
+        // ARRAY
         'push',
         'pop',
         'shift',
@@ -40,6 +42,7 @@ require(['vs/editor/editor.main'], () => {
         'join',
         'forEach',
         'repeat',
+        // UTIL
         'funcTools',
         'length',
         'match',
@@ -47,12 +50,29 @@ require(['vs/editor/editor.main'], () => {
         'number',
         'boolean',
         'ternary',
+        // STRING
         'subString',
         'rMatch',
         'rTest',
         'replace',
         'split',
         'concat',
+        // OBJECT
+        'assign',
+    ];
+
+    const builtins = [
+        'import',
+        'eval',
+        'js',
+        'convert',
+        'options',
+        'setOption',
+        'regex',
+        'this',
+        '__root',
+        '__pos',
+        '__filename',
     ];
 
     monaco.languages.register({ id: 'tiny' });
@@ -78,17 +98,19 @@ require(['vs/editor/editor.main'], () => {
     monaco.languages.setMonarchTokensProvider('tiny', {
         keywords,
         stds,
+        builtins,
         tokenizer: {
             root: [
                 [/\/\/.*$/, 'comment'],
                 [/\@.*$/, 'decorator'],
                 [/[{}()\[\]]/, 'bracket'],
                 [
-                    /@?[a-zA-Z][\w$]*/,
+                    /@?[a-zA-Z_][\w$]*/,
                     {
                         cases: {
                             '@keywords': 'keyword',
                             '@stds': 'function',
+                            '@builtins': 'builtin',
                             '@default': 'identifier',
                         },
                     },
@@ -114,6 +136,7 @@ require(['vs/editor/editor.main'], () => {
             { token: 'delimiter', foreground: '#BBBBBB' },
             { token: 'bracket', foreground: '#BBBBBB' },
             { token: 'function', foreground: '#dcdc90' },
+            { token: 'builtin', foreground: '#f75278' },
         ],
     });
 
