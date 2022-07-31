@@ -9,7 +9,7 @@ permissions:
     contents: write
 
 defaults:
-  runs:
+  run:
     working-directory: web
 
 jobs:
