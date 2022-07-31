@@ -8,25 +8,28 @@ on:
 permissions:
     contents: write
 
+defaults:
+  runs:
+    working-directory: web
+
 jobs:
     publish:
         runs-on: ubuntu-latest
+
         env:
           working-directory: ./web
+
         steps:
             - name: Checkout
               uses: actions/checkout@v3
 
             - name: Install dependencies
               run: npm install
-              working-directory: ${{ env.working-directory }}
 
             - name: Build
               run: npm run build
-              working-directory: ${{ env.working-directory }}
 
             - name: Deploy
               uses: JamesIves/github-pages-deploy-action@v4
               with:
                   folder: public
-              working-directory: ${{ env.working-directory }}
