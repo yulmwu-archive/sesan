@@ -1,4 +1,5 @@
 import App from './App.svelte';
+import type { IExamples } from './types';
 
 // @ts-ignore
 require.config({
@@ -276,9 +277,77 @@ println(someVariable);
     });
 });
 
+const examples: Array<IExamples> = [
+    {
+        name: 'Examples',
+        source: '',
+        disabled: true,
+    },
+    {
+        name: 'Hello, World!',
+        source: 'hello_world.tiny',
+    },
+    {
+        name: 'Fibonacci',
+        source: 'fibonacci.tiny',
+    },
+    {
+        name: 'Function',
+        source: 'function.tiny',
+    },
+    {
+        name: 'If',
+        source: 'if.tiny',
+    },
+    {
+        name: 'While',
+        source: 'while.tiny',
+    },
+    {
+        name: 'Import',
+        source: 'import.tiny',
+    },
+    {
+        name: 'Variable',
+        source: 'variable.tiny',
+    },
+    {
+        name: 'Operators',
+        source: 'operators.tiny',
+    },
+    {
+        name: 'Decorators',
+        source: 'decorators.tiny',
+    },
+    {
+        name: 'Tiny interpreter',
+        source: 'interpreter.tiny',
+    },
+    {
+        name: 'Standard Library - IO',
+        source: '/stdlib/io.tiny',
+    },
+    {
+        name: 'Standard Library - Array',
+        source: '/stdlib/array.tiny',
+    },
+    {
+        name: 'Standard Library - String',
+        source: '/stdlib/string.tiny',
+    },
+    {
+        name: 'Standard Library - Object',
+        source: '/stdlib/object.tiny',
+    },
+    {
+        name: 'Standard Library - Utility',
+        source: '/stdlib/util.tiny',
+    },
+];
+
 const app = new App({
     target: document.body,
 });
 
 export default app;
-export { editor };
+export { editor, examples };

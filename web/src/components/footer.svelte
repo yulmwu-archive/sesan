@@ -1,69 +1,30 @@
 <script lang="ts">
     import { evaluating, errors } from '../stores.js';
-    let [_e, _errs] = [false, 0];
+    let [isEvaluating, countErrors] = [false, 0];
 
-    evaluating.subscribe((v) => (_e = v));
-    errors.subscribe((v) => (_errs = v));
+    evaluating.subscribe((v) => (isEvaluating = v));
+    errors.subscribe((v) => (countErrors = v));
 </script>
 
-<div class="footer">
+<div class="clear-both fixed bottom-0 w-full h-[1.4rem] bg-footer">
     <p
-        class="github"
+        class="bg-emerald-600 hover:bg-emerald-500 w-20 pb-2.5 inline text-center float-left cursor-pointer"
         on:click={() => window.open('https://github.com/tsukiroku/tiny')}
     >
         Github
     </p>
 
-    {#if !_e}
-        <p class="evaluating">Ready</p>
+    {#if !isEvaluating}
+        <p class="pl-3 inline text-center float-left cursor-pointer">Ready</p>
 
-        {#if _errs > 0}
-            <p class="errors">{_errs} errors</p>
+        {#if countErrors > 0}
+            <p class="pl-3 text-red-400 inline float-left cursor-pointer">
+                {countErrors} errors
+            </p>
         {/if}
     {:else}
-        <p class="evaluating">Evaluating...</p>
+        <p class="pl-3 inline text-center float-left cursor-pointer">
+            Evaluating...
+        </p>
     {/if}
 </div>
-
-<style>
-    div.footer {
-        clear: both;
-        position: fixed;
-        bottom: 0;
-        width: 100%;
-        height: 20px;
-        background-color: #007acc;
-    }
-
-    div.footer > .github {
-        background-color: #329171;
-        width: 80px;
-        padding: 0 10px;
-        display: inline;
-        text-align: center;
-        float: left;
-        cursor: pointer;
-    }
-
-    div.footer > .github:hover {
-        background-color: #369c7a;
-    }
-
-    div.footer > .evaluating {
-        color: #ffffff;
-        width: 80px;
-        padding: 0 10px;
-        display: inline;
-        text-align: center;
-        float: left;
-        cursor: pointer;
-    }
-
-    div.footer > .errors {
-        color: rgb(234, 24, 24);
-        width: 80px;
-        display: inline;
-        float: left;
-        cursor: pointer;
-    }
-</style>

@@ -1,14 +1,13 @@
 <script lang="ts">
     import { results, evaluating, errors } from '../stores';
-    import { editor } from '../main';
-    import type { IExamples } from '../types';
+    import { editor, examples } from '../main';
     import axios from 'axios';
 
     let disabled = false;
 
     evaluating.subscribe((v) => (disabled = !v));
 
-    const _eval = () => {
+    const evaluate = () => {
         if (disabled) {
             evaluating.update(() => true);
             errors.update(() => 0);
@@ -16,7 +15,6 @@
             axios
                 .get(
                     `https://tiny-tsukiroku.vercel.app/eval/${encodeURIComponent(
-                        // @ts-ignore
                         editor.getValue()
                     )}`
                 )
@@ -30,86 +28,17 @@
                     }))
                 )
                 .finally(() => evaluating.update(() => false));
-        } else {
+        } else
             results.update(() => ({
                 result: [],
                 errors: ['Evaluating...'],
             }));
-        }
     };
-
-    const examples: Array<IExamples> = [
-        {
-            name: 'Examples',
-            source: '',
-            disabled: true,
-        },
-        {
-            name: 'Hello, World!',
-            source: 'hello_world.tiny',
-        },
-        {
-            name: 'Fibonacci',
-            source: 'fibonacci.tiny',
-        },
-        {
-            name: 'Function',
-            source: 'function.tiny',
-        },
-        {
-            name: 'If',
-            source: 'if.tiny',
-        },
-        {
-            name: 'While',
-            source: 'while.tiny',
-        },
-        {
-            name: 'Import',
-            source: 'import.tiny',
-        },
-        {
-            name: 'Variable',
-            source: 'variable.tiny',
-        },
-        {
-            name: 'Operators',
-            source: 'operators.tiny',
-        },
-        {
-            name: 'Decorators',
-            source: 'decorators.tiny',
-        },
-        {
-            name: 'Tiny interpreter',
-            source: 'interpreter.tiny',
-        },
-        {
-            name: 'Standard Library - IO',
-            source: '/stdlib/io.tiny',
-        },
-        {
-            name: 'Standard Library - Array',
-            source: '/stdlib/array.tiny',
-        },
-        {
-            name: 'Standard Library - String',
-            source: '/stdlib/string.tiny',
-        },
-        {
-            name: 'Standard Library - Object',
-            source: '/stdlib/object.tiny',
-        },
-        {
-            name: 'Standard Library - Utility',
-            source: '/stdlib/util.tiny',
-        },
-    ];
 
     let selected = examples[0];
     let exampleOptions: HTMLSelectElement;
 
-    const example = () => {
+    const updateExample = () => {
         exampleOptions.options[0].selected = true;
 
         axios
@@ -118,25 +47,27 @@
             )
             .then((res) => editor.setValue(res.data));
     };
-
-    const share = () => {
-        const url = `#${encodeURIComponent(
-            // @ts-ignore
-            editor.getValue()
-        )}`;
-
-        navigator.clipboard.writeText(url);
-        window.location.href = url;
-    };
 </script>
 
-<div class="header">
-    <p class="run" on:click={_eval} {disabled}>Run</p>
-
-    <p class="share" on:click={share}>Share</p>
+<div class="top-0 h-8 bg-header pl-1.5 pt-1.5">
+    <p class="cursor-pointer inline pl-3" on:click={evaluate} {disabled}>Run</p>
 
     <p
-        class="docs"
+        class="cursor-pointer inline pl-3"
+        on:click={() =>
+            navigator.clipboard.writeText(
+                `${
+                    window.location.href
+                }${(window.location.href = `#${encodeURIComponent(
+                    editor.getValue()
+                )}`)}`
+            )}
+    >
+        Share
+    </p>
+
+    <p
+        class="cursor-pointer inline pl-3"
         on:click={() => {
             window.open('https://github.com/tsukiroku/tiny#documentation');
         }}
@@ -146,71 +77,12 @@
 
     <select
         bind:value={selected}
-        on:change={example}
+        on:change={updateExample}
         bind:this={exampleOptions}
+        class="pb-2.5 pl-3 inline border-none bg-header outline-none appearance-none cursor-pointer"
     >
         {#each examples as e}
             <option value={e} disabled={e.disabled}>{e.name}</option>
         {/each}
     </select>
 </div>
-
-<style>
-    div.header {
-        top: 0;
-        height: 30px;
-        background-color: #151515;
-        padding: 5px 10px;
-    }
-
-    div.header > .run {
-        cursor: pointer;
-        display: inline;
-    }
-
-    div.header > .share {
-        cursor: pointer;
-        display: inline;
-        padding: 0 10px;
-    }
-
-    div.header > .docs {
-        cursor: pointer;
-        display: inline;
-    }
-
-    div.header > select {
-        padding: 0 10px;
-        display: inline;
-        border: none;
-        background-color: #151515;
-        color: rgb(252, 255, 54);
-        font-size: 15px;
-        outline: none;
-        appearance: none;
-        cursor: pointer;
-        width: none;
-    }
-
-    div.header > select::-ms-expand {
-        display: none;
-    }
-
-    div.header > select option {
-        background-color: #252526;
-        outline: none;
-        appearance: none;
-        cursor: pointer;
-        padding: 5px;
-    }
-
-    div.header > select option:disabled {
-        color: rgb(200, 200, 200);
-    }
-
-    @media (max-width: 940px) {
-        div.header > select {
-            width: 100px;
-        }
-    }
-</style>
