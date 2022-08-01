@@ -37,10 +37,10 @@
     };
 
     let selected: IExamples;
-    let exampleOptions: HTMLOptionElement;
+    let exampleOptions: HTMLSelectElement;
 
     const updateExample = () => {
-        exampleOptions.selected = true;
+        exampleOptions.value = 'examples';
 
         axios
             .get(
@@ -69,9 +69,8 @@
 
     <p
         class="cursor-pointer inline pl-3"
-        on:click={() => {
-            window.open('https://github.com/tsukiroku/tiny#documentation');
-        }}
+        on:click={() =>
+            window.open('https://github.com/tsukiroku/tiny#documentation')}
     >
         Docs
     </p>
@@ -79,13 +78,14 @@
     <select
         bind:value={selected}
         on:change={updateExample}
+        bind:this={exampleOptions}
         class="pb-2.5 pl-3 inline border-none bg-header outline-none appearance-none cursor-pointer w-24"
     >
-        <option disabled bind:this={exampleOptions}>Examples</option>
+        <option value="examples" disabled class="bg-sidebar">Examples</option>
         {#each examples as e}
-            <optgroup label={e.name}>
+            <optgroup label={e.name} class="bg-sidebar">
                 {#each e.examples as e}
-                    <option value={e}>{e.name}</option>
+                    <option value={e} class="bg-sidebar">{e.name}</option>
                 {/each}
             </optgroup>
         {/each}
