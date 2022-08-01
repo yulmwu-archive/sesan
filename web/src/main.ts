@@ -1,5 +1,5 @@
 import App from './App.svelte';
-import type { IExamples } from './types';
+import type { IExamplesGroup } from './types';
 
 // @ts-ignore
 require.config({
@@ -277,71 +277,91 @@ println(someVariable);
     });
 });
 
-const examples: Array<IExamples> = [
-    {
-        name: 'Examples',
-        source: '',
-        disabled: true,
-    },
+const examples: Array<IExamplesGroup> = [
     {
         name: 'Hello, World!',
-        source: 'hello_world.tiny',
+        examples: [
+            {
+                name: 'Hello, World!',
+                source: 'hello_world.tiny',
+            },
+            {
+                name: 'Fibonacci',
+                source: 'fibonacci.tiny',
+            },
+            {
+                name: 'Tiny interpreter',
+                source: 'interpreter.tiny',
+            },
+        ],
     },
     {
-        name: 'Fibonacci',
-        source: 'fibonacci.tiny',
+        name: 'Variables & Data types',
+        examples: [
+            {
+                name: 'Variable',
+                source: 'variable.tiny',
+            },
+            {
+                name: 'Function',
+                source: 'function.tiny',
+            },
+        ],
     },
     {
-        name: 'Function',
-        source: 'function.tiny',
+        name: 'Operators & Decorators',
+        examples: [
+            {
+                name: 'Operator',
+                source: 'operators.tiny',
+            },
+            {
+                name: 'Decorator',
+                source: 'decorators.tiny',
+            },
+        ],
     },
     {
-        name: 'If',
-        source: 'if.tiny',
+        name: 'Control flow',
+        examples: [
+            {
+                name: 'If',
+                source: 'if.tiny',
+            },
+            {
+                name: 'While',
+                source: 'while.tiny',
+            },
+            {
+                name: 'Import',
+                source: 'import.tiny',
+            },
+        ],
     },
     {
-        name: 'While',
-        source: 'while.tiny',
-    },
-    {
-        name: 'Import',
-        source: 'import.tiny',
-    },
-    {
-        name: 'Variable',
-        source: 'variable.tiny',
-    },
-    {
-        name: 'Operators',
-        source: 'operators.tiny',
-    },
-    {
-        name: 'Decorators',
-        source: 'decorators.tiny',
-    },
-    {
-        name: 'Tiny interpreter',
-        source: 'interpreter.tiny',
-    },
-    {
-        name: 'Standard Library - IO',
-        source: '/stdlib/io.tiny',
-    },
-    {
-        name: 'Standard Library - Array',
-        source: '/stdlib/array.tiny',
-    },
-    {
-        name: 'Standard Library - String',
-        source: '/stdlib/string.tiny',
-    },
-    {
-        name: 'Standard Library - Object',
-        source: '/stdlib/object.tiny',
-    },
-    {
-        name: 'Standard Library - Utility',
-        source: '/stdlib/util.tiny',
+        name: 'Standard library',
+        examples: [
+            {
+                name: 'IO',
+                source: '/stdlib/io.tiny',
+            },
+            {
+                name: 'Array',
+                source: '/stdlib/array.tiny',
+            },
+            {
+                name: 'String',
+                source: '/stdlib/string.tiny',
+            },
+            {
+                name: 'Object',
+                source: '/stdlib/object.tiny',
+            },
+            {
+                name: 'Utility',
+                source: '/stdlib/util.tiny',
+            },
+        ],
     },
 ];
 

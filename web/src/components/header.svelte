@@ -1,6 +1,7 @@
 <script lang="ts">
     import { results, evaluating, errors } from '../stores';
     import { editor, examples } from '../main';
+    import type { IExamples } from '../types';
     import axios from 'axios';
 
     let disabled = false;
@@ -35,11 +36,11 @@
             }));
     };
 
-    let selected = examples[0];
-    let exampleOptions: HTMLSelectElement;
+    let selected: IExamples;
+    let exampleOptions: HTMLOptionElement;
 
     const updateExample = () => {
-        exampleOptions.options[0].selected = true;
+        exampleOptions.selected = true;
 
         axios
             .get(
@@ -78,11 +79,15 @@
     <select
         bind:value={selected}
         on:change={updateExample}
-        bind:this={exampleOptions}
-        class="pb-2.5 pl-3 inline border-none bg-header outline-none appearance-none cursor-pointer"
+        class="pb-2.5 pl-3 inline border-none bg-header outline-none appearance-none cursor-pointer w-24"
     >
+        <option disabled bind:this={exampleOptions}>Examples</option>
         {#each examples as e}
-            <option value={e} disabled={e.disabled}>{e.name}</option>
+            <optgroup label={e.name}>
+                {#each e.examples as e}
+                    <option value={e}>{e.name}</option>
+                {/each}
+            </optgroup>
         {/each}
     </select>
 </div>

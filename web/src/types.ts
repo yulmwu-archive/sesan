@@ -3,10 +3,14 @@ interface IResults {
     errors: Array<string>;
 }
 
+interface IExamplesGroup {
+    name: string;
+    examples: Array<IExamples>;
+}
+
 interface IExamples {
     name: string;
     source: string;
-    disabled?: boolean;
 }
 
-export type { IResults, IExamples };
+export type { IResults, IExamplesGroup, IExamples };
