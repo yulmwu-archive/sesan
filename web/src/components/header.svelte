@@ -36,17 +36,18 @@
             }));
     };
 
-    let selected: IExamples;
-    let exampleOptions: HTMLSelectElement;
+    let selected: IExamples | string;
 
     const updateExample = () => {
-        exampleOptions.value = 'examples';
+        if (typeof selected === 'string') return;
 
         axios
             .get(
                 `https://raw.githubusercontent.com/tsukiroku/tiny/main/examples/${selected.source}`
             )
             .then((res) => editor.setValue(res.data));
+
+        selected = 'examples';
     };
 </script>
 
@@ -78,12 +79,11 @@
     <select
         bind:value={selected}
         on:change={updateExample}
-        bind:this={exampleOptions}
-        class="pb-2.5 pl-3 inline border-none bg-transparent outline-none appearance-none cursor-pointer w-24 md:w-48"
+        class="pb-2.5 pl-3 inline border-none bg-transparent outline-none appearance-none cursor-pointer w-24"
     >
         <option value="examples" disabled class="bg-sidebar">Examples</option>
         {#each examples as e}
-            <optgroup label={e.name} class="bg-sidebar">
+            <optgroup label={e.name} class="bg-sidebar text-stone-400">
                 {#each e.examples as e}
                     <option value={e} class="bg-sidebar">{e.name}</option>
                 {/each}
