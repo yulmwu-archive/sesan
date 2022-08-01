@@ -64,7 +64,7 @@ npm run start:repl [file]
 
 # Web Playground
 
-[Click here](https://tsukiroku.github.io/tiny)
+[README](./web) | [Playground](https://tsukiroku.github.io/tiny)
 
 <br>
 

@@ -64,7 +64,7 @@ npm run start:repl [file]
 
 # 웹 Playground
 
-[여기](https://tsukiroku.github.io/tiny)를 클릭하여 웹 Playground을 실행할 수 있습니다.
+[README](./web) | [Playground](https://tsukiroku.github.io/tiny)
 
 <br>
 
