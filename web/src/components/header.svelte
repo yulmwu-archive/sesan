@@ -79,7 +79,7 @@
         bind:value={selected}
         on:change={updateExample}
         bind:this={exampleOptions}
-        class="pb-2.5 pl-3 inline border-none bg-header outline-none appearance-none cursor-pointer w-24 md:w-48"
+        class="pb-2.5 pl-3 inline border-none bg-transparent outline-none appearance-none cursor-pointer w-24 md:w-48"
     >
         <option value="examples" disabled class="bg-sidebar">Examples</option>
         {#each examples as e}
