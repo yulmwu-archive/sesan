@@ -32,7 +32,7 @@
     }
 
     body {
-        @apply bg-background;
+        @apply dark:bg-background bg-background-light;
     }
 
     *::-webkit-scrollbar {
@@ -40,12 +40,12 @@
     }
 
     *::-webkit-scrollbar-thumb {
-        @apply bg-header;
+        @apply dark:bg-header bg-header-light;
     }
 
     *::-webkit-scrollbar-track,
     *::-webkit-scrollbar-track:hover,
     *::-webkit-scrollbar-corner {
-        @apply bg-sidebar;
+        @apply dark:bg-sidebar bg-sidebar-light;
     }
 </style>

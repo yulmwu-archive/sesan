@@ -10,6 +10,14 @@ require.config({
 
 let editor = null;
 
+window
+    .matchMedia('(prefers-color-scheme: dark)')
+    .addEventListener('change', (e) =>
+        editor.updateOptions({
+            theme: e.matches ? 'tinyTheme' : 'tinyTheme-light',
+        })
+    );
+
 // @ts-ignore
 require(['vs/editor/editor.main'], () => {
     const keywords = [
@@ -141,6 +149,19 @@ require(['vs/editor/editor.main'], () => {
         ],
     });
 
+    monaco.editor.defineTheme('tinyTheme-light', {
+        base: 'vs',
+        inherit: true,
+        rules: [
+            { token: 'identifier', foreground: '#1c1c1c' },
+            { token: 'decorator', foreground: '#7c2fd4' },
+            { token: 'delimiter', foreground: '#1c1c1c' },
+            { token: 'bracket', foreground: '#1c1c1c' },
+            { token: 'function', foreground: '#94a31f' },
+            { token: 'builtin', foreground: '#b82144' },
+        ],
+    });
+
     monaco.languages.registerCompletionItemProvider('tiny', {
         provideCompletionItems: () => ({
             suggestions: [
@@ -162,20 +183,6 @@ require(['vs/editor/editor.main'], () => {
                         monaco.languages.CompletionItemInsertTextRule
                             .InsertAsSnippet,
                     insertText: 'func ${1:name}(${2:params}) {\n\t${3:body}\n}',
-                },
-                {
-                    label: 'true',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
-                    insertText: 'true',
-                },
-                {
-                    label: 'false',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
-                    insertText: 'false',
                 },
                 {
                     label: 'if',
@@ -269,7 +276,11 @@ let someVariable = 'Hello, World!';
 println(someVariable);
 `,
         language: 'tiny',
-        theme: 'tinyTheme',
+        theme:
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'tinyTheme'
+                : 'tinyTheme-light',
         automaticLayout: true,
         fontSize: 17,
         fontFamily: 'Fira Code',
