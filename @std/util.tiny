@@ -1,3 +1,8 @@
+/// Standard Library: Utility
+/// 
+/// Author: @tsukiroku (https://github.com/tsukiroku)
+/// Updated on 2022/08/03 (12:35 AM, KST)
+
 let funcTools = {
     capture: { capture: true },
     skip: { skipCheckArguments: true }

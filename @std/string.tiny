@@ -1,3 +1,8 @@
+/// Standard Library: String
+/// 
+/// Author: @tsukiroku (https://github.com/tsukiroku)
+/// Updated on 2022/08/03 (12:35 AM, KST)
+
 func subString(str, start, end) {
     return join(slice(split(str, ''), start, end), '');
 }

@@ -1,3 +1,8 @@
+/// Standard Library: Array
+/// 
+/// Author: @tsukiroku (https://github.com/tsukiroku)
+/// Updated on 2022/08/03 (12:35 AM, KST)
+
 func push(arr, value) { return __builtin_push(arr, value); }
 
 func pop(arr) { return __builtin_pop(arr); }
