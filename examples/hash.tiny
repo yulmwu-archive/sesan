@@ -1,0 +1,18 @@
+let myHash = {
+    foo: 'bar',
+    bar: {
+        baz: func () {
+            return 'baz';
+        }
+    }
+};
+
+println(myHash['bar']['baz']());
+println(myHash <- bar <- baz());
+println(myHash.bar.baz());
+
+myHash['bar']['baz'] = func (x, y) {
+    return x * y;
+};
+
+println(myHash.bar.baz(2, 3));

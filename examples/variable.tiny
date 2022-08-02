@@ -9,24 +9,13 @@ let bool2 = false;
 
 let arr = [1, 2, 3, 4, 5];
 
-let dict = {
-    name: 'Kim',
-    age: 20,
-    hasCar: true,
-    cars: ['Hyundai', 'Kia'],
-    address: {
-        'street': 'Yeouido',
-        'city': 'Seoul'
-    },
-    job: null,
-    about: func() {
-        return concat('My name is ', dict <- name) + '.\n' +
-            concat('I am', string(dict <- age), 'years old.\n') +
-            concat('I have a', string(length(dict <- cars)), 'car(s), ') +
-            concat('I live in', dict <- address <- city, dict <- address <- street) +
-            ternary(dict <- job, '\nI work as a ' + dict <- job, '\nI am a out of work') +
-            '.\nNice to meet you!';
-    }
+let hash = {
+    name: 'John',
+    age: 30
 };
 
-println((dict <- about)());
+let function = func (x, y) {
+    return x + y;
+};
+
+println(str, str2, num, num2, bool, bool2, arr, hash, function(1, 2));
