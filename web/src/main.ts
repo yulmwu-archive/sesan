@@ -317,6 +317,10 @@ const examples: Array<IExamplesGroup> = [
                 name: 'Function',
                 source: 'function.tiny',
             },
+            {
+                name: 'Hash',
+                source: 'hash.tiny',
+            },
         ],
     },
     {

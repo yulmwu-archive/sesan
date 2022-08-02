@@ -140,6 +140,7 @@ npm run start:repl [file]
 | `<=`   | `Literal <= Literal` | `number`                                              |
 | `>=`   | `Literal >= Literal` | `number`                                              |
 | `<-`   | `Literal <- Literal` | `array, hash`, `Any`                                  |
+| `.`    | `<-` 상속            | `<-` 상속                                             |
 | `??`   | `Literal ?? Literal` | `Any`                                                 |
 | `in`   | `Literal in Literal` | `string, number, hash`, `string, number, hash, array` |
 
@@ -258,17 +259,20 @@ console.log(
 # 예제
 
 -   [**`./examples`**](https://github.com/tsukiroku/tiny/tree/main/examples)
-    -   [`Hello, World!`](https://github.com/tsukiroku/tiny/blob/main/examples/hello_world.tiny)
-    -   [`Fibonacci`](https://github.com/tsukiroku/tiny/blob/main/examples/fibonacci.tiny)
-    -   [`Function`](https://github.com/tsukiroku/tiny/blob/main/examples/function.tiny)
-    -   [`If`](https://github.com/tsukiroku/tiny/blob/main/examples/if.tiny)
-    -   [`While`](https://github.com/tsukiroku/tiny/blob/main/examples/while.tiny)
+    -   [`안녕, 세상아!`](https://github.com/tsukiroku/tiny/blob/main/examples/hello_world.tiny)
+    -   [`피보나치 (Fibonacci)`](https://github.com/tsukiroku/tiny/blob/main/examples/fibonacci.tiny)
+    -   [`함수`](https://github.com/tsukiroku/tiny/blob/main/examples/function.tiny)
+    -   [`해시`](https://github.com/tsukiroku/tiny/blob/main/examples/hash.tiny)
+    -   [`if`](https://github.com/tsukiroku/tiny/blob/main/examples/if.tiny)
+    -   [`while`](https://github.com/tsukiroku/tiny/blob/main/examples/while.tiny)
     -   [`Import`](https://github.com/tsukiroku/tiny/blob/main/examples/import.tiny)
-    -   [`Variable`](https://github.com/tsukiroku/tiny/blob/main/examples/variable.tiny)
-    -   [`Operators`](https://github.com/tsukiroku/tiny/blob/main/examples/operators.tiny)
-    -   [`StdLib`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib)
+    -   [`변수`](https://github.com/tsukiroku/tiny/blob/main/examples/variable.tiny)
+    -   [`연산자`](https://github.com/tsukiroku/tiny/blob/main/examples/operators.tiny)
+    -   [`표준 라이브러리`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib)
         -   [`Array`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/array.tiny)
         -   [`IO`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/io.tiny)
+        -   [`Object`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/object.tiny)
+        -   [`String`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/string.tiny)
         -   [`Utility`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/util.tiny)
 
 <br>

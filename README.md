@@ -140,6 +140,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 | `<=`     | `Literal <= Literal` | `number`                                              |
 | `>=`     | `Literal >= Literal` | `number`                                              |
 | `<-`     | `Literal <- Literal` | `array, hash`, `Any`                                  |
+| `.`      | extends `<-`         | extends `<-`                                          |
 | `??`     | `Literal ?? Literal` | `Any`                                                 |
 | `in`     | `Literal in Literal` | `string, number, hash`, `string, number, hash, array` |
 
@@ -261,6 +262,7 @@ console.log(
     -   [`Hello, World!`](https://github.com/tsukiroku/tiny/blob/main/examples/hello_world.tiny)
     -   [`Fibonacci`](https://github.com/tsukiroku/tiny/blob/main/examples/fibonacci.tiny)
     -   [`Function`](https://github.com/tsukiroku/tiny/blob/main/examples/function.tiny)
+    -   [`Hash`](https://github.com/tsukiroku/tiny/blob/main/examples/hash.tiny)
     -   [`If`](https://github.com/tsukiroku/tiny/blob/main/examples/if.tiny)
     -   [`While`](https://github.com/tsukiroku/tiny/blob/main/examples/while.tiny)
     -   [`Import`](https://github.com/tsukiroku/tiny/blob/main/examples/import.tiny)
@@ -271,6 +273,8 @@ console.log(
     -   [`StdLib`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib)
         -   [`Array`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/array.tiny)
         -   [`IO`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/io.tiny)
+        -   [`Object`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/object.tiny)
+        -   [`String`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/string.tiny)
         -   [`Utility`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/util.tiny)
 
 <br>
