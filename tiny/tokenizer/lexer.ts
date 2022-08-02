@@ -247,6 +247,14 @@ export default class Lexer {
                 };
                 break;
 
+            case '.':
+                token = {
+                    type: Tiny.TokenType.ELEMENT,
+                    literal: '.',
+                    ...this.curr(),
+                };
+                break;
+
             case ',':
                 token = {
                     type: Tiny.TokenType.COMMA,

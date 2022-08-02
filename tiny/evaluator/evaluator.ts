@@ -276,59 +276,11 @@ export default class Evaluator {
                     env
                 );
 
-            case Tiny.ExpressionKind.Call: {
-                const expr = expression as unknown as Tiny.CallExpression;
-
-                const name = (expr.function as unknown as Tiny.StringLiteral)
-                    .value;
-
-                const functionObject = this.evalExpression(expr.function, env);
-
-                if (functionObject?.kind === Tiny.ObjectKind.ERROR)
-                    return functionObject;
-
-                const args = this.evalExpressions(expr.arguments, env);
-
-                if (args.length == 1 && args[0]?.kind === Tiny.ObjectKind.ERROR)
-                    return args[0];
-
-                return this.applyFunction(
-                    functionObject,
-                    name,
-                    args,
-                    env,
-                    {
-                        line: expression.line,
-                        column: expression.column,
-                    },
-                    {
-                        kind: Tiny.ObjectKind.HASH,
-                        pairs: new Map<
-                            Tiny.StringObject | Tiny.NumberObject,
-                            Tiny.LangObject
-                        >([
-                            [
-                                {
-                                    kind: Tiny.ObjectKind.STRING,
-                                    value: 'arguments',
-                                },
-                                {
-                                    kind: Tiny.ObjectKind.ARRAY,
-                                    value: args,
-                                },
-                            ],
-                            [
-                                {
-                                    kind: Tiny.ObjectKind.STRING,
-                                    value: 'decorator',
-                                },
-                                (functionObject as Tiny.FunctionObject)
-                                    .decorator ?? NULL,
-                            ],
-                        ]),
-                    }
+            case Tiny.ExpressionKind.Call:
+                return this.evalCallExpression(
+                    expression as unknown as Tiny.CallExpression,
+                    env
                 );
-            }
 
             case Tiny.ExpressionKind.Array: {
                 const expr = expression as unknown as Tiny.ArrayExpression;
@@ -530,6 +482,62 @@ export default class Evaluator {
             else env.set(name, ret);
 
         return ret;
+    }
+
+    private evalCallExpression(
+        expression: Tiny.CallExpression,
+        env: Tiny.Enviroment
+    ): Tiny.LangObject {
+        const expr = expression as unknown as Tiny.CallExpression;
+
+        const name = (expr.function as unknown as Tiny.StringLiteral).value;
+
+        const functionObject = this.evalExpression(expr.function, env);
+
+        if (functionObject?.kind === Tiny.ObjectKind.ERROR)
+            return functionObject;
+
+        const args = this.evalExpressions(expr.arguments, env);
+
+        if (args.length == 1 && args[0]?.kind === Tiny.ObjectKind.ERROR)
+            return args[0];
+
+        return this.applyFunction(
+            functionObject,
+            name,
+            args,
+            env,
+            {
+                line: expression.line,
+                column: expression.column,
+            },
+            {
+                kind: Tiny.ObjectKind.HASH,
+                pairs: new Map<
+                    Tiny.StringObject | Tiny.NumberObject,
+                    Tiny.LangObject
+                >([
+                    [
+                        {
+                            kind: Tiny.ObjectKind.STRING,
+                            value: 'arguments',
+                        },
+                        {
+                            kind: Tiny.ObjectKind.ARRAY,
+                            value: args,
+                        },
+                    ],
+                    [
+                        {
+                            kind: Tiny.ObjectKind.STRING,
+                            value: 'decorator',
+                        },
+                        (functionObject as Tiny.FunctionObject).decorator ??
+                            NULL,
+                    ],
+                ]),
+            }
+        );
     }
 
     private evalHashArguments(
@@ -1263,16 +1271,6 @@ export default class Evaluator {
                         if (_value?.kind === Tiny.ObjectKind.ERROR)
                             return _value;
 
-                        if (
-                            _value?.kind !== Tiny.ObjectKind.STRING &&
-                            _value?.kind !== Tiny.ObjectKind.NUMBER
-                        )
-                            return Tiny.error(
-                                this.messages.runtimeError.typeMismatch_1,
-                                pos.line,
-                                pos.column
-                            );
-
                         _left.pairs = new Map(
                             Array.from(
                                 new Map([
@@ -1323,13 +1321,14 @@ export default class Evaluator {
         )
             return null;
 
-        let right: Tiny.LangObject = null;
+        let right: Tiny.LangObject | Tiny.CallExpression = null;
 
         if (_right?.kind === Tiny.ExpressionKind.Ident)
             right = {
                 kind: Tiny.ObjectKind.STRING,
                 value: _right.value,
             };
+        else if (_right?.kind === Tiny.ExpressionKind.Call) right = _right;
         else right = this.evalExpression(_right, env);
 
         if (right?.kind === Tiny.ObjectKind.ERROR) return right;
@@ -1343,13 +1342,52 @@ export default class Evaluator {
             right?.kind === Tiny.ObjectKind.NUMBER ||
             right?.kind === Tiny.ObjectKind.STRING
         ) {
-            const newMap: Map<string | number, Tiny.LangObject> = new Map();
-
-            (left as Tiny.HashObject).pairs.forEach((value, key) =>
-                newMap.set(key.value, value)
+            return (
+                new Map(
+                    [...(left as Tiny.HashObject).pairs].map(([key, value]) => [
+                        key.value,
+                        value,
+                    ])
+                ).get(right.value) ?? NULL
             );
+        } else if (right?.kind === Tiny.ExpressionKind.Call) {
+            const expr =
+                new Map(
+                    [...(left as Tiny.HashObject).pairs].map(([key, value]) => [
+                        key.value,
+                        value,
+                    ])
+                ).get(
+                    (right.function as unknown as Tiny.StringLiteral).value
+                ) ?? NULL;
 
-            return newMap.get(right.value) ?? NULL;
+            if (expr?.kind === Tiny.ObjectKind.ERROR) return expr;
+
+            if (expr?.kind !== Tiny.ObjectKind.FUNCTION)
+                return Tiny.error(
+                    Tiny.errorFormatter(
+                        this.messages.runtimeError.invalidFunction,
+                        (right.function as unknown as Tiny.StringLiteral).value
+                    ),
+                    pos.line,
+                    pos.column
+                );
+
+            return this.evalCallExpression(
+                {
+                    kind: Tiny.ExpressionKind.Call,
+                    function: {
+                        kind: Tiny.ExpressionKind.Function,
+                        function: expr.function,
+                        arguments: expr.parameters,
+                        body: expr.body,
+                        ...pos,
+                    },
+                    arguments: right.arguments,
+                    ...pos,
+                },
+                env
+            );
         } else return NULL;
     }
 
