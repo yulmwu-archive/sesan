@@ -10,6 +10,8 @@ import {
     Options,
     Lexer,
     Parser,
+    Program,
+    LangObject,
 } from './tiny';
 
 export * from './tiny';
@@ -54,9 +56,28 @@ export default class Tiny {
         );
     }
 
-    public eval(): string {
-        const env = this.option.enviroment ?? new Enviroment();
+    public parser(): Parser {
+        return new Parser(this.tokenizer(), this.option);
+    }
 
+    public parseProgram(): Program {
+        const program = this.parser().parseProgram();
+
+        program.errors.forEach((error) =>
+            printError(
+                error,
+                this.option.filename ?? defaultFilename,
+                this.stdio.stderr,
+                {
+                    ...this.option,
+                }
+            )
+        );
+
+        return program;
+    }
+
+    public includeStdlib(env: Enviroment) {
         if (this.option.useStdLibAutomatically)
             new Evaluator(
                 new Parser(
@@ -76,23 +97,9 @@ export default class Tiny {
                 this.option.filename ?? defaultFilename,
                 this.option.root
             ).eval();
+    }
 
-        const program = new Parser(
-            this.tokenizer(),
-            this.option
-        ).parseProgram();
-
-        program.errors.forEach((error) =>
-            printError(
-                error,
-                this.option.filename ?? defaultFilename,
-                this.stdio.stderr,
-                {
-                    ...this.option,
-                }
-            )
-        );
-
+    public evaluate(program: Program, env: Enviroment): LangObject {
         const result = new Evaluator(
             program,
             env,
@@ -110,7 +117,23 @@ export default class Tiny {
                 this.option
             );
 
-        return objectStringify(result);
+        return result;
+    }
+
+    public eval(): string {
+        const env = this.option.enviroment ?? new Enviroment();
+
+        this.includeStdlib(env);
+
+        return objectStringify(this.evaluate(this.parseProgram(), env));
+    }
+
+    public evalProgram(program: Program): string {
+        const env = this.option.enviroment ?? new Enviroment();
+
+        this.includeStdlib(env);
+
+        return objectStringify(this.evaluate(program, env));
     }
 
     public setBuiltin(name: string, func: Func): Tiny {

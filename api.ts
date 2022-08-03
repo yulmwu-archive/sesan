@@ -1,5 +1,5 @@
 import { NULL } from './tiny/evaluator';
-import Tiny, { ObjectKind } from './index';
+import Tiny from './index';
 import express from 'express';
 
 const app = express();
@@ -20,7 +20,7 @@ app.get('/eval/:code', (req, res) => {
     const result: Array<string> = [];
     const errors: Array<string> = [];
 
-    new Tiny(req.params.code, {
+    const tiny = new Tiny(req.params.code, {
         useStdLibAutomatically: true,
         allowEval: true,
         stderrPrefix: false,
@@ -28,8 +28,11 @@ app.get('/eval/:code', (req, res) => {
     })
         .setStdout((x) => result.push(x))
         .setStderr((x) => errors.push(x))
-        .setStdin(() => NULL)
-        .eval();
+        .setStdin(() => NULL);
+
+    const parsed = tiny.parseProgram();
+
+    tiny.evalProgram(parsed);
 
     res.header('Content-Type', 'application/json');
     res.header('Access-Control-Allow-Origin', '*');
@@ -37,5 +40,6 @@ app.get('/eval/:code', (req, res) => {
     res.json({
         result,
         errors,
+        ast: parsed,
     });
 });
