@@ -6,6 +6,7 @@ let errors = writable(0);
 let results = writable<IResults>({
     result: [],
     errors: [],
+    ast: '',
 });
 
 export { evaluating, errors, results };

@@ -1,6 +1,7 @@
 interface IResults {
     result: Array<string>;
     errors: Array<string>;
+    ast: string;
 }
 
 interface IExamplesGroup {
