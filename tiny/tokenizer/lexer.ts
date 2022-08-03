@@ -7,6 +7,7 @@ type LexerOptions = Tiny.Options & {
 export default class Lexer {
     public position: number = 0;
     public readPosition: number = 0;
+    public column: number = 0;
     public line: number = 1;
     public lineStart: number = 1;
     public ch: string = '';
@@ -26,7 +27,7 @@ export default class Lexer {
     public curr(): Tiny.Position {
         return {
             line: this.line,
-            column: this.position - this.lineStart,
+            column: this.column - this.lineStart,
         };
     }
 
@@ -36,6 +37,8 @@ export default class Lexer {
 
         this.position = this.readPosition;
         this.readPosition += 1;
+
+        this.column += 1;
     }
 
     public readIdentifier(): Tiny.Token {
@@ -96,8 +99,7 @@ export default class Lexer {
                     return {
                         type: Tiny.TokenType.EOF,
                         literal: 'EOF',
-                        line: this.line,
-                        column: this.position - position,
+                        ...this.curr(),
                     };
                 }
                 dot = true;
@@ -157,8 +159,7 @@ export default class Lexer {
                 .replaceAll('\\n', '\n')
                 .replaceAll('\\r', '\r')
                 .replaceAll('\\t', '\t'),
-            line: this.line,
-            column: this.position - position,
+            ...this.curr(),
         };
     }
 
@@ -172,7 +173,7 @@ export default class Lexer {
             if (this.ch === '\n') {
                 this.line += 1;
 
-                this.lineStart = this.position;
+                this.lineStart = this.column;
             }
 
             this.readChar();
@@ -189,6 +190,8 @@ export default class Lexer {
         let position = this.position;
 
         while (this.ch !== '\0' && this.ch !== '\n') this.readChar();
+
+        this.line += 1;
 
         return {
             type: Tiny.TokenType.COMMENT,
