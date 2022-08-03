@@ -1,30 +1,24 @@
-[English](./README.md) | [한국어](./README_KR.md)
-
-[Docs](#documentation) | [문서](./README_KR.md#문서)
-
----
-
--   [**Introduce**](#Introduce)
+-   [Introduce](#introduce)
     -   [How it works?](#how-it-works)
     -   [Start REPL](#start-repl)
-        -   [REPL commands](#repl-commands)
-    -   [Web Playground](#web-playground)
--   [**Interpreter**](#Interpreter)
-    -   Tokenizer
-        -   [Tokens](#tokens)
-    -   Parser
-        -   [Expressions](#expressions)
-        -   [Statements](#statements)
-        -   [Priority](#priority)
-        -   [Operators](#operators)
--   [**Built-in functions**](#Built-in-functions)
--   [**Standard library**](#Standard-library)
--   [**Options**](#Options)
-    -   [**Strict mode**](#Strict-mode)
--   [**Npm package**](#Npm-Package)
--   [**Examples**](#Examples)
+    -   [REPL commands](#repl-commands)
+-   [Web Playground](#web-playground)
+-   [Interpreter](#interpreter)
+    -   [Tokens](#tokens)
+    -   [Expressions](#expressions)
+    -   [Statements](#statements)
+    -   [Priority](#priority)
+    -   [Operators](#operators)
+    -   [Literal](#literal)
+-   [Built-in functions](#built-in-functions)
+-   [Standard library](#standard-library)
+-   [Options](#options)
+    -   [Strict mode](#strict-mode)
+-   [Npm package](#npm-package)
+-   [Examples](#examples)
+-   [Documentation](#documentation)
 
-<br>
+<br />
 
 # Introduce
 
@@ -34,7 +28,7 @@
 [Token + Lexer] (Tokenizer) -> Parser + AST (Abstract Syntax Tree) -> Evaluator -> [Repl]
 ```
 
-<br>
+<br />
 
 ## Start REPL
 
@@ -49,7 +43,7 @@ npm run start:repl
 npm run start:repl [file]
 ```
 
-<br>
+<br />
 
 ## REPL commands
 
@@ -60,13 +54,13 @@ npm run start:repl [file]
 | `exit`  | Exit the repl                                      |
 | `mode`  | Change the mode (`repl`, `lexer`, `parser`, `env`) |
 
-<br>
+<br />
 
 # Web Playground
 
 [README](./web) | [Playground](https://tsukiroku.github.io/tiny)
 
-<br>
+<br />
 
 # Interpreter
 
@@ -93,7 +87,7 @@ npm run start:repl [file]
 | `WHILE`     | `WHILE`    | `RETURN`       | `RETURN`   |
 | `QUOTE`     | `"`        | `SINGLE_QUOTE` | `'`        |
 
-<br>
+<br />
 
 ## Expressions
 
@@ -107,7 +101,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 | `Array`    | `[expr, expr, ...]`               | `Index`    | `ident[number]`              |
 | `Hash`     | `{ string: expr, ... }`           | `Assign`   | `[ident / index] = expr`     |
 
-<br>
+<br />
 
 ## Statements
 
@@ -116,13 +110,13 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 | `Let`     | `let ident = expr;` | `While`   | `while (expr) [block];` |
 | `Return`  | `return expr;`      | `Block`   | `{ statement }`         |
 
-<br>
+<br />
 
 ## Priority
 
 `LOWEST` > `EQUAL` > `LESSGREATER` > `SUM` > `PRODUCT` > `PREFIX` > `CALL` > `INDEX`
 
-<br>
+<br />
 
 ## Operators
 
@@ -144,7 +138,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 | `??`     | `Literal ?? Literal` | `Any`                                                 |
 | `in`     | `Literal in Literal` | `string, number, hash`, `string, number, hash, array` |
 
-<br>
+<br />
 
 ## Literal
 
@@ -157,7 +151,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 | `array`   | `[value (Any)]`                              |
 | `func`    | `func [name?]([args]) [block]`               |
 
-<br>
+<br />
 
 # Built-in functions
 
@@ -171,7 +165,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 | `setOption`       | `string`, `string` |
 | [`regex`](#rtest) |                    |
 
-<br>
+<br />
 
 # Standard library
 
@@ -180,7 +174,6 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
     -   [`io`](https://github.com/tsukiroku/tiny/blob/main/@std/io.tiny)
         -   `print(args*)`
         -   `println(args*)`
-        -   `readline`
     -   [`array`](https://github.com/tsukiroku/tiny/blob/main/@std/array.tiny)
         -   `push(array, value)`
         -   `pop(array)`
@@ -205,10 +198,8 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
         -   `subString(string, start, end)`
         -   `rTest(string, pattern)`
         -   `rMatch(string, pattern)`
-    -   [`object`](https://github.com/tsukiroku/tiny/blob/main/@std/object.tiny)
-        -   `assign(object, key, value)`
 
-<br>
+<br />
 
 # Options
 
@@ -231,7 +222,7 @@ If `tiny.config.json` dose not exist in root (`./`), it extends Default.
 + Functions cannot be redeclared.
 ```
 
-<br>
+<br />
 
 # Npm package
 
@@ -254,7 +245,7 @@ console.log(
 
 `@std/` must exist in root (`./`).
 
-<br>
+<br />
 
 # Examples
 
@@ -273,36 +264,82 @@ console.log(
     -   [`StdLib`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib)
         -   [`Array`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/array.tiny)
         -   [`IO`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/io.tiny)
-        -   [`Object`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/object.tiny)
         -   [`String`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/string.tiny)
         -   [`Utility`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/util.tiny)
 
-<br>
+<br />
 
 ---
 
-<br>
+<br />
 
 # Documentation
 
--   [Variable](#variables)
-    -   [Data type](#data-types)
--   [Function](#function)
--   [Operator](#operators-1)
+-   [Variables](#variables)
+    -   [Data types](#data-types)
+        -   [string](#string)
+        -   [number](#number)
+        -   [boolean](#boolean)
+        -   [array](#array)
+        -   [hash](#hash)
+        -   [function](#function)
+-   [Operators](#operators-1)
+    -   [`+` (Plus) Operator](#-plus-operator)
+    -   [`-` (Minus) Operator](#--minus-operator)
+    -   [`*` (Multiply) Operator](#-multiply-operator)
+    -   [`/` (Divide) Operator](#-divide-operator)
+    -   [`%` (Modulo) Operator](#-modulo-operator)
+    -   [`==`, `!=`, `<`, `>`, `<=`, `>=` Operators](#------operators)
+    -   [`<-`, `.` Operator](#---operator)
 -   [Control flow](#control-flow)
     -   [If](#if)
     -   [While](#while)
 -   [Import](#import)
 -   [Decorator](#decorator)
 -   [Built-in functions](#built-in-functions-1)
+    -   [import](#import-1)
+    -   [eval](#eval)
+    -   [js](#js)
+    -   [convert](#convert)
+    -   [options](#options-1)
 -   [Standard library](#standard-library-1)
     -   [IO](#io)
+        -   [print](#print)
+        -   [println](#println)
     -   [Utility](#utility)
-    -   [Array](#array)
-    -   [Object](#object)
+        -   [length](#length)
+        -   [match](#match)
+        -   [string, number, boolean](#string-number-boolean)
+        -   [ternary](#ternary)
+    -   [Array](#array-1)
+        -   [push](#push)
+        -   [pop](#pop)
+        -   [shift](#shift)
+        -   [unshift](#unshift)
+        -   [slice](#slice)
+        -   [join](#join)
+        -   [forEach](#foreach)
+        -   [repeat](#repeat)
     -   [String](#string-1)
+        -   [split](#split)
+        -   [concat](#concat)
+        -   [replace](#replace)
+        -   [subString](#substring)
+        -   [rTest](#rtest)
+        -   [rMatch](#rmatch)
+-   [Expression](#expression)
+-   [Block Expression](#block-expression)
+-   [Statement](#statement)
+-   [Keywords](#keywords)
+    -   [typeof](#typeof)
+    -   [null](#null)
+    -   [throw](#throw)
+    -   [delete](#delete)
+-   [Return](#return)
 
 For examples, see [`Examples`](./examples/README.md)
+
+<br />
 
 # Variables
 
@@ -316,22 +353,36 @@ let <identifier> = <expression>;
 
 ---
 
-```swift
+```
 let foo = 1;
 
 foo = 2;
 ```
 
-# Data types
+---
 
-## string
+If the `strict` option is enabled, redeclaration is not allowed.
+
+if the variable prefix contains `_`, `strict` option is ignored and redeclaration is allowed.
+
+variable names use `camelCase` or `snake_case` and, cannot use numbers as variable prefixes.
+
+<br />
+
+## Data types
+
+### string
 
 ```
 'Hello, World!'
 "안녕, 세상아!"
 ```
 
-## number
+---
+
+Can start the string with `'` or `"`, and the content supports all [`Unicode`](https://en.wikipedia.org/wiki/Unicode).
+
+### number
 
 ```
 12345
@@ -339,22 +390,34 @@ foo = 2;
 3.141592
 ```
 
-## boolean
+### boolean
 
 ```
 true, false
 ```
 
-## array
+---
+
+To convert another value to a boolean value, you can use the [`boolean`](#string-number-boolean), or use the `!!` prefix.
+
+### array
 
 ```
 [1, 2, 3, 'Foo', 'Bar', [1, 2, 3]]
+
+[1, 2, 3][1]    // 2
+
+[1, 2, 3] <- 1  // 2
 ```
 
-## hash
+---
+
+Array elements can be accessed via the `index` or [`element`](#--operator) operator.
+
+### hash
 
 ```
-{
+let hash = {
     'foo': 'bar',
     bar: false,
     baz: [1, 2, 3],
@@ -364,9 +427,21 @@ true, false
         }
     }
 }
+
+hash['foo']      // 'bar'
+hash.bar         // false
+hash <- 5 <- x() // 1
 ```
 
-## function
+---
+
+Hash is a pair of keys and values.
+
+the key must be of type [`string`](#string) or [`number`](#number), and the value can be any type.
+
+hash pairs are can be accessed via the `index` or [`element`](#---operator) operator.
+
+### function
 
 ```
 <arguments>: <identifier>, <identifier>, ...
@@ -380,7 +455,7 @@ func(<arguments>) <block expression>;
 
 ---
 
-```swift
+```
 func foo(a, b) {
     return a + b;
 }
@@ -390,10 +465,22 @@ let bar = func(a, b) {
 };
 ```
 
+---
+
+Functions can be declared with [`hard coding`](https://en.wikipedia.org/wiki/Hard_coding), and supports anonymous functions.
+
+if the `strict` option is enabled, redeclaration is not allowed.
+
+if the function prefix contains `_`, `strict` option is ignored and redeclaration is allowed.
+
+function names use `camelCase` or `snake_case` and, cannot use numbers as variable prefixes.
+
+<br />
+
 # Operators
 
 ```
-<operator>: +, -, *, /, %, ==, !=, <, >, <=, >=, <-, ??, in
+<operator>: +, -, *, /, %, ==, !=, <, >, <=, >=, <-, ., ??, in
 
 <left expression> <operator> <right expression>
 ```
@@ -402,18 +489,62 @@ let bar = func(a, b) {
 
 ---
 
-```swift
-let x = {
-    foo: 5
+## `+` (Plus) Operator
+
+The `+` operator is addition, and can add [`number`](#number), [`string`](#string), [`array`](#array), [`hash`](#hash).
+
+`number + number` : Add the right operand to the left operand.
+
+`string + string` : Concatenate the right operand to the left operand.
+
+`array + array` : Concatenate the right operand to the left operand.
+
+`hash + hash` : Add the right operand to the left operand. if there are duplicate keys, the right operand is overwritten.
+
+## `-` (Minus) Operator
+
+The `-` operator is subtraction, and can subtract [`number`](#number).
+
+## `*` (Multiply) Operator
+
+The `*` operator is multiplication, and can multiply [`number`](#number).
+
+## `/` (Divide) Operator
+
+The `/` operator is division, and can divide [`number`](#number).
+
+## `%` (Modulo) Operator
+
+The `%` operator is modulo, and can modulo [`number`](#number).
+
+## `==`, `!=`, `<`, `>`, `<=`, `>=` Operators
+
+The `==`, `!=`, `<`, `>`, `<=`, `>=` operators are comparison operators, and can compare any type.
+
+## `<-`, `.` Operator
+
+The `element` operator, which can access array or Hash elements.
+
+```
+[1, 2, 3] <- 1       // 2
+
+[1, 2, 3].1          // 2
+
+let hash = {
+    foo: {
+        bar: 'baz'
+    },
 };
 
-x <- "foo";
+hash <- foo <- bar   // 'baz'
+hash.foo.bar         // 'baz'
 
-null() ?? 1;
-2 ?? 3;
+hash['foo']['bar'] = 'qux';
 ```
 
-See [Examples/Operators](./examples/operators.tiny) for `in` operator.
+Cannot reassign values ​​with the `element` operator, must use `index`.
+
+<br />
 
 # Control flow
 
@@ -428,12 +559,24 @@ else <block expression>
 
 ---
 
-```swift
+```
 if (condition) {
     implement();
 } else if (condition) {
     implement();
 } else implement();
+```
+
+---
+
+Can use `if`, `else` and `else if`.
+
+the `condition` of `if` is a boolean value, non-boolean values ​​should use `!!`.
+
+```
+!!2    // true
+!!0    // false
+!!null // false
 ```
 
 ## While
@@ -446,17 +589,23 @@ while <condition expression [boolean]> <block expression>
 
 ---
 
-```swift
+```
 while (condition) {
     implement();
 }
 ```
 
-# Import
-
-> extends [`import()`](#import-1)
-
 ---
+
+If `condition` is true, the `block expression` is executed.
+
+the `condition` of `while` is a boolean value, non-boolean values ​​should use `!!`.
+
+does not support `break` and `continue`. This can be used with [`forEach`](#foreach).
+
+<br />
+
+# Import
 
 ```
 <use> <string>;
@@ -466,9 +615,19 @@ while (condition) {
 
 ---
 
-```perl
+```
 use './module/myLib';
 ```
+
+---
+
+Executes external source code and can import executed environments.
+
+path follows the project root (default `./`).
+
+if `.tiny` is not included in path, `.tiny` will be added automatically.
+
+<br />
 
 # Decorator
 
@@ -481,10 +640,8 @@ use './module/myLib';
 
 ---
 
-```swift
-let myHash = {
-    foo: 'bar',
-};
+```
+let myHash = { foo: 'bar' };
 
 @myHash
 func myFunc() {
@@ -494,59 +651,47 @@ func myFunc() {
 myFunc();
 ```
 
+---
+
+`decorator` starts with the prefix `@` and requires a [`hash`](#hash) value.
+
+after that, a [`function`](#function) is required, anonymous functions cannot be used.
+
+<br />
+
 # Built-in functions
 
 ## import
 
-```swift
-// file.tiny
-
-let x = 5;
+```
+import("./module/myLib");
 ```
 
-<br>
-
-```swift
-import("file");
-
-println(x);
-```
-
-<br>
-
-If `.tiny` is not included in path, `.tiny` will be added automatically.
-
-## delete
-
-```swift
-let x = 5;
-
-delete("x");
-
-println(x); // Identifier 'x' is not defined.
-```
+> extends [`import`](#import)
 
 ## eval
 
-```swift
+```
 eval("5 + 5"); // 10
 ```
 
-<br>
+<br />
+
+Execute the provided code. The code can access the current environment variable.
 
 `allowEval` must be `true`.
 
-**This feature is a dangerous feature. be careful.**
+**this feature is a dangerous feature. be careful.**
 
 ## js
 
-```swift
+```
 js("console.log('foo')");
 ```
 
 `allowJavaScript` must be `true`.
 
-**This feature is a dangerous feature. be careful.**
+**this feature is a dangerous feature. be careful.**
 
 ## convert
 
@@ -554,45 +699,51 @@ js("console.log('foo')");
 
 ## options
 
-```swift
+```
 options(); // hash
 ```
 
+Get project options. this cannot be modified.
+
+<br />
+
 # Standard library
 
-# IO
+<br />
 
-## print
+## IO
 
-```swift
+### print
+
+```
 println("Hello, World!", 10);
 ```
 
-## println
+Prints the provided value.
 
-```swift
+### println
+
+```
 println("Hello, World!");
 ```
 
-## readline
+Prints the provided value with a new line (`\n`).
 
-```swift
-let line = readline();
+## Utility
 
-println(line);
+### length
+
 ```
-
-# Utility
-
-## length
-
-```swift
 length([1, 2, 3]); // 3
+
+length("Hello, World!"); // 13
 ```
 
-## match
+Gets the length of an array or string.
 
-```swift
+### match
+
+```
 println(match(3, [
     [ 1, func(v) { return value + 1; } ],
     [ 2, func(v) { return value + 2; } ]
@@ -602,131 +753,187 @@ println(match(3, [
 }));
 ```
 
-## string, number, boolean
+### string, number, boolean
 
-```swift
+```
 string(5); // "5"
 number("5"); // 5
 boolean(0); // false
 ```
 
-## ternary
+### ternary
 
-```swift
+```
 ternary(true, "foo", "bar"); // "foo"
 ternary(false, "foo", "bar"); // "bar"
 ```
 
-# Array
+If the supplied value is true, the left parameter is returned, otherwise the right parameter is returned.
 
-```swift
+<br />
+
+## Array
+
+```
 let arr = [1, 2, 3];
 ```
 
-## push
+Arrays can contain values ​​of any type.
 
-```swift
+> extends [`array`](#array)
+
+### push
+
+```
 push(array, 4); // [1, 2, 3, 4]
 ```
 
-## pop
+Adds the provided values ​​to an array.
 
-```swift
+Since this is a deep copy, `array` is not changed.
+
+### pop
+
+```
 pop(array); // [1, 2]
 ```
 
-## shift
+Removes the last element of an array.
 
-```swift
+Since this is a deep copy, `array` is not changed.
+
+### shift
+
+```
 shift(array); // [2, 3]
 ```
 
-## unshift
+Removes the first element of an array.
 
-```swift
+Since this is a deep copy, `array` is not changed.
+
+### unshift
+
+```
 unshift(array, 0); // [0, 1, 2, 3]
 ```
 
-## slice
+Adds the provided values ​​to the beginning of an array.
 
-```swift
+Since this is a deep copy, `array` is not changed.
+
+### slice
+
+```
 slice(array, 1, 3); // [2, 3]
 ```
 
-## join
+Divide `array` by the range of the two provided parameters.
 
-```swift
+Since this is a deep copy, `array` is not changed.
+
+### join
+
+```
 join(array, ", "); // "1, 2, 3"
 ```
 
-## forEach
+Adds `array` to the provided string.
 
-```swift
-forEach(array, func(value, index) {
+Since this is a deep copy, `array` is not changed.
+
+### forEach
+
+```
+forEach(array, func (value, index) {
     println(index, value);
 });
 ```
 
-## repeat
+Iterate through the `array`.
 
-```swift
+callback is given a value to traverse and an index value.
+
+---
+
+```
+forEach(true, func (i) {
+    if (i % 2 == 0) return true;
+
+    if (i >= 10) return false;
+
+    println(i);
+});
+```
+
+`forEach` can be used as a `while` statement.
+
+provide a true value instead of an array for the parameter, and the index value is provided in the callback.
+
+### repeat
+
+```
 repeat(5); // [NULL, NULL, NULL, NULL, NULL]
 
 repeat("foo", 3); // ["foo", "foo", "foo"]
 ```
 
-# Object
+If there is one parameter provided, iterates the null value by the number of provided values,
 
-## assign
+if there are two parameters, it iterates the first parameter by the second parameter.
 
-```swift
-let x = {
-    a: 5,
-};
+<br />
 
-// (x <- "a") = 10; // Error
+## String
 
-x = assign(x, "a", 10);
+### split
+
 ```
-
-# String
-
-## split
-
-```swift
 split("foo bar baz", " "); // ["foo", "bar", "baz"]
 ```
 
-## concat
+Splits the supplied string into the second parameter.
 
-```swift
+### concat
+
+```
 concat("foo", "bar", "baz"); // "foobarbaz"
 ```
 
-## replace
+Combines the provided parameters.
 
-```swift
+### replace
+
+```
 replace("foo bar baz", " ", ", "); // "foo, bar, baz"
 ```
 
-## subString
+Replaces the value of the second parameter in the provided string with the value of the third parameter.
 
-```swift
+### subString
+
+```
 subString("foo bar baz", 4, 7); // "bar"
 ```
 
-## rTest
+Divides a string by the number of parameters provided.
 
-```swift
+### rTest
+
+```
 rTest("[A-Z]", "ABCD"); // true
 rTest("[A-Z]", "abcd"); // false
 ```
 
-## rMatch
+Checks if the supplied regular expression matches the second parameter.
 
-```swift
+### rMatch
+
+```
 rMatch("[A-Z]", "ABCD"); // ["A", "B", "C", "D"]
 ```
+
+The supplied regular expression returns an array of matching values ​​in the second parameter.
 
 ---
 
@@ -772,9 +979,11 @@ rMatch("[A-Z]", "ABCD"); // ["A", "B", "C", "D"]
 <typeof> <expr>
 ```
 
-<br>
+Returns the type of the given expression.
 
-```js
+<br />
+
+```
 typeof 10; // NUMBER
 typeof 'foo'; // STRING
 typeof true; // BOOLEAN
@@ -786,7 +995,7 @@ typeof func() {}; // FUNCTION
 
 ## null
 
-```swift
+```
 null; // NULL
 ```
 
@@ -796,9 +1005,11 @@ null; // NULL
 <throw> <expr>
 ```
 
-<br>
+Throws an error in the provided expression.
 
-```swift
+<br />
+
+```
 throw 'Error'; // Error
 ```
 
@@ -808,9 +1019,11 @@ throw 'Error'; // Error
 <delete> <expr>
 ```
 
-<br>
+Deletes the provided key from environment variables.
 
-```js
+<br />
+
+```
 let a = 10;
 
 delete a;
@@ -829,5 +1042,7 @@ a; // Identifier 'a' is not defined.
 
 <if> null(); // `NULL`
 ```
+
+Returns a value.
 
 > extends [`<keywords>`](#keywords), [`<if>`](#if), [`<block expression>`](#block-expression)

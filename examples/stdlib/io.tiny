@@ -1,4 +1,2 @@
 print('Hello, ');
 println('World!');
-
-println(readline('> ')); // ❌ Not working in web playground.
