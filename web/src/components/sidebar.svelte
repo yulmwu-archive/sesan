@@ -18,7 +18,7 @@
     class="w-full h-full float-none md:w-1/4 md:float-right dark:bg-background bg-background-light"
 >
     <textarea
-        class="h-1/4 w-full border-none dark:bg-background bg-background-light dark:text-white text-black resize-none outline-none break-words whitespace-pre overflow-x-scroll p-4 md:h-full disabled"
+        class="h-1/4 w-full border-none dark:bg-background bg-background-light dark:disabled:text-white disabled:text-black resize-none outline-none break-words whitespace-pre overflow-x-scroll p-4 md:h-full"
         bind:value={sidebar}
         disabled
     />

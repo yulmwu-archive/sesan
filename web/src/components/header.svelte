@@ -134,8 +134,10 @@
             disabled
             class="dark:bg-sidebar bg-sidebar-light">...</option
         >
-        <option value="ast" class="dark:bg-sidebar bg-sidebar-light"
-            >Show AST (Available after run)</option
-        >
+        <optgroup label="Run" class="dark:bg-sidebar bg-sidebar-light">
+            <option value="ast" class="dark:bg-sidebar bg-sidebar-light"
+                >Show AST (Available after run)</option
+            >
+        </optgroup>
     </select>
 </div>
