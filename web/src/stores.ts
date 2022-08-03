@@ -8,5 +8,6 @@ let results = writable<IResults>({
     errors: [],
     ast: '',
 });
+let ast = writable('');
 
-export { evaluating, errors, results };
+export { evaluating, errors, results, ast };

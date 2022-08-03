@@ -1,7 +1,6 @@
 <script lang="ts">
-    import { results, evaluating, errors } from '../stores';
+    import { results, evaluating, errors, ast } from '../stores';
     import { editor, examples } from '../main';
-    import { assign } from './sidebar.svelte';
     import type { IExamples } from '../types';
     import axios from 'axios';
 
@@ -20,7 +19,10 @@
                         editor.getValue()
                     )}`
                 )
-                .then((res) => results.update(() => res.data))
+                .then((res) => {
+                    console.log(res.data);
+                    results.update(() => res.data);
+                })
                 .catch((err) =>
                     results.update(() => ({
                         result: [],
@@ -58,7 +60,7 @@
     const subMenuEvent = () => {
         switch (subMenu) {
             case 'ast': {
-                assign($results.ast);
+                ast.update(() => JSON.stringify($results.ast, null, 2));
 
                 break;
             }

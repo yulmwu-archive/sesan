@@ -1,5 +1,5 @@
-<script lang="ts" context="module">
-    import { results, errors } from '../stores';
+<script lang="ts">
+    import { results, errors, ast } from '../stores';
 
     let sidebar: string;
 
@@ -11,9 +11,7 @@
         } else sidebar = (v.result ?? []).join('\n');
     });
 
-    const assign = (v: string) => (sidebar = v);
-
-    export { sidebar, assign };
+    ast.subscribe((v) => (sidebar = v));
 </script>
 
 <div
