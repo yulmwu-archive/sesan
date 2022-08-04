@@ -2,6 +2,7 @@ import * as Tiny from '../../index';
 
 enum Priority {
     LOWEST = 1,
+    LOGICAL,
     EQUAL,
     LESSGREATER,
     SUM,
@@ -742,10 +743,12 @@ export default class Parser {
 
     private getPriority(token: Tiny.Token): Priority {
         switch (token.type) {
-            case Tiny.TokenType.EQUAL:
-            case Tiny.TokenType.NOT_EQUAL:
             case Tiny.TokenType.AND:
             case Tiny.TokenType.OR:
+                return Priority.LOGICAL;
+
+            case Tiny.TokenType.EQUAL:
+            case Tiny.TokenType.NOT_EQUAL:
             case Tiny.TokenType.ASSIGN:
                 return Priority.EQUAL;
 

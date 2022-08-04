@@ -616,13 +616,14 @@ export default class Evaluator {
     ): Tiny.LangObject | null {
         if (!func.decorator) return null;
 
-        const newMap: Map<string | number, Tiny.LangObject> = new Map();
-
-        func.decorator.pairs.forEach((value, key) =>
-            newMap.set(key.value, value)
+        return (
+            new Map(
+                [...func.decorator.pairs].map(([key, value]) => [
+                    key.value,
+                    value,
+                ])
+            ).get(key) ?? NULL
         );
-
-        return newMap.get(key) ?? null;
     }
 
     public applyFunction(
@@ -1481,7 +1482,7 @@ export default class Evaluator {
         pos: Tiny.Position
     ): Tiny.LangObject {
         switch (left?.kind) {
-            case Tiny.ObjectKind.ARRAY:
+            case Tiny.ObjectKind.ARRAY: {
                 if (index?.kind === Tiny.ObjectKind.NUMBER)
                     return this.evalArrayIndex(left, index, pos);
 
@@ -1490,14 +1491,17 @@ export default class Evaluator {
                     pos.line,
                     pos.column
                 );
+            }
 
-            case Tiny.ObjectKind.HASH:
+            case Tiny.ObjectKind.HASH: {
                 let key: string | number;
+
                 switch (index?.kind) {
                     case Tiny.ObjectKind.STRING:
                     case Tiny.ObjectKind.NUMBER:
                         key = index.value;
                         break;
+
                     default:
                         return Tiny.error(
                             this.messages.runtimeError.typeMismatch_1,
@@ -1506,13 +1510,15 @@ export default class Evaluator {
                         );
                 }
 
-                const newMap: Map<string | number, Tiny.LangObject> = new Map();
-
-                left.pairs.forEach((value, key) =>
-                    newMap.set(key.value, value)
+                return (
+                    new Map(
+                        [...left.pairs].map(([key, value]) => [
+                            key.value,
+                            value,
+                        ])
+                    ).get(key) ?? NULL
                 );
-
-                return newMap.get(key) ?? NULL;
+            }
 
             default:
                 return NULL;
