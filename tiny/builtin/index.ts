@@ -17,10 +17,7 @@ const invalidArgument = (
 
 const builtinsEval: Map<string, Func> = new Map();
 
-const builtinFunction = (
-    name: string,
-    env: Tiny.Enviroment
-): Tiny.LangObject | null => {
+const builtinFunction = (name: string): Tiny.LangObject | null => {
     const func: Func | undefined = new Map([
         ...builtinsEval,
         ...builtin,

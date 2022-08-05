@@ -6,7 +6,7 @@ const NULL: Tiny.LangObject = {
 };
 
 export default class Evaluator {
-    public messages;
+    public messages: Tiny.Errors;
     public exportEnviroment: Tiny.Enviroment | null = null;
 
     constructor(
@@ -560,31 +560,13 @@ export default class Evaluator {
 
             if (value.kind === Tiny.ObjectKind.ERROR) return key;
 
-            let key_: Tiny.StringObject | Tiny.NumberObject = {
-                kind: Tiny.ObjectKind.STRING,
-                value: '',
-            };
+            if (
+                key.kind !== Tiny.ObjectKind.STRING &&
+                key.kind !== Tiny.ObjectKind.NUMBER
+            )
+                return;
 
-            switch (key.kind) {
-                case Tiny.ObjectKind.NUMBER:
-                    key_ = {
-                        kind: Tiny.ObjectKind.NUMBER,
-                        value: key.value,
-                    };
-                    break;
-
-                case Tiny.ObjectKind.STRING:
-                    key_ = {
-                        kind: Tiny.ObjectKind.STRING,
-                        value: key.value,
-                    };
-                    break;
-
-                default:
-                    return;
-            }
-
-            if (key) hash.pairs.set(key_, value);
+            if (key) hash.pairs.set(key, value);
         });
 
         return hash;
@@ -730,7 +712,7 @@ export default class Evaluator {
     ): Tiny.LangObject {
         if (env.get(name)) return env.get(name);
 
-        const builtin = Tiny.builtinFunction(name, env);
+        const builtin = Tiny.builtinFunction(name);
 
         if (!builtin)
             return Tiny.error(

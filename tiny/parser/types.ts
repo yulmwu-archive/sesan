@@ -5,6 +5,18 @@ interface Program {
     errors: Array<ParseError>;
 }
 
+enum Priority {
+    LOWEST = 1,
+    LOGICAL,
+    EQUAL,
+    LESSGREATER,
+    SUM,
+    PRODUCT,
+    PREFIX,
+    CALL,
+    INDEX,
+}
+
 type Statement =
     | LetStatement
     | ReturnStatement
@@ -220,16 +232,19 @@ interface ParseError extends Position {
 
 export {
     Program,
+    Priority,
     Statement,
     Expression,
-    LiteralKind,
-    NodeKind,
     ExpressionKind,
+    NodeKind,
+    LiteralKind,
+    Debug,
+    Position,
     LetStatement,
     ReturnStatement,
+    ExpressionStatement,
     WhileStatement,
     DecoratorStatement,
-    ExpressionStatement,
     LiteralExpression,
     BlockStatement,
     PrefixExpression,
@@ -237,9 +252,9 @@ export {
     IfExpression,
     FunctionExpression,
     CallExpression,
+    IdentExpression,
     ArrayExpression,
     IndexExpression,
-    IdentExpression,
     HashExpression,
     HashPair,
     TypeofExpression,
@@ -251,5 +266,4 @@ export {
     BooleanLiteral,
     NullLiteral,
     ParseError,
-    Position,
 };

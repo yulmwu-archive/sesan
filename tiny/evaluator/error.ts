@@ -3,9 +3,40 @@ import colors from 'colors';
 
 colors.enabled = true;
 
-const errorsLocale: {
-    [key: string]: any;
-} = {
+interface Errors {
+    lexerError: {
+        invalidIdentifier: string;
+        invalidNumber: string;
+        invalidString: string;
+    };
+    parserError: {
+        unexpectedToken: string;
+        unexpectedExpression: string;
+        invalidBodyBlock: string;
+        decoratorRequiresFunction: string;
+    };
+    runtimeError: {
+        invalidArgument: string;
+        invalidFunction: string;
+        identifierNotDefined_1: string;
+        identifierNotDefined_2: string;
+        identifierAlreadyDefined: string;
+        functionAlreadyDefined: string;
+        typeMismatch_1: string;
+        typeMismatch_2: string;
+        indexOutOfRange: string;
+        deleteRequiresIdentifier: string;
+        useRequiresString: string;
+    };
+    builtinError: {
+        invalidArgument: string;
+        disableAllowEval: string;
+        disableAllowJavaScript: string;
+        couldNotEval: string;
+    };
+}
+
+const errorsLocale: Record<'en' | 'ko', Errors> = {
     en: {
         lexerError: {
             invalidIdentifier: 'Invalid identifier',
@@ -81,7 +112,8 @@ const errorsLocale: {
 
 const localization = (options: Tiny.Options) =>
     options.locale
-        ? errorsLocale[options.locale] ?? errorsLocale.en
+        ? (errorsLocale as { [key: string]: Errors })[options.locale] ??
+          errorsLocale.en
         : errorsLocale.en;
 
 const errorFormatter = (message: string, ...args: Array<any>): string => {
@@ -125,4 +157,4 @@ const printError = (
 };
 
 export default error;
-export { printError, localization, errorFormatter };
+export { printError, localization, errorFormatter, Errors };

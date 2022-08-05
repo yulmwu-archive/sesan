@@ -3,12 +3,13 @@ import * as Tiny from '../../index';
 export default class Lexer {
     public position: number = 0;
     public readPosition: number = 0;
+    public ch: string = '';
+
     public column: number = 0;
     public line: number = 1;
     public lineStart: number = 1;
-    public ch: string = '';
 
-    public messages;
+    public messages: Tiny.Errors;
 
     constructor(
         public input: string,
