@@ -369,10 +369,6 @@ const examples: Array<IExamplesGroup> = [
                 source: '/stdlib/string.tiny',
             },
             {
-                name: 'Object',
-                source: '/stdlib/object.tiny',
-            },
-            {
                 name: 'Utility',
                 source: '/stdlib/util.tiny',
             },
