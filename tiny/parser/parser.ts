@@ -373,7 +373,7 @@ export default class Parser {
             case Tiny.TokenType.TYPEOF: {
                 this.nextToken();
 
-                const expression = this.parseExpression(Tiny.Priority.LOWEST);
+                const expression = this.parseExpression(Tiny.Priority.PREFIX);
 
                 if (!expression) return null;
 
@@ -388,7 +388,7 @@ export default class Parser {
             case Tiny.TokenType.THROW: {
                 this.nextToken();
 
-                const expression = this.parseExpression(Tiny.Priority.LOWEST);
+                const expression = this.parseExpression(Tiny.Priority.PREFIX);
 
                 if (!expression) return null;
 
@@ -404,7 +404,7 @@ export default class Parser {
             case Tiny.TokenType.DELETE: {
                 if (!this.expectPeek(Tiny.TokenType.IDENT)) return null;
 
-                const expression = this.parseExpression(Tiny.Priority.LOWEST);
+                const expression = this.parseExpression(Tiny.Priority.PREFIX);
 
                 if (!expression) return null;
 
@@ -419,7 +419,7 @@ export default class Parser {
             case Tiny.TokenType.USE: {
                 if (!this.expectPeek(Tiny.TokenType.STRING)) return null;
 
-                const expression = this.parseExpression(Tiny.Priority.LOWEST);
+                const expression = this.parseExpression(Tiny.Priority.PREFIX);
 
                 if (!expression) return null;
 
@@ -537,7 +537,7 @@ export default class Parser {
 
                 this.nextToken();
 
-                const right = this.parseExpression(Tiny.Priority.LOWEST);
+                const right = this.parseExpression(priority);
                 if (!right) return null;
 
                 return {
@@ -727,20 +727,23 @@ export default class Parser {
 
     private getPriority(token: Tiny.Token): Tiny.Priority {
         switch (token.type) {
+            case Tiny.TokenType.ASSIGN:
+                return Tiny.Priority.ASSIGN;
+
             case Tiny.TokenType.AND:
             case Tiny.TokenType.OR:
-                return Tiny.Priority.LOGICAL;
+                return Tiny.Priority.AND_OR;
 
             case Tiny.TokenType.EQUAL:
             case Tiny.TokenType.NOT_EQUAL:
-            case Tiny.TokenType.ASSIGN:
                 return Tiny.Priority.EQUAL;
 
             case Tiny.TokenType.LT:
             case Tiny.TokenType.GT:
             case Tiny.TokenType.LTE:
             case Tiny.TokenType.GTE:
-                return Tiny.Priority.LESSGREATER;
+            case Tiny.TokenType.IN:
+                return Tiny.Priority.LESS_GREATER;
 
             case Tiny.TokenType.PLUS:
             case Tiny.TokenType.MINUS:
@@ -749,15 +752,21 @@ export default class Parser {
             case Tiny.TokenType.SLASH:
             case Tiny.TokenType.ASTERISK:
             case Tiny.TokenType.PERCENT:
-            case Tiny.TokenType.ELEMENT:
-            case Tiny.TokenType.IN:
-            case Tiny.TokenType.NULLISH:
                 return Tiny.Priority.PRODUCT;
+
+            case Tiny.TokenType.TYPEOF:
+            case Tiny.TokenType.DELETE:
+            case Tiny.TokenType.THROW:
+            case Tiny.TokenType.USE:
+                return Tiny.Priority.PREFIX;
 
             case Tiny.TokenType.LPAREN:
                 return Tiny.Priority.CALL;
 
             case Tiny.TokenType.LBRACKET:
+            case Tiny.TokenType.ELEMENT:
+            case Tiny.TokenType.IN:
+            case Tiny.TokenType.NULLISH:
                 return Tiny.Priority.INDEX;
 
             default:

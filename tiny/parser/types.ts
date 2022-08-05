@@ -7,9 +7,10 @@ interface Program {
 
 enum Priority {
     LOWEST = 1,
-    LOGICAL,
+    ASSIGN,
+    AND_OR,
     EQUAL,
-    LESSGREATER,
+    LESS_GREATER,
     SUM,
     PRODUCT,
     PREFIX,

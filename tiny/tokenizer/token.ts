@@ -134,6 +134,11 @@ const tokens: Array<Tiny.TokenCheck> = [
     { curr: '|', next: '|', tokenType: TokenType.OR },
     {
         curr: '?',
+        next: '?',
+        tokenType: TokenType.NULLISH,
+    },
+    {
+        curr: '?',
         tokenType: TokenType.QUESTION,
     },
     { curr: '@', tokenType: TokenType.AT },

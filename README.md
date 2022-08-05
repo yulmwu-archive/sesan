@@ -114,7 +114,8 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 ## Priority
 
-`LOWEST` > `EQUAL` > `LESSGREATER` > `SUM` > `PRODUCT` > `PREFIX` > `CALL` > `INDEX`
+
+`LOWEST` < `EQUAL` < `LESSGREATER` < `SUM` < `PRODUCT` < `PREFIX` < `CALL` < `INDEX`
 
 <br />
 
