@@ -114,30 +114,42 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 ## Priority
 
+`1 < ... < 10`
 
-`LOWEST` < `EQUAL` < `LESSGREATER` < `SUM` < `PRODUCT` < `PREFIX` < `CALL` < `INDEX`
+| Priority Number | Operator                                               |
+| --------------- | ------------------------------------------------------ |
+| `10`            | `Nullish (??)`, `Element (<-, .)`, `Index ([])`        |
+| `9`             | `Function Call`                                        |
+| `8`             | `typeof`, `delete`, `throw`, `use`, `Prefix (!, -, +)` |
+| `7`             | `Multiplication (*, /, %)`                             |
+| `6`             | `Addition (+, -)`                                      |
+| `5`             | `Comparison (>, <, >=, <=, in)`                        |
+| `4`             | `Equality (==, !=)`                                    |
+| `3`             | <code>Logical (&&, &#124;&#124;)</code>                |
+| `2`             | `Assignment (=)`                                       |
+| `1`             | `...`                                                  |
 
 <br />
 
 ## Operators
 
-| Operator | Syntax               | Literal Type                                          |
-| -------- | -------------------- | ----------------------------------------------------- |
-| `+`      | `Literal + Literal`  | `number`, `array`, `string`, `hash`                   |
-| `-`      | `Literal - Literal`  | `number`                                              |
-| `*`      | `Literal * Literal`  | `number`                                              |
-| `/`      | `Literal / Literal`  | `number`                                              |
-| `%`      | `Literal % Literal`  | `number`                                              |
-| `==`     | `Literal == Literal` | `number, string, boolean, array, hash`                |
-| `!=`     | `Literal != Literal` | `number, string, boolean, array, hash`                |
-| `<`      | `Literal < Literal`  | `number`                                              |
-| `>`      | `Literal > Literal`  | `number`                                              |
-| `<=`     | `Literal <= Literal` | `number`                                              |
-| `>=`     | `Literal >= Literal` | `number`                                              |
-| `<-`     | `Literal <- Literal` | `array, hash`, `Any`                                  |
-| `.`      | extends `<-`         | extends `<-`                                          |
-| `??`     | `Literal ?? Literal` | `Any`                                                 |
-| `in`     | `Literal in Literal` | `string, number, hash`, `string, number, hash, array` |
+| Operator | Syntax       | Literal Type                                          |
+| -------- | ------------ | ----------------------------------------------------- |
+| `+`      | `... + ...`  | `number`, `array`, `string`, `hash`                   |
+| `-`      | `... - ...`  | `number`                                              |
+| `*`      | `... * ...`  | `number`                                              |
+| `/`      | `... / ...`  | `number`                                              |
+| `%`      | `... % ...`  | `number`                                              |
+| `==`     | `... == ...` | `number, string, boolean, array, hash`                |
+| `!=`     | `... != ...` | `number, string, boolean, array, hash`                |
+| `<`      | `... < ...`  | `number`                                              |
+| `>`      | `... > ...`  | `number`                                              |
+| `<=`     | `... <= ...` | `number`                                              |
+| `>=`     | `... >= ...` | `number`                                              |
+| `<-`     | `... <- ...` | `array, hash`, `Any`                                  |
+| `.`      | extends `<-` | extends `<-`                                          |
+| `??`     | `... ?? ...` | `Any`                                                 |
+| `in`     | `... in ...` | `string, number, hash`, `string, number, hash, array` |
 
 <br />
 
