@@ -1,9 +1,5 @@
 import * as Tiny from '../../index';
 
-type LexerOptions = Tiny.Options & {
-    stderr: Tiny.Stdio;
-};
-
 export default class Lexer {
     public position: number = 0;
     public readPosition: number = 0;
@@ -16,7 +12,7 @@ export default class Lexer {
 
     constructor(
         public input: string,
-        public options: LexerOptions,
+        public options: Tiny.LexerOptions,
         public filename: string
     ) {
         this.messages = Tiny.localization(options);
@@ -115,6 +111,16 @@ export default class Lexer {
         };
     }
 
+    private replaceAll(
+        str: string,
+        ...args: Array<Record<'find' | 'replace', string>>
+    ) {
+        return args.reduce(
+            (acc, curr) => acc.replaceAll(curr.find, curr.replace),
+            str
+        );
+    }
+
     public readString(tok: Tiny.TokenType): Tiny.Token {
         let position = this.position + 1;
 
@@ -147,18 +153,19 @@ export default class Lexer {
 
         return {
             type: Tiny.TokenType.STRING,
-            literal: this.input
-                .substring(position, this.position)
-                .replaceAll('\\"', '"')
-                .replaceAll("\\'", "'")
-                .replaceAll('\\\\', '\\')
-                .replaceAll('\\0', '\0')
-                .replaceAll('\\b', '\b')
-                .replaceAll('\\f', '\f')
-                .replaceAll('\\v', '\v')
-                .replaceAll('\\n', '\n')
-                .replaceAll('\\r', '\r')
-                .replaceAll('\\t', '\t'),
+            literal: this.replaceAll(
+                this.input.substring(position, this.position),
+                { find: '\\"', replace: '"' },
+                { find: "\\'", replace: "'" },
+                { find: '\\\\', replace: '\\' },
+                { find: '\\0', replace: '\0' },
+                { find: '\\b', replace: '\b' },
+                { find: '\\f', replace: '\f' },
+                { find: '\\v', replace: '\v' },
+                { find: '\\n', replace: '\n' },
+                { find: '\\r', replace: '\r' },
+                { find: '\\t', replace: '\t' }
+            ),
             ...this.curr(),
         };
     }
@@ -203,310 +210,72 @@ export default class Lexer {
         };
     }
 
+    public checkToken(token: string, next?: string | null): boolean {
+        if (this.ch === token && !next) return true;
+
+        if (this.ch === token && this.peekChar() === next) {
+            this.readChar();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public check(tests: Array<Readonly<Tiny.TokenCheck>>): Tiny.Token {
+        for (const test of tests) {
+            if (this.checkToken(test.curr, test.next ?? null)) {
+                let token: Tiny.Token = {
+                    type: Tiny.TokenType.ILLEGAL,
+                    literal: this.ch,
+                    ...this.curr(),
+                };
+
+                if (test.tokenType)
+                    token = {
+                        type: test.tokenType,
+                        literal: this.ch,
+                        ...this.curr(),
+                    };
+                else if (test.stringToken)
+                    token = this.readString(test.stringToken);
+                else if (test.commentToken) token = this.readComment();
+                else if (test.token) token = test.token;
+
+                if (test.readChar) this.readChar();
+
+                return token;
+            }
+        }
+
+        return {
+            type: Tiny.TokenType.ILLEGAL,
+            literal: this.ch,
+            ...this.curr(),
+        };
+    }
+
     public nextToken(): Tiny.Token {
         let token: Tiny.Token;
 
         this.skipWhitespace();
 
-        switch (this.ch) {
-            case '=':
-                if (this.peekChar() === '=') {
-                    const ch = this.ch;
-                    this.readChar();
-                    token = {
-                        type: Tiny.TokenType.EQUAL,
-                        literal: `${ch}${this.ch}`,
-                        ...this.curr(),
-                    };
-                } else
-                    token = {
-                        type: Tiny.TokenType.ASSIGN,
-                        literal: '=',
-                        ...this.curr(),
-                    };
-                break;
+        token = this.check(Tiny.tokens);
 
-            case '(':
+        if (token.type === Tiny.TokenType.ILLEGAL) {
+            if (this.isLetter(this.ch)) token = this.readIdentifier();
+            else if (this.isDigit(this.ch)) token = this.readNumber();
+            else {
                 token = {
-                    type: Tiny.TokenType.LPAREN,
-                    literal: '(',
+                    type: Tiny.TokenType.ILLEGAL,
+                    literal: this.ch,
                     ...this.curr(),
                 };
-                break;
+                this.readChar();
+            }
 
-            case ')':
-                token = {
-                    type: Tiny.TokenType.RPAREN,
-                    literal: ')',
-                    ...this.curr(),
-                };
-                break;
-
-            case ';':
-                token = {
-                    type: Tiny.TokenType.SEMICOLON,
-                    literal: ';',
-                    ...this.curr(),
-                };
-                break;
-
-            case '.':
-                token = {
-                    type: Tiny.TokenType.ELEMENT,
-                    literal: '.',
-                    ...this.curr(),
-                };
-                break;
-
-            case ',':
-                token = {
-                    type: Tiny.TokenType.COMMA,
-                    literal: ',',
-                    ...this.curr(),
-                };
-                break;
-
-            case '+':
-                token = {
-                    type: Tiny.TokenType.PLUS,
-                    literal: '+',
-                    ...this.curr(),
-                };
-                break;
-
-            case '-':
-                token = {
-                    type: Tiny.TokenType.MINUS,
-                    literal: '-',
-                    ...this.curr(),
-                };
-                break;
-
-            case '*':
-                token = {
-                    type: Tiny.TokenType.ASTERISK,
-                    literal: '*',
-                    ...this.curr(),
-                };
-                break;
-
-            case '/':
-                if (this.peekChar() === '/') {
-                    this.readChar();
-
-                    token = this.readComment();
-                } else
-                    token = {
-                        type: Tiny.TokenType.SLASH,
-                        literal: '/',
-                        ...this.curr(),
-                    };
-                break;
-
-            case '%':
-                token = {
-                    type: Tiny.TokenType.PERCENT,
-                    literal: '%',
-                    ...this.curr(),
-                };
-                break;
-
-            case '!':
-                if (this.peekChar() === '=') {
-                    this.readChar();
-                    token = {
-                        type: Tiny.TokenType.NOT_EQUAL,
-                        literal: '!=',
-                        ...this.curr(),
-                    };
-                } else
-                    token = {
-                        type: Tiny.TokenType.BANG,
-                        literal: '!',
-                        ...this.curr(),
-                    };
-                break;
-
-            case '<':
-                if (this.peekChar() === '=') {
-                    this.readChar();
-                    token = {
-                        type: Tiny.TokenType.LTE,
-                        literal: '<=',
-                        ...this.curr(),
-                    };
-                } else if (this.peekChar() === '-') {
-                    this.readChar();
-                    token = {
-                        type: Tiny.TokenType.ELEMENT,
-                        literal: '<-',
-                        ...this.curr(),
-                    };
-                } else
-                    token = {
-                        type: Tiny.TokenType.LT,
-                        literal: '<',
-                        ...this.curr(),
-                    };
-                break;
-
-            case '>':
-                if (this.peekChar() === '=') {
-                    this.readChar();
-                    token = {
-                        type: Tiny.TokenType.GTE,
-                        literal: '>=',
-                        ...this.curr(),
-                    };
-                } else
-                    token = {
-                        type: Tiny.TokenType.GT,
-                        literal: '>',
-                        ...this.curr(),
-                    };
-                break;
-
-            case '&':
-                if (this.peekChar() === '&') {
-                    this.readChar();
-                    token = {
-                        type: Tiny.TokenType.AND,
-                        literal: '&&',
-                        ...this.curr(),
-                    };
-                } else
-                    token = {
-                        type: Tiny.TokenType.ILLEGAL,
-                        literal: this.ch,
-                        ...this.curr(),
-                    };
-                break;
-
-            case '|':
-                if (this.peekChar() === '|') {
-                    this.readChar();
-                    token = {
-                        type: Tiny.TokenType.OR,
-                        literal: '||',
-                        ...this.curr(),
-                    };
-                } else
-                    token = {
-                        type: Tiny.TokenType.ILLEGAL,
-                        literal: this.ch,
-                        ...this.curr(),
-                    };
-                break;
-
-            case '?':
-                if (this.peekChar() === '?') {
-                    this.readChar();
-                    token = {
-                        type: Tiny.TokenType.NULLISH,
-                        literal: '??',
-                        ...this.curr(),
-                    };
-                } else
-                    token = {
-                        type: Tiny.TokenType.QUESTION,
-                        literal: '?',
-                        ...this.curr(),
-                    };
-                break;
-
-            case '@':
-                token = {
-                    type: Tiny.TokenType.AT,
-                    literal: '@',
-                    ...this.curr(),
-                };
-                break;
-
-            case '"':
-                token = this.readString(Tiny.TokenType.QUOTE);
-                break;
-
-            case "'":
-                token = this.readString(Tiny.TokenType.SINGLE_QUOTE);
-                break;
-
-            case '{':
-                token = {
-                    type: Tiny.TokenType.LBRACE,
-                    literal: '{',
-                    ...this.curr(),
-                };
-                break;
-
-            case '}':
-                token = {
-                    type: Tiny.TokenType.RBRACE,
-                    literal: '}',
-                    ...this.curr(),
-                };
-                break;
-
-            case '[':
-                token = {
-                    type: Tiny.TokenType.LBRACKET,
-                    literal: '[',
-                    ...this.curr(),
-                };
-                break;
-
-            case ']':
-                token = {
-                    type: Tiny.TokenType.RBRACKET,
-                    literal: ']',
-                    ...this.curr(),
-                };
-                break;
-
-            case ':':
-                token = {
-                    type: Tiny.TokenType.COLON,
-                    literal: ':',
-                    ...this.curr(),
-                };
-                break;
-
-            case '\0':
-                token = {
-                    type: Tiny.TokenType.EOF,
-                    literal: 'EOF',
-                    ...this.curr(),
-                };
-                break;
-
-            default:
-                if (this.isLetter(this.ch)) token = this.readIdentifier();
-                else if (this.isDigit(this.ch)) token = this.readNumber();
-                else
-                    token = {
-                        type: Tiny.TokenType.ILLEGAL,
-                        literal: this.ch,
-                        ...this.curr(),
-                    };
-        }
-
-        if (
-            token.type === Tiny.TokenType.LET ||
-            token.type === Tiny.TokenType.FUNCTION ||
-            token.type === Tiny.TokenType.TRUE ||
-            token.type === Tiny.TokenType.FALSE ||
-            token.type === Tiny.TokenType.NULL ||
-            token.type === Tiny.TokenType.IF ||
-            token.type === Tiny.TokenType.ELSE ||
-            token.type === Tiny.TokenType.RETURN ||
-            token.type === Tiny.TokenType.WHILE ||
-            token.type === Tiny.TokenType.TYPEOF ||
-            token.type === Tiny.TokenType.THROW ||
-            token.type === Tiny.TokenType.DELETE ||
-            token.type === Tiny.TokenType.USE ||
-            token.type === Tiny.TokenType.IDENT ||
-            token.type === Tiny.TokenType.NUMBER
-        )
             return token;
+        }
 
         this.readChar();
 

@@ -1,3 +1,5 @@
+import * as Tiny from '../../index';
+
 enum TokenType {
     ILLEGAL = 'ILLEGAL',
     EOF = 'EOF',
@@ -63,6 +65,90 @@ interface Token {
     column: number;
 }
 
+const tokens: Array<Tiny.TokenCheck> = [
+    {
+        curr: '=',
+        next: '=',
+        tokenType: TokenType.EQUAL,
+    },
+    { curr: '=', tokenType: TokenType.ASSIGN },
+    { curr: '(', tokenType: TokenType.LPAREN },
+    { curr: ')', tokenType: TokenType.RPAREN },
+    { curr: '{', tokenType: TokenType.LBRACE },
+    { curr: '}', tokenType: TokenType.RBRACE },
+    {
+        curr: '[',
+        tokenType: TokenType.LBRACKET,
+    },
+    {
+        curr: ']',
+        tokenType: TokenType.RBRACKET,
+    },
+    {
+        curr: ';',
+        tokenType: TokenType.SEMICOLON,
+    },
+    { curr: '.', tokenType: TokenType.ELEMENT },
+    { curr: ',', tokenType: TokenType.COMMA },
+    { curr: '+', tokenType: TokenType.PLUS },
+    { curr: '-', tokenType: TokenType.MINUS },
+    {
+        curr: '*',
+        tokenType: TokenType.ASTERISK,
+    },
+    {
+        curr: '/',
+        next: '/',
+        commentToken: TokenType.COMMENT,
+    },
+    { curr: '/', tokenType: TokenType.SLASH },
+    { curr: '%', tokenType: TokenType.PERCENT },
+    {
+        curr: '!',
+        next: '=',
+        tokenType: TokenType.NOT_EQUAL,
+    },
+    { curr: '!', tokenType: TokenType.BANG },
+    {
+        curr: '<',
+        next: '-',
+        tokenType: TokenType.ELEMENT,
+    },
+    {
+        curr: '<',
+        next: '=',
+        tokenType: TokenType.LTE,
+    },
+    {
+        curr: '>',
+        next: '=',
+        tokenType: TokenType.GTE,
+    },
+    { curr: '<', tokenType: TokenType.LT },
+    { curr: '>', tokenType: TokenType.GT },
+    {
+        curr: '&',
+        next: '&',
+        tokenType: TokenType.AND,
+    },
+    { curr: '|', next: '|', tokenType: TokenType.OR },
+    {
+        curr: '?',
+        tokenType: TokenType.QUESTION,
+    },
+    { curr: '@', tokenType: TokenType.AT },
+    {
+        curr: '"',
+        stringToken: TokenType.QUOTE,
+    },
+    {
+        curr: "'",
+        stringToken: TokenType.SINGLE_QUOTE,
+    },
+    { curr: ':', tokenType: TokenType.COLON },
+    { curr: '\0', tokenType: TokenType.EOF },
+];
+
 const fromLiteral = (literal: string): TokenType => {
     switch (literal) {
         case 'let':
@@ -112,4 +198,4 @@ const fromLiteral = (literal: string): TokenType => {
     }
 };
 
-export { TokenType, Token, fromLiteral };
+export { TokenType, Token, tokens, fromLiteral };
