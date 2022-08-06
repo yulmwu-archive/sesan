@@ -149,14 +149,14 @@ interface IfExpression extends Debug, Position {
 
 interface FunctionExpression extends Debug, Position {
     function: Expression;
-    arguments: Array<Expression>;
+    parameters: Array<Expression>;
     body: Expression;
     kind: ExpressionKind.Function;
 }
 
 interface CallExpression extends Debug, Position {
     function: Expression;
-    arguments: Array<Expression>;
+    parameters: Array<Expression>;
     kind: ExpressionKind.Call;
 }
 

@@ -7,12 +7,12 @@ import { strings } from './string';
 type Func = Tiny.BuiltinFunction['func'];
 
 const invalidArgument = (
-    pos: Tiny.Position,
-    option: Tiny.Options
+    position: Tiny.Position,
+    options: Tiny.Options
 ): Tiny.LangObject => ({
     kind: Tiny.ObjectKind.ERROR,
-    message: Tiny.localization(option).builtinError.invalidArgument,
-    ...pos,
+    message: Tiny.localization(options).builtinError.invalidArgument,
+    ...position,
 });
 
 const builtinsEval: Map<string, Func> = new Map();

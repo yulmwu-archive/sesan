@@ -1,24 +1,24 @@
 import * as Tiny from '../../index';
 
 const regex: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
     if (
-        args.length !== 3 ||
-        args[0]?.kind !== Tiny.ObjectKind.STRING ||
-        args[1]?.kind !== Tiny.ObjectKind.STRING ||
-        args[2]?.kind !== Tiny.ObjectKind.STRING
+        parameters.length !== 3 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.STRING ||
+        parameters[1]?.kind !== Tiny.ObjectKind.STRING ||
+        parameters[2]?.kind !== Tiny.ObjectKind.STRING
     )
-        return Tiny.invalidArgument(pos, t.option);
+        return Tiny.invalidArgument(position, evaluator.options);
 
-    const regex = new RegExp(args[1].value, 'g');
+    const regex = new RegExp(parameters[1].value, 'g');
 
-    const str = args[2].value;
+    const str = parameters[2].value;
 
-    switch (args[0].value) {
+    switch (parameters[0].value) {
         case 'match':
             return {
                 kind: Tiny.ObjectKind.ARRAY,
@@ -36,27 +36,30 @@ const regex: Tiny.Func = (
             };
 
         default:
-            return Tiny.invalidArgument(pos, t.option);
+            return Tiny.invalidArgument(position, evaluator.options);
     }
 };
 
 const replace: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
     if (
-        args.length !== 3 ||
-        args[0]?.kind !== Tiny.ObjectKind.STRING ||
-        args[1]?.kind !== Tiny.ObjectKind.STRING ||
-        args[2]?.kind !== Tiny.ObjectKind.STRING
+        parameters.length !== 3 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.STRING ||
+        parameters[1]?.kind !== Tiny.ObjectKind.STRING ||
+        parameters[2]?.kind !== Tiny.ObjectKind.STRING
     )
-        return Tiny.invalidArgument(pos, t.option);
+        return Tiny.invalidArgument(position, evaluator.options);
 
     return {
         kind: Tiny.ObjectKind.STRING,
-        value: args[0].value.replaceAll(args[1].value, args[2].value),
+        value: parameters[0].value.replaceAll(
+            parameters[1].value,
+            parameters[2].value
+        ),
     };
 };
 

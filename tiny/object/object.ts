@@ -140,17 +140,17 @@ interface FunctionObject {
     parameters: Array<Tiny.Expression>;
     decorator?: HashObject;
     body: Tiny.Expression;
-    env: Tiny.Enviroment;
+    enviroment: Tiny.Enviroment;
     option: Tiny.Options;
     kind: ObjectKind.FUNCTION;
 }
 
 interface BuiltinFunction {
     func: (
-        args: Array<LangObject>,
-        env: Tiny.Enviroment,
-        t: Tiny.Evaluator,
-        pos: Tiny.Position
+        parameters: Array<LangObject>,
+        enviroment: Tiny.Enviroment,
+        evaluator: Tiny.Evaluator,
+        position: Tiny.Position
     ) => LangObject;
     kind: ObjectKind.BUILTIN;
 }

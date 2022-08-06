@@ -51,6 +51,7 @@ require(['vs/editor/editor.main'], () => {
         'join',
         'forEach',
         'repeat',
+        'reduce',
         // UTIL
         'funcTools',
         'length',
@@ -66,8 +67,6 @@ require(['vs/editor/editor.main'], () => {
         'replace',
         'split',
         'concat',
-        // OBJECT
-        'assign',
     ];
 
     const builtins = [
@@ -76,7 +75,6 @@ require(['vs/editor/editor.main'], () => {
         'js',
         'convert',
         'options',
-        'setOption',
         'regex',
         'this',
         '__root',

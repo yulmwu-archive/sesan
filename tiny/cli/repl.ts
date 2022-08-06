@@ -155,16 +155,15 @@ export default class {
                 this.env
             );
 
-            if (executed)
-                if (parser.errors.length > 0)
-                    parser.errors.forEach((error) =>
-                        Tiny.printError(
-                            error,
-                            defaultFilename,
-                            Tiny.stderr,
-                            this.option
-                        )
-                    );
+            if (executed && parser.errors.length > 0)
+                parser.errors.forEach((error) =>
+                    Tiny.printError(
+                        error,
+                        defaultFilename,
+                        Tiny.stderr,
+                        this.option
+                    )
+                );
 
             console.log(executed, '\n');
         }

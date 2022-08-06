@@ -116,13 +116,11 @@ const localization = (options: Tiny.Options) =>
           errorsLocale.en
         : errorsLocale.en;
 
-const errorFormatter = (message: string, ...args: Array<any>): string => {
-    args.forEach(
-        (arg, index) => (message = message.replace(`{${index}}`, arg))
+const errorFormatter = (message: string, ...args: Array<any>): string =>
+    args.reduce(
+        (message, curr, index) => message.replaceAll(`{${index}}`, curr),
+        message
     );
-
-    return message;
-};
 
 const error = (
     message: string,

@@ -18,7 +18,7 @@ export * from './tiny';
 
 type Stdio = (...x: Array<any>) => any;
 
-type TinyOption = Options & {
+interface TinyOption extends Options {
     enviroment?: Enviroment;
     root?: string;
     filename?: string;

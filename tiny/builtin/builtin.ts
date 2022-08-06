@@ -1,57 +1,70 @@
 import * as Tiny from '../../index';
 
-const importEnv: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+const importEnviroment: Tiny.Func = (
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
-    if (args.length !== 1 || args[0]?.kind !== Tiny.ObjectKind.STRING)
-        return Tiny.invalidArgument(pos, t.option);
+    if (
+        parameters.length !== 1 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.STRING
+    )
+        return Tiny.invalidArgument(position, evaluator.options);
 
-    return t.importEnv((args[0] as Tiny.StringObject).value, env, t, pos);
+    return evaluator.importEnv(
+        (parameters[0] as Tiny.StringObject).value,
+        enviroment,
+        evaluator,
+        position
+    );
 };
 
-const length: Tiny.Func = (args: Array<Tiny.LangObject>): Tiny.LangObject => {
+const length: Tiny.Func = (
+    parameters: Array<Tiny.LangObject>
+): Tiny.LangObject => {
     if (
-        args.length !== 1 ||
-        (args[0]?.kind !== Tiny.ObjectKind.ARRAY &&
-            args[0]?.kind !== Tiny.ObjectKind.HASH &&
-            args[0]?.kind !== Tiny.ObjectKind.STRING)
+        parameters.length !== 1 ||
+        (parameters[0]?.kind !== Tiny.ObjectKind.ARRAY &&
+            parameters[0]?.kind !== Tiny.ObjectKind.HASH &&
+            parameters[0]?.kind !== Tiny.ObjectKind.STRING)
     )
         return Tiny.NULL;
 
-    if (args[0]?.kind === Tiny.ObjectKind.ARRAY)
+    if (parameters[0]?.kind === Tiny.ObjectKind.ARRAY)
         return {
             kind: Tiny.ObjectKind.NUMBER,
-            value: (args[0] as Tiny.ArrayObject).value.length,
+            value: (parameters[0] as Tiny.ArrayObject).value.length,
         };
 
-    if (args[0]?.kind === Tiny.ObjectKind.STRING)
+    if (parameters[0]?.kind === Tiny.ObjectKind.STRING)
         return {
             kind: Tiny.ObjectKind.NUMBER,
-            value: (args[0] as Tiny.StringObject).value.length,
+            value: (parameters[0] as Tiny.StringObject).value.length,
         };
 
     return {
         kind: Tiny.ObjectKind.NUMBER,
-        value: (args[0] as Tiny.HashObject).pairs.size,
+        value: (parameters[0] as Tiny.HashObject).pairs.size,
     };
 };
 
 const split: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
-    if (args.length !== 2 || args[0]?.kind !== Tiny.ObjectKind.STRING)
-        return Tiny.invalidArgument(pos, t.option);
+    if (
+        parameters.length !== 2 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.STRING
+    )
+        return Tiny.invalidArgument(position, evaluator.options);
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
-        value: (args[0] as Tiny.StringObject).value
-            .split((args[1] as Tiny.StringObject).value)
+        value: (parameters[0] as Tiny.StringObject).value
+            .split((parameters[1] as Tiny.StringObject).value)
             .map((s) => ({
                 kind: Tiny.ObjectKind.STRING,
                 value: s,
@@ -60,97 +73,114 @@ const split: Tiny.Func = (
 };
 
 const evalCode: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
-    if (args.length !== 1 || args[0]?.kind !== Tiny.ObjectKind.STRING)
-        return Tiny.invalidArgument(pos, t.option);
+    if (
+        parameters.length !== 1 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.STRING
+    )
+        return Tiny.invalidArgument(position, evaluator.options);
 
-    if (!t.option.allowEval)
+    if (!evaluator.options.allowEval)
         return {
             kind: Tiny.ObjectKind.ERROR,
-            message: Tiny.localization(t.option).builtinError.disableAllowEval,
-            ...pos,
+            message: Tiny.localization(evaluator.options).builtinError
+                .disableAllowEval,
+            ...position,
         };
 
     return new Tiny.Evaluator(
         new Tiny.Parser(
             new Tiny.Lexer(
-                args[0].value,
+                parameters[0].value,
                 {
-                    ...t.option,
-                    stderr: t.stdio.stderr,
+                    ...evaluator.options,
+                    stderr: evaluator.stdio.stderr,
                 },
-                t.filename
+                evaluator.filename
             ),
-            t.option
+            evaluator.options
         ).parseProgram(),
-        env,
-        t.option,
-        t.stdio,
-        t.filename
+        enviroment,
+        evaluator.options,
+        evaluator.stdio,
+        evaluator.filename
     ).eval();
 };
 
 const evalJSCode: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
-    if (args.length !== 1 || args[0]?.kind !== Tiny.ObjectKind.STRING)
-        return Tiny.invalidArgument(pos, t.option);
+    if (
+        parameters.length !== 1 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.STRING
+    )
+        return Tiny.invalidArgument(position, evaluator.options);
 
-    if (!t.option.allowJavaScript)
+    if (!evaluator.options.allowJavaScript)
         return {
             kind: Tiny.ObjectKind.ERROR,
-            message: t.messages.builtinError.disableAllowJavaScript,
-            ...pos,
+            message: evaluator.messages.builtinError.disableAllowJavaScript,
+            ...position,
         };
 
     try {
-        return eval(args[0].value);
+        return eval(parameters[0].value);
     } catch (e) {
         if (e instanceof Error)
             return {
                 kind: Tiny.ObjectKind.ERROR,
                 message: Tiny.errorFormatter(
-                    t.messages.builtinError.couldNotEval,
+                    evaluator.messages.builtinError.couldNotEval,
                     e.message
                 ),
-                ...pos,
+                ...position,
             };
 
-        throw e;
+        return {
+            kind: Tiny.ObjectKind.ERROR,
+            message: Tiny.errorFormatter(
+                evaluator.messages.builtinError.couldNotEval,
+                `${e}`
+            ),
+            ...position,
+        };
     }
 };
 
 const convert: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
-    if (args.length !== 2 || args[1]?.kind !== Tiny.ObjectKind.STRING)
-        return Tiny.invalidArgument(pos, t.option);
+    if (
+        parameters.length !== 2 ||
+        parameters[1]?.kind !== Tiny.ObjectKind.STRING
+    )
+        return Tiny.invalidArgument(position, evaluator.options);
 
-    const to = args[1].value.toLowerCase();
+    const to = parameters[1].value.toLowerCase();
 
     if (to === 'number') {
-        switch (args[0]?.kind) {
+        switch (parameters[0]?.kind) {
             case Tiny.ObjectKind.NUMBER:
-                return args[0];
+                return parameters[0];
 
             case Tiny.ObjectKind.BOOLEAN:
                 return {
                     kind: Tiny.ObjectKind.NUMBER,
-                    value: args[0].value ? 1 : 0,
+                    value: parameters[0].value ? 1 : 0,
                 };
 
             case Tiny.ObjectKind.STRING:
-                const num = Number(args[0]?.value);
+                const num = Number(parameters[0]?.value);
                 return isNaN(num)
                     ? Tiny.NULL
                     : { kind: Tiny.ObjectKind.NUMBER, value: num };
@@ -161,26 +191,26 @@ const convert: Tiny.Func = (
     } else if (to === 'string')
         return {
             kind: Tiny.ObjectKind.STRING,
-            value: Tiny.objectStringify(args[0]),
+            value: Tiny.objectStringify(parameters[0]),
         };
     else if (to === 'boolean') {
-        switch (args[0]?.kind) {
+        switch (parameters[0]?.kind) {
             case Tiny.ObjectKind.BOOLEAN:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
-                    value: args[0].value,
+                    value: parameters[0].value,
                 };
 
             case Tiny.ObjectKind.NUMBER:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
-                    value: args[0].value !== 0,
+                    value: parameters[0].value !== 0,
                 };
 
             case Tiny.ObjectKind.STRING:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
-                    value: args[0].value !== '',
+                    value: parameters[0].value !== '',
                 };
 
             default:
@@ -192,62 +222,56 @@ const convert: Tiny.Func = (
 };
 
 const options: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator
 ): Tiny.LangObject => {
-    const pairs: Map<Tiny.StringObject, Tiny.LangObject> = new Map();
-
-    Object.entries(t.option).forEach(([key, value]) =>
-        pairs.set(
-            {
-                kind: Tiny.ObjectKind.STRING,
-                value: key,
-            },
-            typeof value === 'string'
-                ? {
-                      kind: Tiny.ObjectKind.STRING,
-                      value: value,
-                  }
-                : {
-                      kind: Tiny.ObjectKind.BOOLEAN,
-                      value: value,
-                  }
-        )
-    );
-
     return {
         kind: Tiny.ObjectKind.HASH,
-        pairs,
+        pairs: new Map(
+            Object.entries(evaluator.options).map(([key, value]) => [
+                {
+                    kind: Tiny.ObjectKind.STRING,
+                    value: key,
+                },
+                typeof value === 'string'
+                    ? {
+                          kind: Tiny.ObjectKind.STRING,
+                          value: value,
+                      }
+                    : {
+                          kind: Tiny.ObjectKind.BOOLEAN,
+                          value: value,
+                      },
+            ])
+        ),
     };
 };
 
 const setOption: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
     if (
-        args.length !== 2 ||
-        args[0]?.kind !== Tiny.ObjectKind.STRING ||
-        (args[1]?.kind !== Tiny.ObjectKind.STRING &&
-            args[1]?.kind !== Tiny.ObjectKind.BOOLEAN)
+        parameters.length !== 2 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.STRING ||
+        (parameters[1]?.kind !== Tiny.ObjectKind.STRING &&
+            parameters[1]?.kind !== Tiny.ObjectKind.BOOLEAN)
     )
-        return Tiny.invalidArgument(pos, t.option);
+        return Tiny.invalidArgument(position, evaluator.options);
 
-    type T = {
-        [key: string]: string | boolean;
-    };
+    type T = { [key: string]: string | boolean };
 
-    const key = args[0].value;
+    const key = parameters[0].value;
 
     if (
-        (t.option as T)[key] &&
+        (evaluator.options as T)[key] &&
         key !== 'allowEval' &&
         key !== 'allowJavaScript'
     )
-        (t.option as T)[key] = args[1].value;
+        (evaluator.options as T)[key] = parameters[1].value;
     else {
         return {
             kind: Tiny.ObjectKind.BOOLEAN,
@@ -262,44 +286,44 @@ const setOption: Tiny.Func = (
 };
 
 const rootDir: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator
 ): Tiny.LangObject => ({
     kind: Tiny.ObjectKind.STRING,
-    value: t.root,
+    value: evaluator.root,
 });
 
 const curr: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => ({
     kind: Tiny.ObjectKind.HASH,
     pairs: new Map([
         [
             { kind: Tiny.ObjectKind.STRING, value: 'line' },
-            { kind: Tiny.ObjectKind.NUMBER, value: pos.line },
+            { kind: Tiny.ObjectKind.NUMBER, value: position.line },
         ],
         [
             { kind: Tiny.ObjectKind.STRING, value: 'column' },
-            { kind: Tiny.ObjectKind.NUMBER, value: pos.column },
+            { kind: Tiny.ObjectKind.NUMBER, value: position.column },
         ],
     ]),
 });
 
 const filename: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator
 ): Tiny.LangObject => ({
     kind: Tiny.ObjectKind.STRING,
-    value: t.filename,
+    value: evaluator.filename,
 });
 
 export const builtin: Map<string, Tiny.Func> = new Map([
-    ['import', importEnv],
+    ['import', importEnviroment],
     ['eval', evalCode],
     ['js', evalJSCode],
     ['convert', convert],

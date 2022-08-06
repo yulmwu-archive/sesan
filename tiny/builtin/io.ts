@@ -1,16 +1,16 @@
 import * as Tiny from '../../index';
 
 const print: Tiny.Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator
 ): Tiny.LangObject => {
-    if (args[0]?.kind !== Tiny.ObjectKind.ARRAY) return Tiny.NULL;
+    if (parameters[0]?.kind !== Tiny.ObjectKind.ARRAY) return Tiny.NULL;
 
-    t.stdio.stdout(
-        `${args[0]?.value
+    evaluator.stdio.stdout(
+        `${parameters[0]?.value
             .map((arg) => Tiny.objectStringify(arg))
-            .join(' ')}${Tiny.objectStringify(args[1])}`
+            .join(' ')}${Tiny.objectStringify(parameters[1])}`
     );
 
     return Tiny.NULL;

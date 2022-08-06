@@ -360,7 +360,7 @@ export default class Parser {
             case Tiny.TokenType.LBRACKET:
                 return {
                     debug: 'parsePrefix>case>Lbracket',
-                    elements: this.parseExpressionArguments(
+                    elements: this.parseExpressionParameters(
                         Tiny.TokenType.RBRACKET
                     ),
                     kind: Tiny.ExpressionKind.Array,
@@ -462,7 +462,7 @@ export default class Parser {
         return {
             debug: 'parsePrefix>case>function',
             function: name,
-            arguments: parameters,
+            parameters: parameters,
             body,
             kind: Tiny.ExpressionKind.Function,
             ...this.currPos(),
@@ -470,13 +470,13 @@ export default class Parser {
     }
 
     private prefixParseOps(): Tiny.PrefixExpression | null {
-        const token = this.currToken;
+        const operator = this.currToken;
 
         this.nextToken();
 
         return {
             debug: 'prefixParseOps>return',
-            operator: token.type,
+            operator: operator.type,
             right: this.parseExpression(Tiny.Priority.PREFIX),
             kind: Tiny.ExpressionKind.Prefix,
             ...this.currPos(),
@@ -491,7 +491,7 @@ export default class Parser {
                 return {
                     debug: 'parseInfixExpression>case>Lparen',
                     function: left,
-                    arguments: this.parseExpressionArguments(
+                    parameters: this.parseExpressionParameters(
                         Tiny.TokenType.RPAREN
                     ),
                     kind: Tiny.ExpressionKind.Call,
@@ -604,6 +604,7 @@ export default class Parser {
 
         if (this.peekTokenIs(Tiny.TokenType.RPAREN)) {
             this.nextToken();
+
             return [];
         }
 
@@ -631,33 +632,33 @@ export default class Parser {
         return parameters;
     }
 
-    private parseExpressionArguments(
+    private parseExpressionParameters(
         end: Tiny.TokenType
     ): Array<Tiny.Expression> {
-        const args: Array<Tiny.Expression> = [];
+        const parameters: Array<Tiny.Expression> = [];
 
         if (this.peekTokenIs(end)) {
             this.nextToken();
 
-            return args;
+            return parameters;
         }
 
         this.nextToken();
 
         const expression = this.parseExpression(Tiny.Priority.LOWEST);
-        if (expression) args.push(expression);
+        if (expression) parameters.push(expression);
 
         while (this.peekTokenIs(Tiny.TokenType.COMMA)) {
             this.nextToken();
             this.nextToken();
 
             const expression = this.parseExpression(Tiny.Priority.LOWEST);
-            if (expression) args.push(expression);
+            if (expression) parameters.push(expression);
         }
 
-        if (!this.expectPeek(end)) return args;
+        if (!this.expectPeek(end)) return parameters;
 
-        return args;
+        return parameters;
     }
 
     private parseHash(): Tiny.HashExpression | null {

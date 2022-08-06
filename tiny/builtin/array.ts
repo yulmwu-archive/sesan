@@ -2,130 +2,142 @@ import { Func, invalidArgument } from '.';
 import * as Tiny from '../../index';
 
 const push: Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
-    if (args.length !== 2 || args[0]?.kind !== Tiny.ObjectKind.ARRAY)
-        return invalidArgument(pos, t.option);
+    if (
+        parameters.length !== 2 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.ARRAY
+    )
+        return invalidArgument(position, evaluator.options);
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
-        value: [...(args[0] as Tiny.ArrayObject).value, args[1]],
+        value: [...(parameters[0] as Tiny.ArrayObject).value, parameters[1]],
     };
 };
 
 const pop: Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviromnet: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
-    if (args.length !== 1 || args[0]?.kind !== Tiny.ObjectKind.ARRAY)
-        return invalidArgument(pos, t.option);
+    if (
+        parameters.length !== 1 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.ARRAY
+    )
+        return invalidArgument(position, evaluator.options);
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
-        value: [...(args[0] as Tiny.ArrayObject).value.slice(0, -1)],
+        value: [...(parameters[0] as Tiny.ArrayObject).value.slice(0, -1)],
     };
 };
 
 const shift: Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
-    if (args.length !== 1 || args[0]?.kind !== Tiny.ObjectKind.ARRAY)
-        return invalidArgument(pos, t.option);
+    if (
+        parameters.length !== 1 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.ARRAY
+    )
+        return invalidArgument(position, evaluator.options);
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
-        value: [...(args[0] as Tiny.ArrayObject).value.slice(1)],
+        value: [...(parameters[0] as Tiny.ArrayObject).value.slice(1)],
     };
 };
 
 const unshift: Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
-    if (args.length !== 2 || args[0]?.kind !== Tiny.ObjectKind.ARRAY)
-        return invalidArgument(pos, t.option);
+    if (
+        parameters.length !== 2 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.ARRAY
+    )
+        return invalidArgument(position, evaluator.options);
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
-        value: [args[1], ...(args[0] as Tiny.ArrayObject).value],
+        value: [parameters[1], ...(parameters[0] as Tiny.ArrayObject).value],
     };
 };
 
 const slice: Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
     if (
-        args.length !== 3 ||
-        args[0]?.kind !== Tiny.ObjectKind.ARRAY ||
-        args[1]?.kind !== Tiny.ObjectKind.NUMBER ||
-        args[2]?.kind !== Tiny.ObjectKind.NUMBER
+        parameters.length !== 3 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.ARRAY ||
+        parameters[1]?.kind !== Tiny.ObjectKind.NUMBER ||
+        parameters[2]?.kind !== Tiny.ObjectKind.NUMBER
     )
-        return invalidArgument(pos, t.option);
+        return invalidArgument(position, evaluator.options);
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
-        value: (args[0] as Tiny.ArrayObject).value.slice(
-            args[1].value,
-            args[2].value
+        value: (parameters[0] as Tiny.ArrayObject).value.slice(
+            parameters[1].value,
+            parameters[2].value
         ),
     };
 };
 
 const join: Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
     if (
-        args.length !== 2 ||
-        args[0]?.kind !== Tiny.ObjectKind.ARRAY ||
-        args[1]?.kind !== Tiny.ObjectKind.STRING
+        parameters.length !== 2 ||
+        parameters[0]?.kind !== Tiny.ObjectKind.ARRAY ||
+        parameters[1]?.kind !== Tiny.ObjectKind.STRING
     )
-        return invalidArgument(pos, t.option);
+        return invalidArgument(position, evaluator.options);
 
     return {
         kind: Tiny.ObjectKind.STRING,
-        value: (args[0] as Tiny.ArrayObject).value
+        value: (parameters[0] as Tiny.ArrayObject).value
             .map((v) => Tiny.objectStringify(v))
-            .join(args[1].value),
+            .join(parameters[1].value),
     };
 };
 
 const forEach: Func = (
-    args: Array<Tiny.LangObject>,
-    env: Tiny.Enviroment,
-    t: Tiny.Evaluator,
-    pos: Tiny.Position
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
 ): Tiny.LangObject => {
     if (
-        args.length !== 2 ||
-        (args[0]?.kind !== Tiny.ObjectKind.ARRAY &&
-            args[0]?.kind !== Tiny.ObjectKind.BOOLEAN) ||
-        args[1]?.kind !== Tiny.ObjectKind.FUNCTION
+        parameters.length !== 2 ||
+        (parameters[0]?.kind !== Tiny.ObjectKind.ARRAY &&
+            parameters[0]?.kind !== Tiny.ObjectKind.BOOLEAN) ||
+        parameters[1]?.kind !== Tiny.ObjectKind.FUNCTION
     )
-        return invalidArgument(pos, t.option);
+        return invalidArgument(position, evaluator.options);
 
-    const func = args[1] as Tiny.FunctionObject;
+    const func = parameters[1] as Tiny.FunctionObject;
 
-    if (args[0].kind === Tiny.ObjectKind.ARRAY) {
-        const array = args[0] as Tiny.ArrayObject;
+    if (parameters[0].kind === Tiny.ObjectKind.ARRAY) {
+        const array = parameters[0] as Tiny.ArrayObject;
 
         for (const [index, value] of array.value.entries()) {
-            const result = t.applyFunction(
+            const result = evaluator.applyFunction(
                 func,
                 '',
                 [
@@ -135,8 +147,8 @@ const forEach: Func = (
                         value: index,
                     },
                 ],
-                env,
-                pos,
+                enviroment,
+                position,
                 Tiny.NULL
             );
 
@@ -144,10 +156,8 @@ const forEach: Func = (
                 break;
         }
     } else {
-        const boolean = args[0] as Tiny.BooleanObject;
-
         for (let i = 0; true; i++) {
-            const result = t.applyFunction(
+            const result = evaluator.applyFunction(
                 func,
                 '',
                 [
@@ -156,8 +166,8 @@ const forEach: Func = (
                         value: i,
                     },
                 ],
-                env,
-                pos,
+                enviroment,
+                position,
                 Tiny.NULL
             );
 
