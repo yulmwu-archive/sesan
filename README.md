@@ -195,7 +195,10 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
         -   `slice(array, start, end)`
         -   `join(array, separator)`
         -   `forEach(array, callback)`
+            -   `callback(value, index)`
         -   `repeat(value, count)`, `repeat(count)`
+        -   `reduce(array, callback, initial)`
+            -   `callback(previous, current)`
     -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
         -   `funcTools`
         -   `length(array)`
@@ -333,6 +336,7 @@ console.log(
         -   [join](#join)
         -   [forEach](#foreach)
         -   [repeat](#repeat)
+        -   [reduce](#reduce)
     -   [String](#string-1)
         -   [split](#split)
         -   [concat](#concat)
@@ -894,6 +898,18 @@ repeat("foo", 3); // ["foo", "foo", "foo"]
 If there is one parameter provided, iterates the null value by the number of provided values,
 
 if there are two parameters, it iterates the first parameter by the second parameter.
+
+### reduce
+
+```
+reduce([ 1, 2, 3 ], func (prev, curr) { 
+    return prev + curr; 
+}, 0);
+```
+
+Iterates through each element of the provided array, accumulating the return value of the callback and returning it.
+
+can specify the initial value of the accumulated values.
 
 <br />
 

@@ -1,7 +1,7 @@
 /// Standard Library: Array
 /// 
 /// Author: @tsukiroku (https://github.com/tsukiroku)
-/// Updated on 2022/08/03 (12:35 AM, KST)
+/// Updated on 2022/08/06 (11:10 AM, KST)
 
 func push(arr, value) { return __builtin_push(arr, value); }
 
@@ -45,4 +45,19 @@ func repeat(x, r) {
     ], func(value) {
         return null;
     });
+}
+
+func reduce(arr, callback, initial) {
+    let result = initial;
+    let c = callback;
+
+    forEach(arr, func (value, _) { 
+        let _result = c(result, value); 
+
+        if (typeof _result == 'BOOLEAN') return _result;
+
+        result = _result;
+    });
+
+    return result;
 }

@@ -22,10 +22,14 @@ forEach([1, 2, 3, 4, 5, 6, 7, 8, 9], func (value, index) {
 });
 
 forEach(true, func (index) {
-    if (index == 10) return false;        // break
-    if (index % 2 == 0) return true;      // continue
+    if (index == 10) return false;       // break
+    if (index % 2 == 0) return true;     // continue
 
     print(index, '');
 });
 
 println();
+
+println(reduce(array, func (prev, curr) { 
+    return prev + curr; 
+}, 0));
