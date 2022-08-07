@@ -76,11 +76,11 @@ export default class Lexer {
     public readNumber(): Tiny.Token {
         const position = this.position;
 
-        let dot = false;
+        let float = false;
 
         while (this.isDigit(this.ch)) {
             if (this.ch === '.') {
-                if (dot) {
+                if (float) {
                     Tiny.printError(
                         {
                             ...this.curr(),
@@ -99,7 +99,7 @@ export default class Lexer {
                         ...this.curr(),
                     };
                 }
-                dot = true;
+                float = true;
             }
 
             this.readChar();
@@ -284,10 +284,10 @@ export default class Lexer {
     }
 
     private isLetter(ch: string): boolean {
-        return /[a-zA-Z]/.test(ch) || ch === '_' || ch === '@';
+        return /[\w|_]/g.test(ch);
     }
 
     private isDigit(ch: string): boolean {
-        return /[0-9]/.test(ch) || ch === '.';
+        return /[\d|\.]/.test(ch);
     }
 }
