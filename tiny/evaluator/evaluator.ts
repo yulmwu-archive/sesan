@@ -90,7 +90,7 @@ export default class Evaluator {
                 const name = (statement.ident as unknown as Tiny.StringLiteral)
                     .value;
 
-                if (statement.ident) {
+                if (statement.ident)
                     if (
                         enviroment.has(name) &&
                         !name.startsWith('_') &&
@@ -105,8 +105,7 @@ export default class Evaluator {
                             statement.line,
                             statement.column
                         );
-                    enviroment.set(name, value);
-                }
+                    else if (name !== '_') enviroment.set(name, value);
 
                 return null;
             }
@@ -471,7 +470,7 @@ export default class Evaluator {
                     expression.line,
                     expression.column
                 );
-            else enviroment.set(name, functionObject);
+            else if (name !== '_') enviroment.set(name, functionObject);
 
         return functionObject;
     }

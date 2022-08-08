@@ -284,10 +284,10 @@ export default class Lexer {
     }
 
     private isLetter(ch: string): boolean {
-        return /[\w|_]/g.test(ch);
+        return /[a-zA-Z]|_/g.test(ch);
     }
 
     private isDigit(ch: string): boolean {
-        return /[\d|\.]/.test(ch);
+        return /[\d]|\./g.test(ch);
     }
 }
