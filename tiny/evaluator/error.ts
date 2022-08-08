@@ -3,7 +3,7 @@ import colors from 'colors';
 
 colors.enabled = true;
 
-interface Errors {
+export interface Errors {
     lexerError: {
         invalidIdentifier: string;
         invalidNumber: string;
@@ -110,19 +110,19 @@ const errorsLocale: Record<'en' | 'ko', Errors> = {
     },
 };
 
-const localization = (options: Tiny.Options) =>
+export const localization = (options: Tiny.Options) =>
     options.locale
         ? (errorsLocale as { [key: string]: Errors })[options.locale] ??
           errorsLocale.en
         : errorsLocale.en;
 
-const errorFormatter = (message: string, ...args: Array<any>): string =>
+export const errorFormatter = (message: string, ...args: Array<any>): string =>
     args.reduce(
         (message, curr, index) => message.replaceAll(`{${index}}`, curr),
         message
     );
 
-const error = (
+export const error = (
     message: string,
     line: number,
     column: number
@@ -133,7 +133,7 @@ const error = (
     column,
 });
 
-const printError = (
+export const printError = (
     error: Tiny.ParseError,
     file: string,
     stderr: Tiny.Stdio,
@@ -155,4 +155,3 @@ const printError = (
 };
 
 export default error;
-export { printError, localization, errorFormatter, Errors };

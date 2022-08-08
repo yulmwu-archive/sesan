@@ -1,6 +1,6 @@
 import Options, { IOptions } from './types';
 
-const parseOptions = (option?: string): Options =>
+export const parseOptions = (option?: string): Options =>
     option
         ? { ...parseOptions(), ...JSON.parse(option) }
         : ({
@@ -13,4 +13,4 @@ const parseOptions = (option?: string): Options =>
               locale: 'en',
           } as IOptions);
 
-export { Options, parseOptions };
+export { Options };

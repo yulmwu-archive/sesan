@@ -272,6 +272,7 @@ export default class Lexer {
                     literal: this.ch,
                     ...this.curr(),
                 };
+
                 this.readChar();
             }
 

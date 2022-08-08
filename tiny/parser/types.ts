@@ -1,11 +1,11 @@
 import { TokenType } from '../../index';
 
-interface Program {
+export interface Program {
     statements: Array<Statement>;
     errors: Array<ParseError>;
 }
 
-enum Priority {
+export enum Priority {
     LOWEST = 1,
     ASSIGN,
     AND_OR,
@@ -18,7 +18,7 @@ enum Priority {
     INDEX,
 }
 
-type Statement =
+export type Statement =
     | LetStatement
     | ReturnStatement
     | ExpressionStatement
@@ -26,12 +26,13 @@ type Statement =
     | WhileStatement
     | DecoratorStatement;
 
-type Expression =
+export type Expression =
     | LiteralExpression
     | BlockStatement
     | PrefixExpression
     | InfixExpression
     | IfExpression
+    | MatchExpression
     | FunctionExpression
     | CallExpression
     | IdentExpression
@@ -44,12 +45,13 @@ type Expression =
     | UseExpression
     | null;
 
-enum ExpressionKind {
+export enum ExpressionKind {
     Literal = 0,
     Block,
     Prefix,
     Infix,
     If,
+    Match,
     Function,
     Call,
     Ident,
@@ -63,7 +65,7 @@ enum ExpressionKind {
     Null,
 }
 
-enum NodeKind {
+export enum NodeKind {
     Program = 100,
     LetStatement,
     ReturnStatement,
@@ -72,199 +74,172 @@ enum NodeKind {
     DecoratorStatement,
 }
 
-enum LiteralKind {
+export enum LiteralKind {
     String = 200,
     Number,
     Boolean,
     Null,
 }
 
-interface Debug {
+export interface Debug {
     debug?: string;
 }
 
-interface Position {
+export interface Position {
     line: number;
     column: number;
 }
 
-interface LetStatement extends Debug, Position {
+export interface LetStatement extends Debug, Position {
     ident: Expression;
     value: Expression;
     kind: NodeKind.LetStatement;
 }
 
-interface ReturnStatement extends Debug, Position {
+export interface ReturnStatement extends Debug, Position {
     value: Expression;
     kind: NodeKind.ReturnStatement;
 }
 
-interface WhileStatement extends Debug, Position {
+export interface WhileStatement extends Debug, Position {
     condition: Expression;
     body: Expression;
     kind: NodeKind.WhileStatement;
 }
 
-interface DecoratorStatement extends Debug, Position {
+export interface DecoratorStatement extends Debug, Position {
     value: Expression;
     function: Expression;
     kind: NodeKind.DecoratorStatement;
 }
 
-interface ExpressionStatement extends Debug, Position {
+export interface ExpressionStatement extends Debug, Position {
     expression: Expression;
     kind: NodeKind.ExpressionStatement;
 }
 
-interface LiteralExpression extends Debug, Position {
+export interface LiteralExpression extends Debug, Position {
     value: NumberLiteral | StringLiteral | BooleanLiteral | NullLiteral;
     kind: ExpressionKind.Literal;
 }
 
-interface BlockStatement extends Debug, Position {
+export interface BlockStatement extends Debug, Position {
     statements: Array<Statement>;
     returnFinal: boolean;
     kind: ExpressionKind.Block;
 }
 
-interface PrefixExpression extends Debug, Position {
+export interface PrefixExpression extends Debug, Position {
     operator: TokenType;
     right: Expression;
     kind: ExpressionKind.Prefix;
 }
 
-interface InfixExpression extends Debug, Position {
+export interface InfixExpression extends Debug, Position {
     left: Expression;
     right: Expression;
     operator: TokenType;
     kind: ExpressionKind.Infix;
 }
 
-interface IfExpression extends Debug, Position {
+export interface IfExpression extends Debug, Position {
     condition: Expression;
     consequence: Expression;
     alternative: Expression | null;
     kind: ExpressionKind.If;
 }
 
-interface FunctionExpression extends Debug, Position {
+export interface MatchExpression extends Debug, Position {
+    condition: Expression;
+    cases: Array<MatchCase>;
+    kind: ExpressionKind.Match;
+}
+
+export interface MatchCase extends Debug, Position {
+    pattern: Expression;
+    body: Expression;
+}
+
+export interface FunctionExpression extends Debug, Position {
     function: Expression;
     parameters: Array<Expression>;
     body: Expression;
     kind: ExpressionKind.Function;
 }
 
-interface CallExpression extends Debug, Position {
+export interface CallExpression extends Debug, Position {
     function: Expression;
     parameters: Array<Expression>;
     kind: ExpressionKind.Call;
 }
 
-interface ArrayExpression extends Debug, Position {
+export interface ArrayExpression extends Debug, Position {
     elements: Array<Expression>;
     kind: ExpressionKind.Array;
 }
 
-interface IndexExpression extends Debug, Position {
+export interface IndexExpression extends Debug, Position {
     left: Expression;
     index: Expression;
     kind: ExpressionKind.Index;
 }
 
-interface IdentExpression extends Debug, Position {
+export interface IdentExpression extends Debug, Position {
     value: string;
     kind: ExpressionKind.Ident;
 }
 
-interface HashExpression extends Debug, Position {
+export interface HashExpression extends Debug, Position {
     pairs: Array<HashPair>;
     kind: ExpressionKind.Hash;
 }
 
-interface HashPair extends Debug, Position {
+export interface HashPair extends Debug, Position {
     key: Expression;
     value: Expression;
 }
 
-interface TypeofExpression extends Debug, Position {
+export interface TypeofExpression extends Debug, Position {
     value: Expression;
     kind: ExpressionKind.Typeof;
 }
 
-interface ThrowExpression extends Debug, Position {
+export interface ThrowExpression extends Debug, Position {
     message: Expression;
     line: number;
     column: number;
     kind: ExpressionKind.Throw;
 }
 
-interface DeleteExpression extends Debug, Position {
+export interface DeleteExpression extends Debug, Position {
     value: Expression;
     kind: ExpressionKind.Delete;
 }
 
-interface UseExpression extends Debug, Position {
+export interface UseExpression extends Debug, Position {
     path: Expression;
     kind: ExpressionKind.Use;
 }
 
-interface NumberLiteral extends Debug, Position {
+export interface NumberLiteral extends Debug, Position {
     value: number;
     kind: LiteralKind.Number;
 }
 
-interface StringLiteral extends Debug, Position {
+export interface StringLiteral extends Debug, Position {
     value: string;
     kind: LiteralKind.String;
 }
 
-interface BooleanLiteral extends Debug, Position {
+export interface BooleanLiteral extends Debug, Position {
     value: boolean;
     kind: LiteralKind.Boolean;
 }
 
-interface NullLiteral extends Debug, Position {
+export interface NullLiteral extends Debug, Position {
     kind: LiteralKind.Null;
 }
 
-interface ParseError extends Position {
+export interface ParseError extends Position {
     message: string;
 }
-
-export {
-    Program,
-    Priority,
-    Statement,
-    Expression,
-    ExpressionKind,
-    NodeKind,
-    LiteralKind,
-    Debug,
-    Position,
-    LetStatement,
-    ReturnStatement,
-    ExpressionStatement,
-    WhileStatement,
-    DecoratorStatement,
-    LiteralExpression,
-    BlockStatement,
-    PrefixExpression,
-    InfixExpression,
-    IfExpression,
-    FunctionExpression,
-    CallExpression,
-    IdentExpression,
-    ArrayExpression,
-    IndexExpression,
-    HashExpression,
-    HashPair,
-    TypeofExpression,
-    ThrowExpression,
-    DeleteExpression,
-    UseExpression,
-    NumberLiteral,
-    StringLiteral,
-    BooleanLiteral,
-    NullLiteral,
-    ParseError,
-};

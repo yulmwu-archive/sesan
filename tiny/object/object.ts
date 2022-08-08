@@ -1,6 +1,6 @@
 import * as Tiny from '../../index';
 
-type LangObject =
+export type LangObject =
     | NumberObject
     | StringObject
     | BooleanObject
@@ -13,7 +13,7 @@ type LangObject =
     | Null
     | null;
 
-const enum ObjectKind {
+export const enum ObjectKind {
     NUMBER = 300,
     STRING,
     BOOLEAN,
@@ -27,7 +27,10 @@ const enum ObjectKind {
     DECORATOR,
 }
 
-const objectStringify = (obj: LangObject, strW: boolean = false): string => {
+export const objectStringify = (
+    obj: LangObject,
+    strW: boolean = false
+): string => {
     if (!obj) return 'NULL';
 
     switch (obj.kind) {
@@ -73,7 +76,7 @@ const objectStringify = (obj: LangObject, strW: boolean = false): string => {
     }
 };
 
-const objectKindStringify = (kind: ObjectKind): string => {
+export const objectKindStringify = (kind: ObjectKind): string => {
     switch (kind) {
         case ObjectKind.NUMBER:
             return 'NUMBER';
@@ -110,32 +113,32 @@ const objectKindStringify = (kind: ObjectKind): string => {
     }
 };
 
-interface NumberObject {
+export interface NumberObject {
     value: number;
     kind: ObjectKind.NUMBER;
 }
 
-interface BooleanObject {
+export interface BooleanObject {
     value: boolean;
     kind: ObjectKind.BOOLEAN;
 }
 
-interface StringObject {
+export interface StringObject {
     value: string;
     kind: ObjectKind.STRING;
 }
 
-interface ArrayObject {
+export interface ArrayObject {
     value: Array<LangObject>;
     kind: ObjectKind.ARRAY;
 }
 
-interface HashObject {
+export interface HashObject {
     pairs: Map<NumberObject | StringObject, LangObject>;
     kind: ObjectKind.HASH;
 }
 
-interface FunctionObject {
+export interface FunctionObject {
     function: Tiny.Expression;
     parameters: Array<Tiny.Expression>;
     decorator?: HashObject;
@@ -145,7 +148,7 @@ interface FunctionObject {
     kind: ObjectKind.FUNCTION;
 }
 
-interface BuiltinFunction {
+export interface BuiltinFunction {
     func: (
         parameters: Array<LangObject>,
         enviroment: Tiny.Enviroment,
@@ -155,35 +158,18 @@ interface BuiltinFunction {
     kind: ObjectKind.BUILTIN;
 }
 
-interface ReturnValue {
+export interface ReturnValue {
     value: LangObject;
     kind: ObjectKind.RETURN_VALUE;
 }
 
-interface ErrorObject {
+export interface ErrorObject {
     message: string;
     kind: ObjectKind.ERROR;
     line: number;
     column: number;
 }
 
-interface Null {
+export interface Null {
     kind: ObjectKind.NULL;
 }
-
-export {
-    LangObject,
-    NumberObject,
-    BooleanObject,
-    StringObject,
-    ArrayObject,
-    HashObject,
-    FunctionObject,
-    BuiltinFunction,
-    ReturnValue,
-    ErrorObject,
-    Null,
-    ObjectKind,
-    objectStringify,
-    objectKindStringify,
-};
