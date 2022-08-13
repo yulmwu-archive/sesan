@@ -11,6 +11,7 @@ export type LangObject =
     | ReturnValue
     | ErrorObject
     | Null
+    | Undefined
     | null;
 
 export const enum ObjectKind {
@@ -24,6 +25,7 @@ export const enum ObjectKind {
     RETURN_VALUE,
     ERROR,
     NULL,
+    UNDEFINED,
     DECORATOR,
 }
 
@@ -68,6 +70,9 @@ export const objectStringify = (
         case ObjectKind.NULL:
             return 'NULL';
 
+        case ObjectKind.UNDEFINED:
+            return 'UNDEFINED';
+
         case ObjectKind.ERROR:
             return `ERROR: ${obj.message}`;
 
@@ -107,6 +112,9 @@ export const objectKindStringify = (kind: ObjectKind): string => {
 
         case ObjectKind.NULL:
             return 'NULL';
+
+        case ObjectKind.UNDEFINED:
+            return 'UNDEFINED';
 
         default:
             return 'UNKNOWN';
@@ -172,4 +180,8 @@ export interface ErrorObject {
 
 export interface Null {
     kind: ObjectKind.NULL;
+}
+
+export interface Undefined {
+    kind: ObjectKind.UNDEFINED;
 }

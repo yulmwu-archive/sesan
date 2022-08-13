@@ -56,7 +56,7 @@ enum TokenType {
     THROW = 'THROW',
     DELETE = 'DELETE',
     USE = 'USE',
-    MATCH = 'MATCH',
+    VOID = 'VOID',
 }
 
 interface Token {
@@ -199,8 +199,8 @@ const fromLiteral = (literal: string): TokenType => {
         case 'use':
             return TokenType.USE;
 
-        case '_match':
-            return TokenType.MATCH;
+        case 'void':
+            return TokenType.VOID;
 
         default:
             return TokenType.IDENT;

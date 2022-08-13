@@ -14,6 +14,7 @@ export interface Errors {
         unexpectedExpression: string;
         invalidBodyBlock: string;
         decoratorRequiresFunction: string;
+        voidRequiresExpression: string;
     };
     runtimeError: {
         invalidArgument: string;
@@ -49,6 +50,7 @@ const errorsLocale: Record<'en' | 'ko', Errors> = {
             unexpectedExpression: `Expected expression, got {0} instead.`,
             invalidBodyBlock: `Invalid body block.`,
             decoratorRequiresFunction: `Decorator requires a function.`,
+            voidRequiresExpression: `'void' requires an expression.`,
         },
         runtimeError: {
             invalidArgument: "'{0}' expected {1} arguments but got {2}.",
@@ -83,6 +85,7 @@ const errorsLocale: Record<'en' | 'ko', Errors> = {
             unexpectedExpression: `식을 예상했지만, {0}을(를) 받았습니다.`,
             invalidBodyBlock: `유효하지 않은 블록입니다.`,
             decoratorRequiresFunction: `데코레이터는 함수를 요구합니다.`,
+            voidRequiresExpression: `'void'는 식을 요구합니다.`,
         },
         runtimeError: {
             invalidArgument:

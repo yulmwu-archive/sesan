@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import * as Tiny from '../../index';
 
 export const NULL: Tiny.LangObject = { kind: Tiny.ObjectKind.NULL };
+export const UNDEFINED: Tiny.LangObject = { kind: Tiny.ObjectKind.UNDEFINED };
 
 export default class Evaluator {
     public messages: Tiny.Errors;
@@ -386,6 +387,14 @@ export default class Evaluator {
                         column: expression.column,
                     }
                 );
+            }
+
+            case Tiny.ExpressionKind.Void: {
+                const value = this.evalExpression(expression.value, enviroment);
+
+                if (value?.kind === Tiny.ObjectKind.ERROR) return value;
+
+                return UNDEFINED;
             }
 
             default:
@@ -1322,7 +1331,7 @@ export default class Evaluator {
                         key.value,
                         value,
                     ])
-                ).get(right.value) ?? NULL
+                ).get(right.value) ?? UNDEFINED
             );
         } else if (right?.kind === Tiny.ExpressionKind.Call) {
             const expression =
@@ -1333,7 +1342,7 @@ export default class Evaluator {
                     ])
                 ).get(
                     (right.function as unknown as Tiny.StringLiteral).value
-                ) ?? NULL;
+                ) ?? UNDEFINED;
 
             if (expression?.kind === Tiny.ObjectKind.ERROR) return expression;
 
@@ -1500,7 +1509,7 @@ export default class Evaluator {
                             key.value,
                             value,
                         ])
-                    ).get(key) ?? NULL
+                    ).get(key) ?? UNDEFINED
                 );
             }
 
