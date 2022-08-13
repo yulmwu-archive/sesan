@@ -35,6 +35,7 @@ require(['vs/editor/editor.main'], () => {
         'throw',
         'delete',
         'use',
+        'void',
     ];
 
     const stds = [
