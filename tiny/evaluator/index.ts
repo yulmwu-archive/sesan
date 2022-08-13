@@ -1,4 +1,4 @@
-import Evaluator, { UNDEFINED } from './evaluator';
+import Evaluator, { NULL, UNDEFINED } from './evaluator';
 import error, {
     printError,
     localization,
@@ -8,7 +8,8 @@ import error, {
 
 export {
     Evaluator,
-    UNDEFINED as NULL,
+    NULL,
+    UNDEFINED,
     error,
     printError,
     localization,

@@ -656,7 +656,7 @@ export default class Evaluator {
         return Tiny.error(
             Tiny.errorFormatter(
                 this.messages.runtimeError.invalidFunction,
-                name
+                name ?? '<unknown>'
             ),
             position.line,
             position.column
@@ -1354,7 +1354,8 @@ export default class Evaluator {
                 return Tiny.error(
                     Tiny.errorFormatter(
                         this.messages.runtimeError.invalidFunction,
-                        (right.function as unknown as Tiny.StringLiteral).value
+                        (right.function as unknown as Tiny.StringLiteral)
+                            .value ?? '<unknown>'
                     ),
                     position.line,
                     position.column

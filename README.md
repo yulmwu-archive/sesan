@@ -485,6 +485,7 @@ null
 ```
 void <expression>
 ```
+
 > extends [`<expression>`](#expression)
 
 Returns `undefined` after executing the expression.
@@ -921,8 +922,8 @@ if there are two parameters, it iterates the first parameter by the second param
 ### reduce
 
 ```
-reduce([ 1, 2, 3 ], func (prev, curr) { 
-    return prev + curr; 
+reduce([ 1, 2, 3 ], func (prev, curr) {
+    return prev + curr;
 }, 0);
 ```
 
@@ -1022,10 +1023,10 @@ IIFE (Immediately Invoked Function Expression) pattern
 # Keywords
 
 ```
-<let>, <func>, <true>, <false>, <if>, <else>, <return>, <while>, <in>, <typeof>, <null>, <throw>, <delete>, <use>
+<let>, <func>, <true>, <false>, <if>, <else>, <return>, <while>, <in>, <typeof>, <null>, <throw>, <delete>, <use>, <void>
 ```
 
-> extends [`<let>`](#variables), [`<func>`](#function), [`<true>`](#boolean), [`<false>`](#boolean), [`<if>`](#if), [`<else>`](#if), [`<return>`](#return), [`<while>`](#while), [`<in>`](#operators-1), [`<use>`](#import-1)
+> extends [`<let>`](#variables), [`<func>`](#function), [`<true>`](#boolean), [`<false>`](#boolean), [`<if>`](#if), [`<else>`](#if), [`<return>`](#return), [`<while>`](#while), [`<in>`](#operators-1), [`<use>`](#import-1), [`<void>`](#undefined)
 
 ---
 
@@ -1086,6 +1087,8 @@ delete a;
 
 a; // Identifier 'a' is not defined.
 ```
+
+<br />
 
 # Return
 
