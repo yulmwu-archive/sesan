@@ -299,6 +299,8 @@ console.log(
         -   [array](#array)
         -   [hash](#hash)
         -   [function](#function)
+        -   [null](#null)
+        -   [undefined](#undefined)
 -   [Operators](#operators-1)
     -   [`+` (Plus) Operator](#-plus-operator)
     -   [`-` (Minus) Operator](#--minus-operator)
@@ -448,6 +450,8 @@ let hash = {
 hash['foo']      // 'bar'
 hash.bar         // false
 hash <- 5 <- x() // 1
+
+hash <- qux      // UNDEFINED
 ```
 
 ---
@@ -469,6 +473,21 @@ func(<arguments>) <block expression>;
 ```
 
 > extends [`<block expression>`](#block-expression)
+
+### null
+
+```
+null
+```
+
+### undefined
+
+```
+void <expression>
+```
+> extends [`<expression>`](#expression)
+
+Returns `undefined` after executing the expression.
 
 ---
 
@@ -983,6 +1002,14 @@ The supplied regular expression returns an array of matching values ​​in the
 ```
 
 > extends [`<keywords>`](#keywords), [`<if>`](#if)
+
+IIFE (Immediately Invoked Function Expression) pattern
+
+```
+(func () {
+    implement();
+})();
+```
 
 # Statement
 
