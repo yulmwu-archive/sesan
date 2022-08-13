@@ -46,7 +46,7 @@ export default class Evaluator {
             }
         }
 
-        if (results.length === 0) return NULL;
+        if (results.length === 0) return UNDEFINED;
 
         return results[results.length - 1];
     }
@@ -70,10 +70,10 @@ export default class Evaluator {
             }
         }
 
-        if (results.length === 0) return NULL;
+        if (results.length === 0) return UNDEFINED;
 
         if (returnFinal) return results[results.length - 1];
-        else return NULL;
+        else return UNDEFINED;
     }
 
     private evalStatement(
@@ -134,7 +134,7 @@ export default class Evaluator {
 
                 if (condition?.kind === Tiny.ObjectKind.ERROR) return condition;
 
-                const res: Array<Tiny.LangObject> = [];
+                const resultExpr: Array<Tiny.LangObject> = [];
 
                 while (this.isTruthy(condition)) {
                     const result = this.evalExpression(
@@ -152,7 +152,7 @@ export default class Evaluator {
                     if (condition?.kind === Tiny.ObjectKind.ERROR)
                         return condition;
 
-                    res.push(result);
+                    resultExpr.push(result);
                 }
 
                 return NULL;
@@ -296,20 +296,20 @@ export default class Evaluator {
             }
 
             case Tiny.ExpressionKind.Index: {
-                const _expression = this.evalExpression(
+                const resultExpr = this.evalExpression(
                     expression.left,
                     enviroment
                 );
-                if (!_expression) return null;
+                if (!resultExpr) return null;
 
-                if (_expression.kind === Tiny.ObjectKind.ERROR) return NULL;
+                if (resultExpr.kind === Tiny.ObjectKind.ERROR) return NULL;
 
                 const index = this.evalExpression(expression.index, enviroment);
                 if (!index) return null;
 
                 if (index.kind === Tiny.ObjectKind.ERROR) return NULL;
 
-                return this.evalIndex(_expression, index, {
+                return this.evalIndex(resultExpr, index, {
                     line: expression.line,
                     column: expression.column,
                 });
@@ -612,7 +612,7 @@ export default class Evaluator {
                 return Tiny.error(
                     Tiny.errorFormatter(
                         this.messages.runtimeError.invalidArgument,
-                        name,
+                        name ?? '<Anonymous>',
                         functionObject.parameters.length,
                         parameters.length
                     ),
@@ -1128,9 +1128,9 @@ export default class Evaluator {
         position: Tiny.Position
     ): Tiny.LangObject {
         if (operator === Tiny.TokenType.ASSIGN) {
-            const _right = this.evalExpression(rightOperand, enviroment);
+            const right = this.evalExpression(rightOperand, enviroment);
 
-            if (_right?.kind === Tiny.ObjectKind.ERROR) return _right;
+            if (right?.kind === Tiny.ObjectKind.ERROR) return right;
 
             if (
                 leftOperand?.kind !== Tiny.ExpressionKind.Ident &&
@@ -1162,10 +1162,10 @@ export default class Evaluator {
 
                     enviroment.update(
                         (leftOperand as unknown as Tiny.StringLiteral).value,
-                        _right
+                        right
                     );
 
-                    return _right;
+                    return right;
                 }
 
                 case Tiny.ExpressionKind.Index: {
@@ -1173,22 +1173,22 @@ export default class Evaluator {
                         leftOperand as unknown as Tiny.IndexExpression
                     ).index;
 
-                    const _left = this.evalExpression(
+                    const left = this.evalExpression(
                         (leftOperand as unknown as Tiny.IndexExpression).left,
                         enviroment
                     );
 
-                    if (_left?.kind === Tiny.ObjectKind.ERROR) return _left;
+                    if (left?.kind === Tiny.ObjectKind.ERROR) return left;
 
                     if (
-                        _left?.kind !== Tiny.ObjectKind.ARRAY &&
-                        _left?.kind !== Tiny.ObjectKind.HASH
+                        left?.kind !== Tiny.ObjectKind.ARRAY &&
+                        left?.kind !== Tiny.ObjectKind.HASH
                     )
                         return Tiny.error(
                             Tiny.errorFormatter(
                                 this.messages.runtimeError.typeMismatch_2,
                                 Tiny.objectKindStringify(
-                                    _left?.kind ?? Tiny.ObjectKind.NULL
+                                    left?.kind ?? Tiny.ObjectKind.NULL
                                 ),
                                 Tiny.objectKindStringify(Tiny.ObjectKind.ARRAY)
                             ),
@@ -1196,48 +1196,53 @@ export default class Evaluator {
                             position.column
                         );
 
-                    if (_left?.kind === Tiny.ObjectKind.ARRAY) {
-                        const _index = this.evalExpression(index, enviroment);
+                    if (left?.kind === Tiny.ObjectKind.ARRAY) {
+                        const resultIdx = this.evalExpression(
+                            index,
+                            enviroment
+                        );
 
-                        if (_index?.kind === Tiny.ObjectKind.ERROR)
-                            return _index;
+                        if (resultIdx?.kind === Tiny.ObjectKind.ERROR)
+                            return resultIdx;
 
-                        if (_index?.kind !== Tiny.ObjectKind.NUMBER)
+                        if (resultIdx?.kind !== Tiny.ObjectKind.NUMBER)
                             return Tiny.error(
                                 this.messages.runtimeError.typeMismatch_1,
                                 position.line,
                                 position.column
                             );
 
-                        const _value = this.evalExpression(
+                        const value = this.evalExpression(
                             rightOperand,
                             enviroment
                         );
 
-                        if (_value?.kind === Tiny.ObjectKind.ERROR)
-                            return _value;
+                        if (value?.kind === Tiny.ObjectKind.ERROR) return value;
 
-                        if (_value?.kind !== Tiny.ObjectKind.NUMBER)
+                        if (value?.kind !== Tiny.ObjectKind.NUMBER)
                             return Tiny.error(
                                 this.messages.runtimeError.typeMismatch_2,
                                 position.line,
                                 position.column
                             );
 
-                        (_left as unknown as Tiny.ArrayObject).value[
-                            _index.value
-                        ] = _value;
+                        (left as unknown as Tiny.ArrayObject).value[
+                            resultIdx.value
+                        ] = value;
 
-                        return _value;
+                        return value;
                     } else {
-                        const _index = this.evalExpression(index, enviroment);
+                        const resultIdx = this.evalExpression(
+                            index,
+                            enviroment
+                        );
 
-                        if (_index?.kind === Tiny.ObjectKind.ERROR)
-                            return _index;
+                        if (resultIdx?.kind === Tiny.ObjectKind.ERROR)
+                            return resultIdx;
 
                         if (
-                            _index?.kind !== Tiny.ObjectKind.STRING &&
-                            _index?.kind !== Tiny.ObjectKind.NUMBER
+                            resultIdx?.kind !== Tiny.ObjectKind.STRING &&
+                            resultIdx?.kind !== Tiny.ObjectKind.NUMBER
                         )
                             return Tiny.error(
                                 this.messages.runtimeError.typeMismatch_1,
@@ -1245,24 +1250,23 @@ export default class Evaluator {
                                 position.column
                             );
 
-                        const _value = this.evalExpression(
+                        const value = this.evalExpression(
                             rightOperand,
                             enviroment
                         );
 
-                        if (_value?.kind === Tiny.ObjectKind.ERROR)
-                            return _value;
+                        if (value?.kind === Tiny.ObjectKind.ERROR) return value;
 
-                        _left.pairs = new Map(
+                        left.pairs = new Map(
                             Array.from(
                                 new Map([
                                     ...new Map(
-                                        [..._left.pairs].map(([k, v]) => [
+                                        [...left.pairs].map(([k, v]) => [
                                             k.value,
                                             v,
                                         ])
                                     ),
-                                    [_index.value, _value],
+                                    [resultIdx.value, value],
                                 ]).entries()
                             ).map(([k, v]) => [
                                 typeof k === 'string'
@@ -1278,7 +1282,7 @@ export default class Evaluator {
                             ])
                         );
 
-                        return _value;
+                        return value;
                     }
                 }
             }
@@ -1458,15 +1462,11 @@ export default class Evaluator {
         if (conditionExpression?.kind === Tiny.ObjectKind.ERROR)
             return conditionExpression;
 
-        if (conditionExpression?.kind === Tiny.ObjectKind.BOOLEAN) {
-            if (conditionExpression.value)
-                return this.evalExpression(consequence, enviroment);
-            else if (alternative)
-                return this.evalExpression(alternative, enviroment);
-            else return NULL;
-        }
-
-        return NULL;
+        if (this.isTruthy(conditionExpression))
+            return this.evalExpression(consequence, enviroment);
+        else if (alternative)
+            return this.evalExpression(alternative, enviroment);
+        else return NULL;
     }
 
     private evalIndex(
@@ -1554,6 +1554,7 @@ export default class Evaluator {
                 return object.value !== 0;
 
             case Tiny.ObjectKind.NULL:
+            case Tiny.ObjectKind.UNDEFINED:
                 return false;
 
             default:
