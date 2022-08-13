@@ -202,7 +202,7 @@ require(['vs/editor/editor.main'], () => {
                     insertTextRules:
                         monaco.languages.CompletionItemInsertTextRule
                             .InsertAsSnippet,
-                    insertText: 'return ${1:value};',
+                    insertText: 'return ${1:expression};',
                 },
                 {
                     label: 'while',
@@ -223,14 +223,7 @@ require(['vs/editor/editor.main'], () => {
                     insertTextRules:
                         monaco.languages.CompletionItemInsertTextRule
                             .InsertAsSnippet,
-                    insertText: 'typeof ${1:value}',
-                },
-                {
-                    label: 'null',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
-                    insertText: 'null',
+                    insertText: 'typeof ${1:expression}',
                 },
                 {
                     label: 'throw',
@@ -251,7 +244,14 @@ require(['vs/editor/editor.main'], () => {
                     insertTextRules:
                         monaco.languages.CompletionItemInsertTextRule
                             .InsertAsSnippet,
-                    insertText: "use '${1:path};'",
+                    insertText: "use '${1:path}';",
+                },
+                {
+                    label: 'void',
+                    insertTextRules:
+                        monaco.languages.CompletionItemInsertTextRule
+                            .InsertAsSnippet,
+                    insertText: 'void ${1:expression};',
                 },
             ],
         }),

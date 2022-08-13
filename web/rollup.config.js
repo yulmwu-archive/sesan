@@ -58,6 +58,7 @@ export default {
             sourceMap: !production,
             inlineSources: !production
         }),
+        // json(),
         !production && serve(),
         !production && livereload('public'),
         production && terser()

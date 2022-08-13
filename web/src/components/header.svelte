@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { results, evaluating, errors, ast } from '../stores';
+    import { results, evaluating, errors, ast, toggleSidebar } from '../stores';
     import { editor, examples } from '../main';
     import type { IExamples } from '../types';
     import axios from 'axios';
@@ -60,10 +60,15 @@
     const subMenuEvent = () => {
         switch (subMenu) {
             case 'ast': {
-                ast.update(() => JSON.stringify($results.ast, null, 2));
+                const astJson = JSON.stringify($results.ast, null, 2);
+
+                ast.update(() => (astJson === '""' ? '' : astJson));
 
                 break;
             }
+
+            case 'sidebar':
+                toggleSidebar.update(() => !$toggleSidebar);
         }
 
         subMenu = 'subMenu';
@@ -137,6 +142,9 @@
         <optgroup label="Run" class="dark:bg-sidebar bg-sidebar-light">
             <option value="ast" class="dark:bg-sidebar bg-sidebar-light"
                 >Show AST (Available after run)</option
+            >
+            <option value="sidebar" class="dark:bg-sidebar bg-sidebar-light"
+                >d</option
             >
         </optgroup>
     </select>
