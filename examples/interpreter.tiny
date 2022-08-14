@@ -26,8 +26,8 @@ func tokenizer(input) {
 
     @funcTools <- capture
     func peekChar() {
-        if (current <- readPos >= length(input)) { return '\0'; }
-        else { return split(input, '') <- (current <- readPos); }
+        if (current <- readPos >= length(input)) return '\0';
+        else return split(input, '') <- (current <- readPos);
     }
 
     @funcTools <- capture
@@ -35,7 +35,7 @@ func tokenizer(input) {
         let pos = current <- pos;
 
         if (!isDigit(current <- ch)) {
-            while (isLetter(current <- ch) || regex('test', '[0-9]', current <- ch)) {
+            while (isLetter(current <- ch) || isDigit(current <- ch)) {
                 readChar();
             }
 
@@ -75,12 +75,12 @@ func tokenizer(input) {
 
     @funcTools <- capture
     func isLetter(ch) {
-        return !!regex('test', '[a-zA-Z]', ch) || (ch == '_');
+        return regex('[a-zA-Z]', 'g', ch) <- test() || (ch == '_');
     }
 
     @funcTools <- capture
     func isDigit(ch) {
-        return !!regex('test', '[0-9]', ch) || (ch == '.');
+        return regex('[0-9]', 'g', ch) <- test() || (ch == '.');
     }
 
     @funcTools <- capture
@@ -117,7 +117,7 @@ func tokenizer(input) {
     return { readChar, skipWhitespace, nextToken, peekChar };
 }
 
-let t = tokenizer('let x = 3.14;');
+let t = tokenizer('let _x = 3.14;');
 
 forEach(true, func (_) {
     let token = (t <- nextToken)();

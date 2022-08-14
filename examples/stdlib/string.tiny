@@ -8,6 +8,8 @@ println(replace(myString, " ", ", "));
 
 println(subString(myString, 4, 7));
 
-println(rTest("[A-Z]", "ABCD"));
+let pattern = regex('[a-z]', 'g', 'Abcd12345');
 
-println(rMatch("[A-Z]", "ABCD"));
+println(pattern <- match());
+println(pattern <- test());
+println(pattern <- replace('b'));

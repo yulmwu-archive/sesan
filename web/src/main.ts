@@ -63,11 +63,10 @@ require(['vs/editor/editor.main'], () => {
         'ternary',
         // STRING
         'subString',
-        'rMatch',
-        'rTest',
         'replace',
         'split',
         'concat',
+        'regex'
     ];
 
     const builtins = [
@@ -76,7 +75,7 @@ require(['vs/editor/editor.main'], () => {
         'js',
         'convert',
         'options',
-        'regex',
+        'regExp',
         'this',
         '__root',
         '__pos',

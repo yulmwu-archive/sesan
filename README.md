@@ -168,15 +168,15 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 # Built-in functions
 
-| Function          | Arguments          |
-| ----------------- | ------------------ |
-| `import`          | `string`           |
-| `eval`            | `string`           |
-| `js`              | `string`           |
-| `convert`         | `Any`              |
-| `options`         |                    |
-| `setOption`       | `string`, `string` |
-| [`regex`](#rtest) |                    |
+| Function           | Arguments          |
+| ------------------ | ------------------ |
+| `import`           | `string`           |
+| `eval`             | `string`           |
+| `js`               | `string`           |
+| `convert`          | `Any`              |
+| `options`          |                    |
+| `setOption`        | `string`, `string` |
+| [`regExp`](#regex) |                    |
 
 <br />
 
@@ -185,35 +185,45 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 -   [**`@std/`**](https://github.com/tsukiroku/tiny/blob/main/@std/)
     -   [`lib`](https://github.com/tsukiroku/tiny/blob/main/@std/lib.tiny)
     -   [`io`](https://github.com/tsukiroku/tiny/blob/main/@std/io.tiny)
-        -   `print(args*)`
-        -   `println(args*)`
+        -   `print(args*) -> NULL`
+        -   `println(args*) -> NULL`
     -   [`array`](https://github.com/tsukiroku/tiny/blob/main/@std/array.tiny)
-        -   `push(array, value)`
-        -   `pop(array)`
-        -   `shift(array)`
-        -   `unshift(array, value)`
-        -   `slice(array, start, end)`
-        -   `join(array, separator)`
-        -   `forEach(array, callback)`
+        -   `push(array, value) -> array`
+        -   `pop(array) -> array`
+        -   `shift(array) -> array`
+        -   `unshift(array, value) -> array`
+        -   `slice(array, start, end) -> array`
+        -   `join(array, separator) -> string`
+        -   `forEach(array, callback) -> NULL`
             -   `callback(value, index)`
-        -   `repeat(value, count)`, `repeat(count)`
-        -   `reduce(array, callback, initial)`
+        -   `repeat(value, count) -> array`, `repeat(count) -> array`
+        -   `reduce(array, callback, initial) -> Any`
             -   `callback(previous, current)`
     -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
-        -   `funcTools`
-        -   `length(array)`
-        -   `match(value, [pattern], default)`
-        -   `string(value)`
-        -   `number(value)`
-        -   `boolean(value)`
-        -   `ternary(condition, trueValue, falseValue)`
+        -   `funcTools -> hash`
+        -   `length(array) -> number`
+        -   `match(value, [pattern], default) -> Any`
+        -   `string(value) -> string`
+        -   `number(value) -> number`
+        -   `boolean(value) -> boolean`
+        -   `ternary(condition, trueValue, falseValue) -> Any`
     -   [`string`]
-        -   `split(string, separator)`
-        -   `concat(args*)`
-        -   `replace(string, pattern, replacement)`
-        -   `subString(string, start, end)`
-        -   `rTest(string, pattern)`
-        -   `rMatch(string, pattern)`
+        -   `split(string, separator) -> array`
+        -   `concat(args*) -> string`
+        -   `replace(string, pattern, replacement) -> string`
+        -   `subString(string, start, end) -> string`
+        -   `regExp(regexExpression, Options) -> string`
+            -   `regexExpression`
+                -   `pattern`: `[Regex Pattern]`
+                -   `flags`: `[Regex Flags]`
+            -   `Options`
+                -   `type`: `match`, `test`, `replace`
+                -   `str`: `string`
+                -   `replace?`: `string`
+        -   `regex(pattern, flags, string) -> function`
+            -   `match() -> string`
+            -   `test() -> boolean`
+            -   `replace(string, replace) -> string`
 
 <br />
 
@@ -967,22 +977,15 @@ subString("foo bar baz", 4, 7); // "bar"
 
 Divides a string by the number of parameters provided.
 
-### rTest
+### regex
 
 ```
-rTest("[A-Z]", "ABCD"); // true
-rTest("[A-Z]", "abcd"); // false
+let pattern = regex('[a-z]', 'g', 'asdf');
+
+println(pattern <- match());
+println(pattern <- test());
+println(pattern <- replace('b'));
 ```
-
-Checks if the supplied regular expression matches the second parameter.
-
-### rMatch
-
-```
-rMatch("[A-Z]", "ABCD"); // ["A", "B", "C", "D"]
-```
-
-The supplied regular expression returns an array of matching values ​​in the second parameter.
 
 ---
 
