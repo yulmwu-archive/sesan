@@ -1,6 +1,6 @@
 let custom = { customDecorator: 'hello' };
 
-@(funcTools <- skip) + custom
+@(funcTools <- skip) + custom;
 func foo() {
     println(this <- decorator <- customDecorator);
 
