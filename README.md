@@ -474,22 +474,6 @@ func(<arguments>) <block expression>;
 
 > extends [`<block expression>`](#block-expression)
 
-### null
-
-```
-null
-```
-
-### undefined
-
-```
-void <expression>
-```
-
-> extends [`<expression>`](#expression)
-
-Returns `undefined` after executing the expression.
-
 ---
 
 ```
@@ -511,6 +495,22 @@ if the `strict` option is enabled, redeclaration is not allowed.
 if the function prefix contains `_`, `strict` option is ignored and redeclaration is allowed.
 
 function names use `camelCase` or `snake_case` and, cannot use numbers as variable prefixes.
+
+### null
+
+```
+null
+```
+
+### undefined
+
+```
+void <expression>
+```
+
+> extends [`<expression>`](#expression)
+
+Returns `undefined` after executing the expression.
 
 <br />
 

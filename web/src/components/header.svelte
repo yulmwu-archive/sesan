@@ -92,9 +92,7 @@
         class="cursor-pointer inline pl-3 dark:text-white text-black"
         on:click={() =>
             navigator.clipboard.writeText(
-                `${
-                    window.location.href
-                }${(window.location.href = `#${encodeURIComponent(
+                `https://tsukiroku.github.io/tiny/${(window.location.href = `#${encodeURIComponent(
                     editor.getValue()
                 )}`)}`
             )}
@@ -145,8 +143,10 @@
             <option value="ast" class="dark:bg-sidebar bg-sidebar-light"
                 >Show AST (Available after run)</option
             >
+        </optgroup>
+        <optgroup label="Output" class="dark:bg-sidebar bg-sidebar-light">
             <option value="sidebar" class="dark:bg-sidebar bg-sidebar-light"
-                >Hide/Show sidebar (output)</option
+                >Toggle Sidebar (output)</option
             >
         </optgroup>
     </select>
