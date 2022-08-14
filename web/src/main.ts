@@ -109,7 +109,7 @@ require(['vs/editor/editor.main'], () => {
         tokenizer: {
             root: [
                 [/\/\/.*$/, 'comment'],
-                [/\@\{.*\}/, 'decorator'],
+                [/@{[^\}]*}/, 'decorator'],
                 [/[{}()\[\]]/, 'bracket'],
                 [
                     /@?[a-zA-Z_][\w$]*/,
