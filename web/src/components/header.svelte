@@ -39,6 +39,8 @@
                 errors: ['Evaluating...'],
                 ast: '',
             }));
+
+        toggleSidebar.update(() => true);
     };
 
     let selected: IExamples | string;
@@ -144,7 +146,7 @@
                 >Show AST (Available after run)</option
             >
             <option value="sidebar" class="dark:bg-sidebar bg-sidebar-light"
-                >d</option
+                >Hide/Show sidebar (output)</option
             >
         </optgroup>
     </select>

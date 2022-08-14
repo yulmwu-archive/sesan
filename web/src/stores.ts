@@ -9,4 +9,4 @@ export let results = writable<IResults>({
     ast: '',
 });
 export let ast = writable('');
-export let toggleSidebar = writable(false);
+export let toggleSidebar = writable(true);
