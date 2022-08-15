@@ -1002,7 +1002,7 @@ println(pattern <- replace('b'));
     implement();
 }
 
-<if> implement(); // only `if` body
+<keywords> implement();
 ```
 
 > extends [`<keywords>`](#keywords), [`<if>`](#if)

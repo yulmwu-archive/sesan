@@ -1,15 +1,15 @@
 /// Standard Library: IO
 /// 
 /// Author: @tsukiroku (https://github.com/tsukiroku)
-/// Updated on 2022/08/03 (12:35 AM, KST)
+/// Updated on 2022/08/15 (12:45 PM, KST)
 
 use '@std/util';
 
 @funcTools <- skip;
-func print() { __builtin_print(this <- arguments, ''); }
+func print() __builtin_print(this <- arguments, '');
 
 @funcTools <- skip;
-func println() { __builtin_print(this <- arguments, '\n'); }
+func println() __builtin_print(this <- arguments, '\n');
 
 @funcTools <- skip;
-func readline() { __builtin_readline(this <- arguments); }
+func readline() __builtin_readline(this <- arguments);

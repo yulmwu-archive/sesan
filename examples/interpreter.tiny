@@ -19,9 +19,7 @@ func tokenizer(input) {
         while (
             (current <- ch == ' ') || (current <- ch == '\t') ||
             (current <- ch == '\n') || (current <- ch == '\r')
-        ) {
-            readChar();
-        }
+        ) readChar();
     }
 
     @funcTools <- capture
@@ -35,9 +33,8 @@ func tokenizer(input) {
         let pos = current <- pos;
 
         if (!isDigit(current <- ch)) {
-            while (isLetter(current <- ch) || isDigit(current <- ch)) {
+            while (isLetter(current <- ch) || isDigit(current <- ch))
                 readChar();
-            }
 
             let literal = join(slice(split(input, ''), pos, current <- pos), '');
 
@@ -74,14 +71,10 @@ func tokenizer(input) {
     }
 
     @funcTools <- capture
-    func isLetter(ch) {
-        return regex('[a-zA-Z]', 'g', ch) <- test() || (ch == '_');
-    }
+    func isLetter(ch) regex('[a-zA-Z]', 'g', ch) <- test() || (ch == '_');
 
     @funcTools <- capture
-    func isDigit(ch) {
-        return regex('[0-9]', 'g', ch) <- test() || (ch == '.');
-    }
+    func isDigit(ch) regex('[0-9]', 'g', ch) <- test() || (ch == '.');
 
     @funcTools <- capture
     func nextToken() {
@@ -91,7 +84,7 @@ func tokenizer(input) {
 
         let _ch = current <- ch;
 
-        func expect(value) { return _ch == value; }
+        func expect(value) _ch == value;
 
         if (expect('\0'))       token = { type: 'EOF', literal: '' };
         else if (expect('='))   token = { type: 'ASSIGN', literal: '=' };
@@ -103,9 +96,8 @@ func tokenizer(input) {
         if (
             ((token <- type) == 'IDENT') || 
             ((token <- type) == 'LET') || 
-            ((token <- type) == 'NUMBER')) {
-            return token;
-        }
+            ((token <- type) == 'NUMBER'))
+        return token;
 
         readChar();
 

@@ -359,7 +359,7 @@ export default class Parser {
 
                 const parameters = this.parseFunctionParameters();
 
-                const body = this.parseBlockStatement(false);
+                const body = this.parseBlockStatement(true);
 
                 if (!body) return null;
 
@@ -608,12 +608,6 @@ export default class Parser {
     }
 
     private parseBlockStatement(short: boolean): Tiny.BlockStatement | null {
-        if (!this.peekTokenIs(Tiny.TokenType.LBRACE) && !short) {
-            this.pushError(this.messages.parserError.invalidBodyBlock);
-
-            return null;
-        }
-
         if (!this.peekTokenIs(Tiny.TokenType.LBRACE)) {
             this.nextToken();
 

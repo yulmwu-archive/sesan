@@ -1,25 +1,25 @@
 /// Standard Library: Array
 /// 
 /// Author: @tsukiroku (https://github.com/tsukiroku)
-/// Updated on 2022/08/06 (11:10 AM, KST)
+/// Updated on 2022/08/15 (12:45 PM, KST)
 
-func push(arr, value) { return __builtin_push(arr, value); }
+func push(arr, value) __builtin_push(arr, value);
 
-func pop(arr) { return __builtin_pop(arr); }
+func pop(arr) __builtin_pop(arr);
 
-func shift(arr) { return __builtin_shift(arr); }
+func shift(arr) __builtin_shift(arr);
 
-func unshift(arr, value) { return __builtin_unshift(arr, value); }
+func unshift(arr, value) __builtin_unshift(arr, value);
 
-func slice(arr, start, end) { return __builtin_slice(arr, start, end); }
+func slice(arr, start, end) __builtin_slice(arr, start, end);
 
-func join(arr, separator) { return __builtin_join(arr, separator); }
+func join(arr, separator) __builtin_join(arr, separator);
 
-func forEach(arr, callback) { return __builtin_forEach(arr, callback); }
+func forEach(arr, callback) __builtin_forEach(arr, callback);
 
 @funcTools <- skip;
-func repeat(x, r) {
-    return match(length(this <- arguments), [
+func repeat(x, r) 
+    match(length(this <- arguments), [
         [1, func(value) {
             let _x = 0;
             let result = [];
@@ -42,10 +42,7 @@ func repeat(x, r) {
 
             return result;
         }]
-    ], func(value) {
-        return null;
-    });
-}
+    ], func(value) return null;);
 
 func reduce(arr, callback, initial) {
     let result = initial;
