@@ -162,7 +162,7 @@ export default class Parser {
         return {
             debug: 'parseWhileStatement>return',
             condition: this.parseExpression(Tiny.Priority.LOWEST),
-            body: this.parseBlockStatement(false),
+            body: this.parseBlockStatement(),
             kind: Tiny.NodeKind.WhileStatement,
             ...this.currPos(),
         };
@@ -320,14 +320,14 @@ export default class Parser {
 
                 if (!this.expectPeek(Tiny.TokenType.RPAREN)) return null;
 
-                const consequence = this.parseBlockStatement(true);
+                const consequence = this.parseBlockStatement();
 
                 let alternative: Tiny.Expression | null = null;
 
                 if (this.peekTokenIs(Tiny.TokenType.ELSE)) {
                     this.nextToken();
 
-                    alternative = this.parseBlockStatement(true);
+                    alternative = this.parseBlockStatement();
                 }
 
                 return {
@@ -359,8 +359,7 @@ export default class Parser {
 
                 const parameters = this.parseFunctionParameters();
 
-                const body = this.parseBlockStatement(true);
-
+                const body = this.parseBlockStatement();
                 if (!body) return null;
 
                 return {
@@ -607,17 +606,17 @@ export default class Parser {
         }
     }
 
-    private parseBlockStatement(short: boolean): Tiny.BlockStatement | null {
+    private parseBlockStatement(): Tiny.BlockStatement | null {
         if (!this.peekTokenIs(Tiny.TokenType.LBRACE)) {
             this.nextToken();
 
-            const statement = this.parseStatement();
+            const statements = this.parseStatement();
 
-            if (!statement) return null;
+            if (!statements) return null;
 
             return {
                 debug: 'parseBlockStatement>return',
-                statements: [statement],
+                statements: [statements],
                 returnFinal: true,
                 kind: Tiny.ExpressionKind.Block,
                 ...this.currPos(),
@@ -636,7 +635,20 @@ export default class Parser {
         ) {
             const statement = this.parseStatement();
             if (statement) statements.push(statement);
+
             this.nextToken();
+        }
+
+        if (!this.currTokenIs(Tiny.TokenType.RBRACE)) {
+            this.pushError(
+                Tiny.errorFormatter(
+                    this.messages.parserError.unexpectedToken,
+                    Tiny.TokenType.RPAREN,
+                    this.peekToken.type
+                )
+            );
+
+            return null;
         }
 
         return {
