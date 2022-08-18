@@ -600,6 +600,8 @@ Cannot reassign values ​​with the `element` operator, must use `index`.
 ```
 if <condition expression [boolean]> <block expression>
 else <block expression>
+
+if <condition expression [boolean]> <expression> else <expression>
 ```
 
 > extends [`<block expression>`](#block-expression)

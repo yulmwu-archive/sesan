@@ -1,5 +1,9 @@
-let hello = func(name) {
-    return 'Hello, ' + name + '!';
-};
+@funcTools <- skip
+func hello() concat('Hello,', join(this <- arguments, ''));
 
-println(hello('World'));
+println(
+    hello(
+        reduce(['W', 'o', 'r', 'l', 'd'], func (prev, curr) prev + curr, ''),
+        '!'
+    )
+);

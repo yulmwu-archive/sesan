@@ -262,6 +262,7 @@ require(['vs/editor/editor.main'], () => {
             : `// Welcome to the Tiny language playground.
 // Try writing some code, try running it.
 // you can run it by clicking the 'Run' button.
+// requests sent to the server only return result values!
 
 // Try it
 // - Share    : you can share your code by url.

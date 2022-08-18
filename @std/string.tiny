@@ -1,18 +1,18 @@
 /// Standard Library: String
 /// 
 /// Author: @tsukiroku (https://github.com/tsukiroku)
-/// Updated on 2022/08/15 (02:10 PM, KST)
+/// Updated on 2022/08/15 (08:25 PM, KST)
 
 func subString(str, start, end) join(slice(split(str, ''), start, end), '');
 
 func regex(pattern, flags, str) {
     return {
         match: 
-            func () regExp({ pattern, flags }, { type: 'match', str });,
+            func () regExp({ pattern, flags }, { type: 'match', str }),
         test: 
-            func () regExp({ pattern, flags }, { type: 'test', str });,
+            func () regExp({ pattern, flags }, { type: 'test', str }),
         replace: 
-            func (replace) regExp({ pattern, flags }, { type: 'replace', str, replace });,
+            func (replace) regExp({ pattern, flags }, { type: 'replace', str, replace }),
         pattern,
         flags,
         str

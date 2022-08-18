@@ -1,5 +1,5 @@
 let str = 'Hello World';
-let str2 = "Hello World";
+// let str = "Hello World";
 
 let num = 10;
 let num2 = 3.141592;
@@ -18,4 +18,8 @@ let function = func (x, y) {
     return x + y;
 };
 
-println(str, str2, num, num2, bool, bool2, arr, hash, function(1, 2));
+// let function = func (x, y) x + y;
+
+println(
+    join([str, num, num2, bool, bool2, arr, hash, function(1, 2)], '\n')
+);

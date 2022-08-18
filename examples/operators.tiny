@@ -1,15 +1,11 @@
-func expect_true(v, i) {
-    if (!v) throw '❌';
-}
-
-forEach([
+println([
     2 == 2,
     1 != 2,
     1 < 2,
     2 > 1,
     1 <= 2,
     2 >= 1
-], expect_true);
+]);
 
 println('a' + 'b' + 'c');
 println([1, 2, 3] + [4, 5, 6]);
@@ -34,13 +30,13 @@ println(dict <- a);
 println(dict <- 'b');
 println([1, 2, 3] <- 1);
 
-forEach([
+println([
     3 in [1, 2, 3],
     'a' in ['a', 'b', 'c'],
     'a' in 'abc',
     3 in { 1: 'a', 2: 'b', 3: 'c' },
     { 'a': 1, 'b': 2, 'c': 3 } in 3
-], expect_true);
+]);
 
 println(null ?? 5);
 println(10 ?? 5);

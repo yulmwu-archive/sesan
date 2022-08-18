@@ -6,7 +6,7 @@ func tokenizer(input) {
 
     func readChar() {
         if (current <- readPos >= length(input))
-            current['ch'] = '\0';
+            current['ch'] = '\0'
         else current['ch'] = split(input, '') <- (current <- readPos);
 
         current['pos'] = current <- readPos;
@@ -21,8 +21,8 @@ func tokenizer(input) {
     }
 
     func peekChar() {
-        if (current <- readPos >= length(input)) return '\0';
-        else return split(input, '') <- (current <- readPos);
+        return if (current <- readPos >= length(input)) '\0'
+        else split(input, '') <- (current <- readPos);
     }
 
     func readIdent() {
@@ -36,8 +36,8 @@ func tokenizer(input) {
 
             return {
                 type: (
-                        if (ch == 'let') 'LET';
-                        else 'IDENT';
+                        if (literal == 'let') 'LET'
+                        else 'IDENT'
                     ),
                 literal
             };
@@ -78,18 +78,19 @@ func tokenizer(input) {
 
         func expect(value) _ch == value;
 
-        if (expect('\0'))       token = { type: 'EOF', literal: '' };
-        else if (expect('='))   token = { type: 'ASSIGN', literal: '=' };
-        else if (expect(';'))   token = { type: 'SEMICOLON', literal: ';' };
-        else if (isLetter(_ch)) token = readIdent();
-        else if (isDigit(_ch))  token = readNumber();
+        if (expect('\0'))       token = { type: 'EOF', literal: '' }
+        else if (expect('='))   token = { type: 'ASSIGN', literal: '=' }
+        else if (expect(';'))   token = { type: 'SEMICOLON', literal: ';' }
+        else if (isLetter(_ch)) token = readIdent()
+        else if (isDigit(_ch))  token = readNumber()
         else                    token = { type: 'ILLEGAL', literal: _ch };
 
         if (
             ((token <- type) == 'IDENT') || 
             ((token <- type) == 'LET') || 
-            ((token <- type) == 'NUMBER'))
-        return token;
+            ((token <- type) == 'NUMBER')) {
+            return token;
+        }
 
         readChar();
 
@@ -108,5 +109,7 @@ forEach(true, func (_) {
 
     println(token);
 
-    if ((token <- type) == 'EOF') return false;
+    if ((token <- type) == 'EOF') {
+        return false;
+    }
 });

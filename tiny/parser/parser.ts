@@ -610,13 +610,20 @@ export default class Parser {
         if (!this.peekTokenIs(Tiny.TokenType.LBRACE)) {
             this.nextToken();
 
-            const statements = this.parseStatement();
+            const expression = this.parseExpression(Tiny.Priority.LOWEST);
 
-            if (!statements) return null;
+            if (!expression) return null;
 
             return {
                 debug: 'parseBlockStatement>return',
-                statements: [statements],
+                statements: [
+                    {
+                        debug: 'parseBlockStatement>return>statement',
+                        expression,
+                        kind: Tiny.NodeKind.ExpressionStatement,
+                        ...this.currPos(),
+                    },
+                ],
                 returnFinal: true,
                 kind: Tiny.ExpressionKind.Block,
                 ...this.currPos(),
