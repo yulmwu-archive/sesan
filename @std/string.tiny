@@ -1,30 +1,18 @@
 /// Standard Library: String
 /// 
 /// Author: @tsukiroku (https://github.com/tsukiroku)
-/// Updated on 2022/08/15 (12:45 PM, KST)
+/// Updated on 2022/08/15 (02:10 PM, KST)
 
 func subString(str, start, end) join(slice(split(str, ''), start, end), '');
 
 func regex(pattern, flags, str) {
-    @funcTools <- capture
-    func match() regExp({ pattern, flags }, 
-        { type: 'match', str }
-    );
-
-    @funcTools <- capture
-    func test() regExp({ pattern, flags },
-        { type: 'test', str }
-    );
-
-    @funcTools <- capture
-    func replace(replace) regExp({ pattern, flags }, 
-        {  type: 'replace', str, replace }
-    );
-
     return {
-        match,
-        test,
-        replace,
+        match: 
+            func () regExp({ pattern, flags }, { type: 'match', str });,
+        test: 
+            func () regExp({ pattern, flags }, { type: 'test', str });,
+        replace: 
+            func (replace) regExp({ pattern, flags }, { type: 'replace', str, replace });,
         pattern,
         flags,
         str

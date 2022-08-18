@@ -627,14 +627,12 @@ export default class Evaluator {
                     parameters,
                     enviroment,
                     thisObject,
-                    this.getDecorator('capture', functionObject)
-                        ? (
-                              this.getDecorator(
-                                  'capture',
-                                  functionObject
-                              ) as Tiny.BooleanObject
-                          ).value
-                        : false
+                    (
+                        this.getDecorator(
+                            'noCapture',
+                            functionObject
+                        ) as Tiny.BooleanObject
+                    )?.value ?? false
                 )
             );
 
@@ -668,12 +666,12 @@ export default class Evaluator {
         parameters: Array<Tiny.LangObject>,
         enviroment: Tiny.Enviroment,
         thisObject: Tiny.LangObject,
-        capture: boolean
+        noCapture: boolean
     ): Tiny.Enviroment {
         if (functionObject?.kind === Tiny.ObjectKind.FUNCTION) {
             let extendEnviroment = new Tiny.Enviroment(enviroment);
 
-            if (capture) extendEnviroment = functionObject.enviroment;
+            if (!noCapture) extendEnviroment.outer = functionObject.enviroment;
 
             functionObject.parameters.forEach(
                 (param: Tiny.Expression, i: number) => {

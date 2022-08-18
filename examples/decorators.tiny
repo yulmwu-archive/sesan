@@ -6,10 +6,8 @@ func foo() {
 
     let x = join(this <- arguments, ' ');
 
-    @{ capture: true }
-    func ret() {
-        println(x);
-    };
+    // @{ noCapture: true } // Identifier 'x' is not defined.
+    func ret() println(x);
 
     return ret;
 };
