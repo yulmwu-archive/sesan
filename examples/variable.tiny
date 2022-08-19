@@ -9,7 +9,7 @@ let bool2 = false;
 
 let arr = [1, 2, 3, 4, 5];
 
-let hash = {
+let object = {
     name: 'John',
     age: 30
 };
@@ -21,5 +21,5 @@ let function = func (x, y) {
 // let function = func (x, y) x + y;
 
 println(
-    join([str, num, num2, bool, bool2, arr, hash, function(1, 2)], '\n')
+    join([str, num, num2, bool, bool2, arr, object, function(1, 2)], '\n')
 );

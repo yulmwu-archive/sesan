@@ -5,7 +5,7 @@ export type LangObject =
     | StringObject
     | BooleanObject
     | ArrayObject
-    | HashObject
+    | ObjectObject
     | FunctionObject
     | BuiltinFunction
     | ReturnValue
@@ -19,7 +19,7 @@ export const enum ObjectKind {
     STRING,
     BOOLEAN,
     ARRAY,
-    HASH,
+    OBJECT,
     FUNCTION,
     BUILTIN,
     RETURN_VALUE,
@@ -50,7 +50,7 @@ export const objectStringify = (
                 .map((v) => objectStringify(v, true))
                 .join(', ')}]`;
 
-        case ObjectKind.HASH:
+        case ObjectKind.OBJECT:
             return `{ ${[...obj.pairs.entries()]
                 .map(
                     ([key, value]) =>
@@ -95,8 +95,8 @@ export const objectKindStringify = (kind: ObjectKind): string => {
         case ObjectKind.ARRAY:
             return 'ARRAY';
 
-        case ObjectKind.HASH:
-            return 'HASH';
+        case ObjectKind.OBJECT:
+            return 'OBJECT';
 
         case ObjectKind.FUNCTION:
             return 'FUNCTION';
@@ -141,15 +141,15 @@ export interface ArrayObject {
     kind: ObjectKind.ARRAY;
 }
 
-export interface HashObject {
+export interface ObjectObject {
     pairs: Map<NumberObject | StringObject, LangObject>;
-    kind: ObjectKind.HASH;
+    kind: ObjectKind.OBJECT;
 }
 
 export interface FunctionObject {
     function: Tiny.Expression;
     parameters: Array<Tiny.Expression>;
-    decorator?: HashObject;
+    decorator?: ObjectObject;
     body: Tiny.Expression;
     enviroment: Tiny.Enviroment;
     option: Tiny.Options;

@@ -21,8 +21,6 @@ export interface Errors {
         invalidFunction: string;
         identifierNotDefined_1: string;
         identifierNotDefined_2: string;
-        identifierAlreadyDefined: string;
-        functionAlreadyDefined: string;
         typeMismatch_1: string;
         typeMismatch_2: string;
         indexOutOfRange: string;
@@ -57,8 +55,6 @@ const errorsLocale: Record<'en' | 'ko', Errors> = {
             invalidFunction: "'{0}' is not a function.",
             identifierNotDefined_1: "'{0}' is not defined.",
             identifierNotDefined_2: "Identifier '{0}' is not defined.",
-            identifierAlreadyDefined: "Identifier '{0}' is already defined.",
-            functionAlreadyDefined: "Function '{0}' is already defined.",
             typeMismatch_1: 'Type mismatch.',
             typeMismatch_2: 'Type mismatch: [{0}], [{1}].',
             indexOutOfRange: 'Index out of range.',
@@ -93,9 +89,6 @@ const errorsLocale: Record<'en' | 'ko', Errors> = {
             invalidFunction: "'{0}' 은(는) 함수가 아닙니다.",
             identifierNotDefined_1: "'{0}' 이(가) 정의되지 않았습니다.",
             identifierNotDefined_2: "식별자 '{0}' 이(가) 정의되지 않았습니다.",
-            identifierAlreadyDefined:
-                "식별자 '{0}' 은(는) 이미 정의되었습니다.",
-            functionAlreadyDefined: "함수 '{0}' 은(는) 이미 정의되었습니다.",
             typeMismatch_1: '유형이 일치하지 않습니다.',
             typeMismatch_2: '유형이 일치하지 않습니다: [{0}], [{1}].',
             indexOutOfRange: '인덱스가 범위를 벗어났습니다.',

@@ -31,21 +31,21 @@ const regExp: Tiny.Func = (
 ): Tiny.LangObject => {
     if (
         parameters.length !== 2 ||
-        parameters[0]?.kind !== Tiny.ObjectKind.HASH ||
-        parameters[1]?.kind !== Tiny.ObjectKind.HASH
+        parameters[0]?.kind !== Tiny.ObjectKind.OBJECT ||
+        parameters[1]?.kind !== Tiny.ObjectKind.OBJECT
     )
         return Tiny.invalidArgument(position, evaluator.options);
 
     const get = (
-        hash: Map<Tiny.NumberObject | Tiny.StringObject, Tiny.LangObject>,
+        object: Map<Tiny.NumberObject | Tiny.StringObject, Tiny.LangObject>,
         key: string,
-        defaultType: 'string' | 'hash' = 'string'
+        defaultType: 'string' | 'object' = 'string'
     ) =>
-        new Map([...hash].map(([key, value]) => [key.value, value])).get(key) ??
+        new Map([...object].map(([key, value]) => [key.value, value])).get(key) ??
         (defaultType === 'string'
             ? { kind: Tiny.ObjectKind.STRING, value: '' }
             : {
-                  kind: Tiny.ObjectKind.HASH,
+                  kind: Tiny.ObjectKind.OBJECT,
                   value: new Map(),
               });
 
@@ -79,7 +79,7 @@ const regExp: Tiny.Func = (
                 value: str.replace(regex, (match) =>
                     (
                         get(
-                            (parameters[1] as Tiny.HashObject).pairs,
+                            (parameters[1] as Tiny.ObjectObject).pairs,
                             'replace'
                         ) as Tiny.StringObject
                     )?.value.replaceAll('$1', match)

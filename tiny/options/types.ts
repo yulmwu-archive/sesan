@@ -4,7 +4,6 @@ export interface IOptions {
     useStdLibAutomatically: boolean;
     stderrPrefix: boolean;
     stderrColor: boolean;
-    strictMode: boolean;
     locale: string;
 }
 

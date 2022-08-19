@@ -26,7 +26,7 @@ const length: Tiny.Func = (
     if (
         parameters.length !== 1 ||
         (parameters[0]?.kind !== Tiny.ObjectKind.ARRAY &&
-            parameters[0]?.kind !== Tiny.ObjectKind.HASH &&
+            parameters[0]?.kind !== Tiny.ObjectKind.OBJECT &&
             parameters[0]?.kind !== Tiny.ObjectKind.STRING)
     )
         return Tiny.NULL;
@@ -45,7 +45,7 @@ const length: Tiny.Func = (
 
     return {
         kind: Tiny.ObjectKind.NUMBER,
-        value: (parameters[0] as Tiny.HashObject).pairs.size,
+        value: (parameters[0] as Tiny.ObjectObject).pairs.size,
     };
 };
 
@@ -227,7 +227,7 @@ const options: Tiny.Func = (
     evaluator: Tiny.Evaluator
 ): Tiny.LangObject => {
     return {
-        kind: Tiny.ObjectKind.HASH,
+        kind: Tiny.ObjectKind.OBJECT,
         pairs: new Map(
             Object.entries(evaluator.options).map(([key, value]) => [
                 {
@@ -300,7 +300,7 @@ const curr: Tiny.Func = (
     evaluator: Tiny.Evaluator,
     position: Tiny.Position
 ): Tiny.LangObject => ({
-    kind: Tiny.ObjectKind.HASH,
+    kind: Tiny.ObjectKind.OBJECT,
     pairs: new Map([
         [
             { kind: Tiny.ObjectKind.STRING, value: 'line' },

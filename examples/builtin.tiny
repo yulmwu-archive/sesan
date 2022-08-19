@@ -9,11 +9,11 @@ if (option <- 'allowJavaScript') js('console.log("こんにちは、世界！");
 
 // For `convert` Function, See Examples -> Utility (`string`, `number`, `boolean`).
 
-let hash = {
+let object = {
     name: 'John',
     age: 30,
     girlFriend: void 0,
-    hello: func () println('Hello, ' + hash <- 'name')
+    hello: func () println('Hello, ' + object <- 'name')
 };
 
-(hash <- hello)();
+object <- hello();

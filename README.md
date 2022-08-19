@@ -13,7 +13,6 @@
 -   [Built-in functions](#built-in-functions)
 -   [Standard library](#standard-library)
 -   [Options](#options)
-    -   [Strict mode](#strict-mode)
 -   [Npm package](#npm-package)
 -   [Examples](#examples)
 -   [Documentation](#documentation)
@@ -99,7 +98,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 | `If`       | `if (expr) [block] else [block];` | `Function` | `func [name?](args) [block]` |
 | `Call`     | `ident(args)`                     | `Ident`    |                              |
 | `Array`    | `[expr, expr, ...]`               | `Index`    | `ident[number]`              |
-| `Hash`     | `{ string: expr, ... }`           | `Assign`   | `[ident / index] = expr`     |
+| `Object`     | `{ string: expr, ... }`           | `Assign`   | `[ident / index] = expr`     |
 
 <br />
 
@@ -135,21 +134,21 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 | Operator | Syntax       | Literal Type                                          |
 | -------- | ------------ | ----------------------------------------------------- |
-| `+`      | `... + ...`  | `number`, `array`, `string`, `hash`                   |
+| `+`      | `... + ...`  | `number`, `array`, `string`, `object`                   |
 | `-`      | `... - ...`  | `number`                                              |
 | `*`      | `... * ...`  | `number`                                              |
 | `/`      | `... / ...`  | `number`                                              |
 | `%`      | `... % ...`  | `number`                                              |
-| `==`     | `... == ...` | `number, string, boolean, array, hash`                |
-| `!=`     | `... != ...` | `number, string, boolean, array, hash`                |
+| `==`     | `... == ...` | `number, string, boolean, array, object`                |
+| `!=`     | `... != ...` | `number, string, boolean, array, object`                |
 | `<`      | `... < ...`  | `number`                                              |
 | `>`      | `... > ...`  | `number`                                              |
 | `<=`     | `... <= ...` | `number`                                              |
 | `>=`     | `... >= ...` | `number`                                              |
-| `<-`     | `... <- ...` | `array, hash`, `Any`                                  |
+| `<-`     | `... <- ...` | `array, object`, `Any`                                  |
 | `.`      | extends `<-` | extends `<-`                                          |
 | `??`     | `... ?? ...` | `Any`                                                 |
-| `in`     | `... in ...` | `string, number, hash`, `string, number, hash, array` |
+| `in`     | `... in ...` | `string, number, object`, `string, number, object, array` |
 
 <br />
 
@@ -200,7 +199,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
         -   `reduce(array, callback, initial) -> Any`
             -   `callback(previous, current)`
     -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
-        -   `funcTools -> hash`
+        -   `funcTools -> object`
         -   `length(array) -> number`
         -   `match(value, [pattern], default) -> Any`
         -   `string(value) -> string`
@@ -238,15 +237,7 @@ If `tiny.config.json` dose not exist in root (`./`), it extends Default.
 | `useStdLibAutomatically` | Use standard library automatically | `false` |
 | `stderrPrefix`           | Prefix for stderr                  | `true`  |
 | `stderrColor`            | Color for stderr                   | `true`  |
-| `strictMode`             | Strict mode                        | `false` |
 | `locale`                 | Locale                             | `en`    |
-
-## Strict mode
-
-```diff
-+ Variables cannot be redeclared.
-+ Functions cannot be redeclared.
-```
 
 <br />
 
@@ -279,7 +270,7 @@ console.log(
     -   [`Hello, World!`](https://github.com/tsukiroku/tiny/blob/main/examples/hello_world.tiny)
     -   [`Fibonacci`](https://github.com/tsukiroku/tiny/blob/main/examples/fibonacci.tiny)
     -   [`Function`](https://github.com/tsukiroku/tiny/blob/main/examples/function.tiny)
-    -   [`Hash`](https://github.com/tsukiroku/tiny/blob/main/examples/hash.tiny)
+    -   [`Object`](https://github.com/tsukiroku/tiny/blob/main/examples/object.tiny)
     -   [`If`](https://github.com/tsukiroku/tiny/blob/main/examples/if.tiny)
     -   [`While`](https://github.com/tsukiroku/tiny/blob/main/examples/while.tiny)
     -   [`Import`](https://github.com/tsukiroku/tiny/blob/main/examples/import.tiny)
@@ -307,7 +298,7 @@ console.log(
         -   [number](#number)
         -   [boolean](#boolean)
         -   [array](#array)
-        -   [hash](#hash)
+        -   [object](#object)
         -   [function](#function)
         -   [null](#null)
         -   [undefined](#undefined)
@@ -390,10 +381,6 @@ foo = 2;
 
 ---
 
-If the `strict` option is enabled, redeclaration is not allowed.
-
-if the variable prefix contains `_`, `strict` option is ignored and redeclaration is allowed.
-
 variable names use `camelCase` or `snake_case` and, cannot use numbers as variable prefixes.
 
 <br />
@@ -443,10 +430,10 @@ To convert another value to a boolean value, you can use the [`boolean`](#string
 
 Array elements can be accessed via the `index` or [`element`](#--operator) operator.
 
-### hash
+### object
 
 ```
-let hash = {
+let object = {
     'foo': 'bar',
     bar: false,
     baz: [1, 2, 3],
@@ -457,20 +444,20 @@ let hash = {
     }
 }
 
-hash['foo']      // 'bar'
-hash.bar         // false
-hash <- 5 <- x() // 1
+object['foo']      // 'bar'
+object.bar         // false
+object <- 5 <- x() // 1
 
-hash <- qux      // UNDEFINED
+object <- qux      // UNDEFINED
 ```
 
 ---
 
-Hash is a pair of keys and values.
+Object is a pair of keys and values.
 
 the key must be of type [`string`](#string) or [`number`](#number), and the value can be any type.
 
-hash pairs are can be accessed via the `index` or [`element`](#---operator) operator.
+object pairs are can be accessed via the `index` or [`element`](#---operator) operator.
 
 ### function
 
@@ -499,10 +486,6 @@ let bar = func(a, b) {
 ---
 
 Functions can be declared with [`hard coding`](https://en.wikipedia.org/wiki/Hard_coding), and supports anonymous functions.
-
-if the `strict` option is enabled, redeclaration is not allowed.
-
-if the function prefix contains `_`, `strict` option is ignored and redeclaration is allowed.
 
 function names use `camelCase` or `snake_case` and, cannot use numbers as variable prefixes.
 
@@ -538,7 +521,7 @@ Returns `undefined` after executing the expression.
 
 ## `+` (Plus) Operator
 
-The `+` operator is addition, and can add [`number`](#number), [`string`](#string), [`array`](#array), [`hash`](#hash).
+The `+` operator is addition, and can add [`number`](#number), [`string`](#string), [`array`](#array), [`object`](#object).
 
 `number + number` : Add the right operand to the left operand.
 
@@ -546,7 +529,7 @@ The `+` operator is addition, and can add [`number`](#number), [`string`](#strin
 
 `array + array` : Concatenate the right operand to the left operand.
 
-`hash + hash` : Add the right operand to the left operand. if there are duplicate keys, the right operand is overwritten.
+`object + object` : Add the right operand to the left operand. if there are duplicate keys, the right operand is overwritten.
 
 ## `-` (Minus) Operator
 
@@ -570,23 +553,23 @@ The `==`, `!=`, `<`, `>`, `<=`, `>=` operators are comparison operators, and can
 
 ## `<-`, `.` Operator
 
-The `element` operator, which can access array or Hash elements.
+The `element` operator, which can access array or object elements.
 
 ```
 [1, 2, 3] <- 1       // 2
 
 [1, 2, 3].1          // 2
 
-let hash = {
+let object = {
     foo: {
         bar: 'baz'
     },
 };
 
-hash <- foo <- bar   // 'baz'
-hash.foo.bar         // 'baz'
+object <- foo <- bar   // 'baz'
+object.foo.bar         // 'baz'
 
-hash['foo']['bar'] = 'qux';
+object['foo']['bar'] = 'qux';
 ```
 
 Cannot reassign values ​​with the `element` operator, must use `index`.
@@ -681,18 +664,18 @@ if `.tiny` is not included in path, `.tiny` will be added automatically.
 # Decorator
 
 ```
-@<hash>
+@<object>
 <function> // func <identifier>(<arguments>) <block expression>;
 ```
 
-> extends [`<hash>`](#hash), [`<function>`](#function)
+> extends [`<object>`](#object), [`<function>`](#function)
 
 ---
 
 ```
-let myHash = { foo: 'bar' };
+let myObject = { foo: 'bar' };
 
-@myHash
+@myObject
 func myFunc() {
     println(this <- decorator <- foo);
 }
@@ -702,7 +685,7 @@ myFunc();
 
 ---
 
-`decorator` starts with the prefix `@` and requires a [`hash`](#hash) value.
+`decorator` starts with the prefix `@` and requires a [`object`](#object) value.
 
 after that, a [`function`](#function) is required, anonymous functions cannot be used.
 
@@ -749,7 +732,7 @@ js("console.log('foo')");
 ## options
 
 ```
-options(); // hash
+options(); // object
 ```
 
 Get project options. this cannot be modified.
@@ -1049,7 +1032,7 @@ Returns the type of the given expression.
 typeof 10; // NUMBER
 typeof 'foo'; // STRING
 typeof true; // BOOLEAN
-typeof {}; // HASH
+typeof {}; // OBJECT
 typeof []; // ARRAY
 typeof null; // NULL
 typeof func() {}; // FUNCTION

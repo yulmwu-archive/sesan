@@ -38,7 +38,7 @@ export type Expression =
     | IdentExpression
     | ArrayExpression
     | IndexExpression
-    | HashExpression
+    | ObjectExpression
     | TypeofExpression
     | ThrowExpression
     | DeleteExpression
@@ -58,7 +58,7 @@ export enum ExpressionKind {
     Ident,
     Array,
     Index,
-    Hash,
+    Object,
     Typeof,
     Throw,
     Delete,
@@ -191,12 +191,12 @@ export interface IdentExpression extends Debug, Position {
     kind: ExpressionKind.Ident;
 }
 
-export interface HashExpression extends Debug, Position {
-    pairs: Array<HashPair>;
-    kind: ExpressionKind.Hash;
+export interface ObjectExpression extends Debug, Position {
+    pairs: Array<ObjectPair>;
+    kind: ExpressionKind.Object;
 }
 
-export interface HashPair extends Debug, Position {
+export interface ObjectPair extends Debug, Position {
     key: Expression;
     value: Expression;
 }

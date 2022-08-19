@@ -1,0 +1,18 @@
+let myObject = {
+    foo: 'bar',
+    bar: {
+        baz: func () {
+            return 'baz';
+        }
+    }
+};
+
+println(myObject['bar']['baz']());
+println(myObject <- bar <- baz());
+println(myObject.bar.baz());
+
+myObject['bar']['baz'] = func (x, y) {
+    return x * y;
+};
+
+println(myObject.bar.baz(2, 3));

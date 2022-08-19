@@ -383,7 +383,7 @@ export default class Parser {
                 };
 
             case Tiny.TokenType.LBRACE: {
-                const pairs: Array<Tiny.HashPair> = [];
+                const pairs: Array<Tiny.ObjectPair> = [];
 
                 while (!this.peekTokenIs(Tiny.TokenType.RBRACE)) {
                     this.nextToken();
@@ -434,7 +434,7 @@ export default class Parser {
                 return {
                     debug: 'parseHash>return',
                     pairs,
-                    kind: Tiny.ExpressionKind.Hash,
+                    kind: Tiny.ExpressionKind.Object,
                     ...this.currPos(),
                 };
             }

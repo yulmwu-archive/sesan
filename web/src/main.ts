@@ -317,8 +317,8 @@ const examples: Array<IExamplesGroup> = [
                 source: 'function.tiny',
             },
             {
-                name: 'Hash',
-                source: 'hash.tiny',
+                name: 'Object',
+                source: 'object.tiny',
             },
         ],
     },
