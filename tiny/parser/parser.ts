@@ -80,7 +80,7 @@ export default class Parser {
 
         this.pushError(
             Tiny.errorFormatter(
-                this.messages.parserError.unexpectedToken,
+                this.messages.parseError.unexpectedToken,
                 tokenType,
                 this.peekToken.type
             )
@@ -180,7 +180,7 @@ export default class Parser {
         const func = this.parseExpression(Tiny.Priority.LOWEST);
 
         if (func?.kind !== Tiny.ExpressionKind.Function) {
-            this.pushError(this.messages.parserError.decoratorRequiresFunction);
+            this.pushError(this.messages.parseError.decoratorRequiresFunction);
 
             return null;
         }
@@ -201,7 +201,7 @@ export default class Parser {
             if (!this.currTokenIs(Tiny.TokenType.SEMICOLON))
                 this.pushError(
                     Tiny.errorFormatter(
-                        this.messages.parserError.unexpectedExpression,
+                        this.messages.parseError.unexpectedExpression,
                         this.currToken.type
                     )
                 );
@@ -507,7 +507,7 @@ export default class Parser {
 
                 if (!expression)
                     this.pushError(
-                        this.messages.parserError.voidRequiresExpression
+                        this.messages.parseError.voidRequiresExpression
                     );
 
                 return {
@@ -649,7 +649,7 @@ export default class Parser {
         if (!this.currTokenIs(Tiny.TokenType.RBRACE)) {
             this.pushError(
                 Tiny.errorFormatter(
-                    this.messages.parserError.unexpectedToken,
+                    this.messages.parseError.unexpectedToken,
                     Tiny.TokenType.RPAREN,
                     this.peekToken.type
                 )

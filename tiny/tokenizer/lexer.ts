@@ -56,7 +56,7 @@ export default class Lexer {
             Tiny.printError(
                 {
                     ...this.curr(),
-                    message: this.messages.lexerError.invalidIdentifier,
+                    message: this.messages.parseError.invalidIdentifier,
                 },
                 this.filename,
                 this.options.stderr,
@@ -84,7 +84,7 @@ export default class Lexer {
                     Tiny.printError(
                         {
                             ...this.curr(),
-                            message: this.messages.lexerError.invalidNumber,
+                            message: this.messages.parseError.invalidNumber,
                         },
                         this.filename,
                         this.options.stderr,
@@ -132,7 +132,7 @@ export default class Lexer {
                 {
                     ...this.curr(),
                     message: Tiny.errorFormatter(
-                        this.messages.lexerError.invalidString,
+                        this.messages.parseError.invalidString,
                         this.input.substring(position - 1, this.position)
                     ),
                 },

@@ -5,10 +5,10 @@
 
     results.subscribe((v) => {
         if (v.errors.length > 0) {
-            errors.update(() => (v.errors ?? []).length);
+            errors.update(() => v.errors.length);
 
-            sidebar = (v.errors ?? []).join('\n');
-        } else sidebar = (v.result ?? []).join('\n');
+            sidebar = v.errors.join('');
+        } else sidebar = v.result.join('');
     });
 
     ast.subscribe((v) => (sidebar = v));

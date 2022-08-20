@@ -420,6 +420,7 @@ export default class Evaluator {
                 enviroment,
                 evaluator.options,
                 evaluator.stdio,
+                path,
                 evaluator.root
             ).eval();
         } catch (e) {

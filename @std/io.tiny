@@ -1,7 +1,7 @@
 /// Standard Library: IO
 /// 
 /// Author: @tsukiroku (https://github.com/tsukiroku)
-/// Updated on 2022/08/15 (12:45 PM, KST)
+/// Updated on 2022/08/20 (01:05 PM, KST)
 
 use '@std/util';
 
@@ -10,6 +10,3 @@ func print() __builtin_print(this <- arguments, '');
 
 @funcTools <- skip;
 func println() __builtin_print(this <- arguments, '\n');
-
-@funcTools <- skip;
-func readline() __builtin_readline(this <- arguments);

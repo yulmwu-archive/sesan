@@ -4,12 +4,10 @@ import colors from 'colors';
 colors.enabled = true;
 
 export interface Errors {
-    lexerError: {
+    parseError: {
         invalidIdentifier: string;
         invalidNumber: string;
         invalidString: string;
-    };
-    parserError: {
         unexpectedToken: string;
         unexpectedExpression: string;
         invalidBodyBlock: string;
@@ -37,12 +35,10 @@ export interface Errors {
 
 const errorsLocale: Record<'en' | 'ko', Errors> = {
     en: {
-        lexerError: {
+        parseError: {
             invalidIdentifier: 'Invalid identifier',
             invalidNumber: 'Invalid number',
             invalidString: 'Unterminated string: {0}',
-        },
-        parserError: {
             unexpectedToken:
                 "Expected next token to be '{0}', got '{1}' instead.",
             unexpectedExpression: `Expected expression, got {0} instead.`,
@@ -70,12 +66,10 @@ const errorsLocale: Record<'en' | 'ko', Errors> = {
         },
     },
     ko: {
-        lexerError: {
+        parseError: {
             invalidIdentifier: '유효하지 않은 식별자입니다.',
             invalidNumber: '유효하지 않은 숫자입니다.',
             invalidString: '종료되지 않은 문자열입니다: {0}',
-        },
-        parserError: {
             unexpectedToken:
                 "'{0}' 을(를) 예상했지만, '{1}' 을(를) 받았습니다.",
             unexpectedExpression: `식을 예상했지만, {0}을(를) 받았습니다.`,
