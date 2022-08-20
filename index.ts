@@ -1,14 +1,28 @@
-import * as TinyLang from './tiny';
+import {
+    builtinsEval,
+    Func,
+    Evaluator,
+    NULL,
+    printError,
+    Enviroment,
+    ObjectKind,
+    objectStringify,
+    Options,
+    Lexer,
+    Parser,
+    Program,
+    LangObject,
+} from './tiny';
 
 export * from './tiny';
 
 type Stdio = (...x: Array<any>) => any;
 
-interface TinyOption extends TinyLang.Options {
-    enviroment?: TinyLang.Enviroment;
+interface TinyOption extends Options {
+    enviroment?: Enviroment;
     root?: string;
     filename?: string;
-}
+};
 
 interface StdioOptions {
     stdin: Stdio;
@@ -16,7 +30,7 @@ interface StdioOptions {
     stderr: Stdio;
 }
 
-const stdin: Stdio = (...x) => TinyLang.NULL;
+const stdin: Stdio = (...x) => NULL;
 const stdout: Stdio = (...x) => process.stdout.write(x.join(' '));
 const stderr: Stdio = (...x) => process.stderr.write(`${x.join(' ')}\n`);
 
@@ -24,15 +38,15 @@ const defaultFilename: string = '<Tiny>';
 
 export default class Tiny {
     public option: TinyOption;
-    public builtins: Map<string, TinyLang.Func> = new Map();
+    public builtins: Map<string, Func> = new Map();
     public stdio: StdioOptions = { stdin, stdout, stderr };
 
     constructor(public x: string, option?: TinyOption) {
         this.option = { ...option };
     }
 
-    public tokenizer(): TinyLang.Lexer {
-        return new TinyLang.Lexer(
+    public tokenizer(): Lexer {
+        return new Lexer(
             this.x,
             {
                 ...this.option,
@@ -42,15 +56,15 @@ export default class Tiny {
         );
     }
 
-    public parser(): TinyLang.Parser {
-        return new TinyLang.Parser(this.tokenizer(), this.option);
+    public parser(): Parser {
+        return new Parser(this.tokenizer(), this.option);
     }
 
-    public parseProgram(): TinyLang.Program {
+    public parseProgram(): Program {
         const program = this.parser().parseProgram();
 
         program.errors.forEach((error) =>
-            TinyLang.printError(
+            printError(
                 error,
                 this.option.filename ?? defaultFilename,
                 this.stdio.stderr,
@@ -63,11 +77,11 @@ export default class Tiny {
         return program;
     }
 
-    public includeStdlib(env: TinyLang.Enviroment) {
+    public includeStdlib(env: Enviroment) {
         if (this.option.useStdLibAutomatically)
-            new TinyLang.Evaluator(
-                new TinyLang.Parser(
-                    new TinyLang.Lexer(
+            new Evaluator(
+                new Parser(
+                    new Lexer(
                         `import('@std/lib');`,
                         {
                             ...this.option,
@@ -85,11 +99,8 @@ export default class Tiny {
             ).eval();
     }
 
-    public evaluate(
-        program: TinyLang.Program,
-        env: TinyLang.Enviroment
-    ): TinyLang.LangObject {
-        const result = new TinyLang.Evaluator(
+    public evaluate(program: Program, env: Enviroment): LangObject {
+        const result = new Evaluator(
             program,
             env,
             this.option,
@@ -98,8 +109,8 @@ export default class Tiny {
             this.option.root
         ).eval();
 
-        if (result?.kind === TinyLang.ObjectKind.ERROR)
-            TinyLang.printError(
+        if (result?.kind === ObjectKind.ERROR)
+            printError(
                 result,
                 this.option.filename ?? defaultFilename,
                 this.stdio.stderr,
@@ -110,39 +121,35 @@ export default class Tiny {
     }
 
     public eval(): string {
-        const env = this.option.enviroment ?? new TinyLang.Enviroment();
+        const env = this.option.enviroment ?? new Enviroment();
 
         this.includeStdlib(env);
 
-        return TinyLang.objectStringify(
-            this.evaluate(this.parseProgram(), env)
-        );
+        return objectStringify(this.evaluate(this.parseProgram(), env));
     }
 
-    public evalProgram(program: TinyLang.Program): string {
-        const env = this.option.enviroment ?? new TinyLang.Enviroment();
+    public evalProgram(program: Program): string {
+        const env = this.option.enviroment ?? new Enviroment();
 
         this.includeStdlib(env);
 
-        return TinyLang.objectStringify(this.evaluate(program, env));
+        return objectStringify(this.evaluate(program, env));
     }
 
-    public setBuiltin(name: string, func: TinyLang.Func): Tiny {
+    public setBuiltin(name: string, func: Func): Tiny {
         this.builtins.set(name, func);
 
         return this;
     }
 
-    public setBuiltins(builtins: Map<string, TinyLang.Func>): Tiny {
+    public setBuiltins(builtins: Map<string, Func>): Tiny {
         builtins.forEach((func, name) => this.setBuiltin(name, func));
 
         return this;
     }
 
     public applyBuiltins(): Tiny {
-        this.builtins.forEach((func, name) =>
-            TinyLang.builtinsEval.set(name, func)
-        );
+        this.builtins.forEach((func, name) => builtinsEval.set(name, func));
 
         return this;
     }
