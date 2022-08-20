@@ -21,7 +21,10 @@
                 )
                 .then((res) => {
                     console.log(res.data);
+
                     results.update(() => res.data);
+
+                    document.title = res.data.title ?? 'Tiny playground';
                 })
                 .catch((err) =>
                     results.update(() => ({
