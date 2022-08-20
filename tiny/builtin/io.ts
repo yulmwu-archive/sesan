@@ -7,7 +7,7 @@ const print: Tiny.Func = (
 ): Tiny.LangObject => {
     if (parameters[0]?.kind !== Tiny.ObjectKind.ARRAY) return Tiny.NULL;
 
-    evaluator.stdio.stdout(
+    evaluator.option.stdio.stdout(
         `${parameters[0]?.value
             .map((arg) => Tiny.objectStringify(arg))
             .join(' ')}${Tiny.objectStringify(parameters[1])}`

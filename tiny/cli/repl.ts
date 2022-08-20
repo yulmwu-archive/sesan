@@ -50,27 +50,16 @@ export default class {
 
         if (commands.has(command)) return commands.get(command)!(...args);
         else {
-            const result = new Tiny.Evaluator(
-                parsed,
-                env,
-                this.option,
-                {
+            const result = new Tiny.Evaluator(parsed, env, {
+                ...this.option,
+                stdio: {
                     stdin: this.promptSync,
                     stdout: Tiny.stdout,
                     stderr: Tiny.stderr,
                 },
-                defaultFilename
-            ).eval();
-
-            if (result?.kind === Tiny.ObjectKind.ERROR) {
-                Tiny.printError(
-                    result,
-                    defaultFilename,
-                    Tiny.stdout,
-                    this.option
-                );
-                return '';
-            }
+                filename: defaultFilename,
+                root: './',
+            }).eval();
 
             switch (this.mode) {
                 case 'repl':
@@ -113,13 +102,16 @@ export default class {
                     this.option
                 ).parseProgram(),
                 this.env,
-                this.option,
                 {
-                    stdin: this.promptSync,
-                    stdout: Tiny.stdout,
-                    stderr: Tiny.stderr,
-                },
-                defaultFilename
+                    ...this.option,
+                    stdio: {
+                        stdin: this.promptSync,
+                        stdout: Tiny.stdout,
+                        stderr: Tiny.stderr,
+                    },
+                    filename: defaultFilename,
+                    root: './',
+                }
             ).eval();
 
         while (true) {

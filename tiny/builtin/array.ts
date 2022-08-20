@@ -11,7 +11,7 @@ const push: Func = (
         parameters.length !== 2 ||
         parameters[0]?.kind !== Tiny.ObjectKind.ARRAY
     )
-        return invalidArgument(position, evaluator.options);
+        return invalidArgument(position, evaluator.option);
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
@@ -29,7 +29,7 @@ const pop: Func = (
         parameters.length !== 1 ||
         parameters[0]?.kind !== Tiny.ObjectKind.ARRAY
     )
-        return invalidArgument(position, evaluator.options);
+        return invalidArgument(position, evaluator.option);
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
@@ -47,7 +47,7 @@ const shift: Func = (
         parameters.length !== 1 ||
         parameters[0]?.kind !== Tiny.ObjectKind.ARRAY
     )
-        return invalidArgument(position, evaluator.options);
+        return invalidArgument(position, evaluator.option);
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
@@ -65,7 +65,7 @@ const unshift: Func = (
         parameters.length !== 2 ||
         parameters[0]?.kind !== Tiny.ObjectKind.ARRAY
     )
-        return invalidArgument(position, evaluator.options);
+        return invalidArgument(position, evaluator.option);
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
@@ -85,7 +85,7 @@ const slice: Func = (
         parameters[1]?.kind !== Tiny.ObjectKind.NUMBER ||
         parameters[2]?.kind !== Tiny.ObjectKind.NUMBER
     )
-        return invalidArgument(position, evaluator.options);
+        return invalidArgument(position, evaluator.option);
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
@@ -107,7 +107,7 @@ const join: Func = (
         parameters[0]?.kind !== Tiny.ObjectKind.ARRAY ||
         parameters[1]?.kind !== Tiny.ObjectKind.STRING
     )
-        return invalidArgument(position, evaluator.options);
+        return invalidArgument(position, evaluator.option);
 
     return {
         kind: Tiny.ObjectKind.STRING,
@@ -129,7 +129,7 @@ const forEach: Func = (
             parameters[0]?.kind !== Tiny.ObjectKind.BOOLEAN) ||
         parameters[1]?.kind !== Tiny.ObjectKind.FUNCTION
     )
-        return invalidArgument(position, evaluator.options);
+        return invalidArgument(position, evaluator.option);
 
     const func = parameters[1] as Tiny.FunctionObject;
 

@@ -22,7 +22,7 @@ interface TinyOption extends Options {
     enviroment?: Enviroment;
     root?: string;
     filename?: string;
-};
+}
 
 interface StdioOptions {
     stdin: Stdio;
@@ -92,30 +92,22 @@ export default class Tiny {
                     this.option
                 ).parseProgram(),
                 env,
-                this.option,
-                this.stdio,
-                this.option.filename ?? defaultFilename,
-                this.option.root
+                {
+                    ...this.option,
+                    stdio: this.stdio,
+                    filename: this.option.filename ?? defaultFilename,
+                    root: this.option.root ?? './',
+                }
             ).eval();
     }
 
     public evaluate(program: Program, env: Enviroment): LangObject {
-        const result = new Evaluator(
-            program,
-            env,
-            this.option,
-            this.stdio,
-            this.option.filename ?? defaultFilename,
-            this.option.root
-        ).eval();
-
-        if (result?.kind === ObjectKind.ERROR)
-            printError(
-                result,
-                this.option.filename ?? defaultFilename,
-                this.stdio.stderr,
-                this.option
-            );
+        const result = new Evaluator(program, env, {
+            ...this.option,
+            stdio: this.stdio,
+            filename: this.option.filename ?? defaultFilename,
+            root: this.option.root ?? './',
+        }).eval();
 
         return result;
     }

@@ -4,28 +4,43 @@ import * as Tiny from '../../index';
 export const NULL: Tiny.LangObject = { kind: Tiny.ObjectKind.NULL };
 export const UNDEFINED: Tiny.LangObject = { kind: Tiny.ObjectKind.UNDEFINED };
 
+export interface EvaluatorOptions extends Tiny.Options {
+    stdio: Record<'stdin' | 'stdout' | 'stderr', Tiny.Stdio>;
+    filename: string;
+    root: string;
+}
+
 export default class Evaluator {
     public messages: Tiny.Errors;
 
     constructor(
         public program: Tiny.Program,
         public enviroment: Tiny.Enviroment,
-        public options: Tiny.Options,
-        public stdio: Tiny.StdioOptions = {
-            stdin: Tiny.stdin,
-            stdout: Tiny.stdout,
-            stderr: Tiny.stderr,
-        },
-        public filename: string,
-        public root: string = './'
+        public option: EvaluatorOptions
     ) {
-        this.messages = Tiny.localization(options);
+        this.messages = Tiny.localization(option);
     }
 
     public eval(): Tiny.LangObject {
         if (this.program.errors.length > 0) return null;
 
-        return this.evalStatements(this.program.statements, this.enviroment);
+        const result = this.evalStatements(
+            this.program.statements,
+            this.enviroment
+        );
+
+        if (result?.kind === Tiny.ObjectKind.ERROR) {
+            Tiny.printError(
+                result,
+                this.option.filename,
+                this.option.stdio.stderr,
+                this.option
+            );
+
+            return null;
+        }
+
+        return result;
     }
 
     private evalStatements(
@@ -399,34 +414,30 @@ export default class Evaluator {
 
             const parsed = new Tiny.Parser(
                 new Tiny.Lexer(
-                    readFileSync(`${evaluator.root}${path}`, 'utf8'),
+                    readFileSync(`${evaluator.option.root}${path}`, 'utf8'),
                     {
-                        ...evaluator.options,
-                        stderr: evaluator.stdio.stderr,
+                        ...evaluator.option,
+                        stderr: evaluator.option.stdio.stderr,
                     },
                     path
                 ),
-                evaluator.options
+                evaluator.option
             ).parseProgram();
 
             parsed.errors.forEach((error) =>
-                Tiny.printError(error, path, evaluator.stdio.stderr, {
-                    ...evaluator.options,
+                Tiny.printError(error, path, evaluator.option.stdio.stderr, {
+                    ...evaluator.option,
                 })
             );
 
-            return new Tiny.Evaluator(
-                parsed,
-                enviroment,
-                evaluator.options,
-                evaluator.stdio,
-                path,
-                evaluator.root
-            ).eval();
+            return new Tiny.Evaluator(parsed, enviroment, {
+                ...evaluator.option,
+                filename: path,
+            }).eval();
         } catch (e) {
             return {
                 kind: Tiny.ObjectKind.ERROR,
-                message: `Could not import file: ${evaluator.root}${path}`,
+                message: `Could not import file: ${evaluator.option.root}${path}`,
                 ...position,
             };
         }
@@ -442,7 +453,7 @@ export default class Evaluator {
             parameters: expression.parameters,
             body: expression.body,
             enviroment: enviroment,
-            option: this.options,
+            option: this.option,
             decorator: decorator as Tiny.ObjectObject,
             kind: Tiny.ObjectKind.FUNCTION,
         };
@@ -1303,19 +1314,17 @@ export default class Evaluator {
         ) {
             return (
                 new Map(
-                    [...(left as Tiny.ObjectObject).pairs].map(([key, value]) => [
-                        key.value,
-                        value,
-                    ])
+                    [...(left as Tiny.ObjectObject).pairs].map(
+                        ([key, value]) => [key.value, value]
+                    )
                 ).get(right.value) ?? UNDEFINED
             );
         } else if (right?.kind === Tiny.ExpressionKind.Call) {
             const expression =
                 new Map(
-                    [...(left as Tiny.ObjectObject).pairs].map(([key, value]) => [
-                        key.value,
-                        value,
-                    ])
+                    [...(left as Tiny.ObjectObject).pairs].map(
+                        ([key, value]) => [key.value, value]
+                    )
                 ).get(
                     (right.function as unknown as Tiny.StringLiteral).value
                 ) ?? UNDEFINED;
