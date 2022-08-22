@@ -1,10 +1,10 @@
 /// <reference types="svelte" />
 
-declare const monaco: any;
+declare const monaco: any
 
 declare module '*.svelte' {
-    import { Components } from 'svelte';
+    import { Components } from 'svelte'
 
-    const components: Components;
-    export default components;
+    const components: Components
+    export default components
 }

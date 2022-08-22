@@ -1,5 +1,4 @@
 -   [Introduce](#introduce)
-    -   [How it works?](#how-it-works)
     -   [Start REPL](#start-repl)
     -   [REPL commands](#repl-commands)
 -   [Web Playground](#web-playground)
@@ -20,12 +19,6 @@
 <br />
 
 # Introduce
-
-## How it works?
-
-```
-[Token + Lexer] (Tokenizer) -> Parser + AST (Abstract Syntax Tree) -> Evaluator -> [Repl]
-```
 
 <br />
 
@@ -98,7 +91,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 | `If`       | `if (expr) [block] else [block];` | `Function` | `func [name?](args) [block]` |
 | `Call`     | `ident(args)`                     | `Ident`    |                              |
 | `Array`    | `[expr, expr, ...]`               | `Index`    | `ident[number]`              |
-| `Object`     | `{ string: expr, ... }`           | `Assign`   | `[ident / index] = expr`     |
+| `Object`   | `{ string: expr, ... }`           | `Assign`   | `[ident / index] = expr`     |
 
 <br />
 
@@ -132,22 +125,22 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 ## Operators
 
-| Operator | Syntax       | Literal Type                                          |
-| -------- | ------------ | ----------------------------------------------------- |
-| `+`      | `... + ...`  | `number`, `array`, `string`, `object`                   |
-| `-`      | `... - ...`  | `number`                                              |
-| `*`      | `... * ...`  | `number`                                              |
-| `/`      | `... / ...`  | `number`                                              |
-| `%`      | `... % ...`  | `number`                                              |
-| `==`     | `... == ...` | `number, string, boolean, array, object`                |
-| `!=`     | `... != ...` | `number, string, boolean, array, object`                |
-| `<`      | `... < ...`  | `number`                                              |
-| `>`      | `... > ...`  | `number`                                              |
-| `<=`     | `... <= ...` | `number`                                              |
-| `>=`     | `... >= ...` | `number`                                              |
-| `<-`     | `... <- ...` | `array, object`, `Any`                                  |
-| `.`      | extends `<-` | extends `<-`                                          |
-| `??`     | `... ?? ...` | `Any`                                                 |
+| Operator | Syntax       | Literal Type                                              |
+| -------- | ------------ | --------------------------------------------------------- |
+| `+`      | `... + ...`  | `number`, `array`, `string`, `object`                     |
+| `-`      | `... - ...`  | `number`                                                  |
+| `*`      | `... * ...`  | `number`                                                  |
+| `/`      | `... / ...`  | `number`                                                  |
+| `%`      | `... % ...`  | `number`                                                  |
+| `==`     | `... == ...` | `number, string, boolean, array, object`                  |
+| `!=`     | `... != ...` | `number, string, boolean, array, object`                  |
+| `<`      | `... < ...`  | `number`                                                  |
+| `>`      | `... > ...`  | `number`                                                  |
+| `<=`     | `... <= ...` | `number`                                                  |
+| `>=`     | `... >= ...` | `number`                                                  |
+| `<-`     | `... <- ...` | `array, object`, `Any`                                    |
+| `.`      | extends `<-` | extends `<-`                                              |
+| `??`     | `... ?? ...` | `Any`                                                     |
 | `in`     | `... in ...` | `string, number, object`, `string, number, object, array` |
 
 <br />
@@ -243,12 +236,18 @@ If `tiny.config.json` dose not exist in root (`./`), it extends Default.
 
 # Npm package
 
+> **Warning**
+>
+> Some features may not be updated immediately.
+>
+> when updating fatal errors, [npm package](#npm-package) is also updated immediately.
+
 ```sh
 npm i @tsukiroku/tiny
 ```
 
 ```ts
-import Tiny, { NULL } from '@tsukiroku/tiny';
+import Tiny, { NULL } from '@tsukiroku/tiny'
 
 console.log(
     new Tiny('let x = "World!"; println("Hello, " + x);', {
@@ -257,7 +256,7 @@ console.log(
         .setBuiltins(new Map([['test', () => NULL]]))
         .applyBuiltins()
         .eval()
-);
+)
 ```
 
 `@std/` must exist in root (`./`).

@@ -12,37 +12,37 @@ import {
     Parser,
     Program,
     LangObject,
-} from './tiny';
+} from './tiny'
 
-export * from './tiny';
+export * from './tiny'
 
-type Stdio = (...x: Array<any>) => any;
+type Stdio = (...x: Array<any>) => any
 
 interface TinyOption extends Options {
-    enviroment?: Enviroment;
-    root?: string;
-    filename?: string;
+    enviroment?: Enviroment
+    root?: string
+    filename?: string
 }
 
 interface StdioOptions {
-    stdin: Stdio;
-    stdout: Stdio;
-    stderr: Stdio;
+    stdin: Stdio
+    stdout: Stdio
+    stderr: Stdio
 }
 
-const stdin: Stdio = (...x) => NULL;
-const stdout: Stdio = (...x) => process.stdout.write(x.join(' '));
-const stderr: Stdio = (...x) => process.stderr.write(`${x.join(' ')}\n`);
+const stdin: Stdio = (...x) => NULL
+const stdout: Stdio = (...x) => process.stdout.write(x.join(' '))
+const stderr: Stdio = (...x) => process.stderr.write(`${x.join(' ')}\n`)
 
-const defaultFilename: string = '<Tiny>';
+const defaultFilename: string = '<Tiny>'
 
 export default class Tiny {
-    public option: TinyOption;
-    public builtins: Map<string, Func> = new Map();
-    public stdio: StdioOptions = { stdin, stdout, stderr };
+    public option: TinyOption
+    public builtins: Map<string, Func> = new Map()
+    public stdio: StdioOptions = { stdin, stdout, stderr }
 
     constructor(public x: string, option?: TinyOption) {
-        this.option = { ...option };
+        this.option = { ...option }
     }
 
     public tokenizer(): Lexer {
@@ -53,28 +53,23 @@ export default class Tiny {
                 stderr: this.stdio.stderr,
             },
             this.option.filename ?? defaultFilename
-        );
+        )
     }
 
     public parser(): Parser {
-        return new Parser(this.tokenizer(), this.option);
+        return new Parser(this.tokenizer(), this.option)
     }
 
     public parseProgram(): Program {
-        const program = this.parser().parseProgram();
+        const program = this.parser().parseProgram()
 
         program.errors.forEach((error) =>
-            printError(
-                error,
-                this.option.filename ?? defaultFilename,
-                this.stdio.stderr,
-                {
-                    ...this.option,
-                }
-            )
-        );
+            printError(error, this.option.filename ?? defaultFilename, this.stdio.stderr, {
+                ...this.option,
+            })
+        )
 
-        return program;
+        return program
     }
 
     public includeStdlib(env: Enviroment) {
@@ -98,7 +93,7 @@ export default class Tiny {
                     filename: this.option.filename ?? defaultFilename,
                     root: this.option.root ?? './',
                 }
-            ).eval();
+            ).eval()
     }
 
     public evaluate(program: Program, env: Enviroment): LangObject {
@@ -107,68 +102,68 @@ export default class Tiny {
             stdio: this.stdio,
             filename: this.option.filename ?? defaultFilename,
             root: this.option.root ?? './',
-        }).eval();
+        }).eval()
 
-        return result;
+        return result
     }
 
     public eval(): string {
-        const env = this.option.enviroment ?? new Enviroment();
+        const env = this.option.enviroment ?? new Enviroment()
 
-        this.includeStdlib(env);
+        this.includeStdlib(env)
 
-        return objectStringify(this.evaluate(this.parseProgram(), env));
+        return objectStringify(this.evaluate(this.parseProgram(), env))
     }
 
     public evalProgram(program: Program): string {
-        const env = this.option.enviroment ?? new Enviroment();
+        const env = this.option.enviroment ?? new Enviroment()
 
-        this.includeStdlib(env);
+        this.includeStdlib(env)
 
-        return objectStringify(this.evaluate(program, env));
+        return objectStringify(this.evaluate(program, env))
     }
 
     public setBuiltin(name: string, func: Func): Tiny {
-        this.builtins.set(name, func);
+        this.builtins.set(name, func)
 
-        return this;
+        return this
     }
 
     public setBuiltins(builtins: Map<string, Func>): Tiny {
-        builtins.forEach((func, name) => this.setBuiltin(name, func));
+        builtins.forEach((func, name) => this.setBuiltin(name, func))
 
-        return this;
+        return this
     }
 
     public applyBuiltins(): Tiny {
-        this.builtins.forEach((func, name) => builtinsEval.set(name, func));
+        this.builtins.forEach((func, name) => builtinsEval.set(name, func))
 
-        return this;
+        return this
     }
 
     public setStdin(func: Stdio): Tiny {
-        this.stdio = { ...this.stdio, stdin: func };
+        this.stdio = { ...this.stdio, stdin: func }
 
-        return this;
+        return this
     }
 
     public setStdout(func: Stdio): Tiny {
-        this.stdio = { ...this.stdio, stdout: func };
+        this.stdio = { ...this.stdio, stdout: func }
 
-        return this;
+        return this
     }
 
     public setStderr(func: Stdio): Tiny {
-        this.stdio = { ...this.stdio, stderr: func };
+        this.stdio = { ...this.stdio, stderr: func }
 
-        return this;
+        return this
     }
 
     public setFileName(filename: string): Tiny {
-        this.option.filename = filename;
+        this.option.filename = filename
 
-        return this;
+        return this
     }
 }
 
-export { TinyOption, Stdio, StdioOptions, stdin, stdout, stderr };
+export { TinyOption, Stdio, StdioOptions, stdin, stdout, stderr }

@@ -1,5 +1,5 @@
-import Enviroment from './env';
+import Enviroment from './env'
 
-export { Enviroment };
+export { Enviroment }
 
-export * from './object';
+export * from './object'

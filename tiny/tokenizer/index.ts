@@ -1,6 +1,6 @@
-import Lexer from './lexer';
+import Lexer from './lexer'
 
-export * from './token';
-export * from './types';
+export * from './token'
+export * from './types'
 
-export { Lexer };
+export { Lexer }

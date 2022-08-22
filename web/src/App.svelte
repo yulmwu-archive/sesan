@@ -1,8 +1,8 @@
 <script lang="ts">
-    import Header from './components/header.svelte';
-    import Editor from './components/editor.svelte';
-    import Results from './components/sidebar.svelte';
-    import Footer from './components/footer.svelte';
+    import Header from './components/header.svelte'
+    import Editor from './components/editor.svelte'
+    import Results from './components/sidebar.svelte'
+    import Footer from './components/footer.svelte'
 </script>
 
 <div class="absolute w-full h-full pb-12">

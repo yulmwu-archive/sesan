@@ -1,17 +1,17 @@
 interface IResults {
-    result: Array<string>;
-    errors: Array<string>;
-    ast: string;
+    result: Array<string>
+    errors: Array<string>
+    ast: string
 }
 
 interface IExamplesGroup {
-    name: string;
-    examples: Array<IExamples>;
+    name: string
+    examples: Array<IExamples>
 }
 
 interface IExamples {
-    name: string;
-    source: string;
+    name: string
+    source: string
 }
 
-export type { IResults, IExamplesGroup, IExamples };
+export type { IResults, IExamplesGroup, IExamples }

@@ -1,4 +1,4 @@
-import * as Tiny from '../../index';
+import * as Tiny from '../../index'
 
 enum TokenType {
     ILLEGAL = 'ILLEGAL',
@@ -60,151 +60,83 @@ enum TokenType {
 }
 
 interface Token {
-    type: TokenType;
-    literal: string;
-    line: number;
-    column: number;
+    type: TokenType
+    literal: string
+    line: number
+    column: number
 }
 
 const tokens: Array<Tiny.TokenCheck> = [
-    {
-        curr: '=',
-        next: '=',
-        tokenType: TokenType.EQUAL,
-    },
+    { curr: '=', next: '=', tokenType: TokenType.EQUAL },
+    { curr: '/', next: '/', commentToken: TokenType.COMMENT },
+    { curr: '!', next: '=', tokenType: TokenType.NOT_EQUAL },
+    { curr: '<', next: '-', tokenType: TokenType.ELEMENT },
+    { curr: '<', next: '=', tokenType: TokenType.LTE },
+    { curr: '>', next: '=', tokenType: TokenType.GTE },
+    { curr: '&', next: '&', tokenType: TokenType.AND },
+    { curr: '|', next: '|', tokenType: TokenType.OR },
+    { curr: '?', next: '?', tokenType: TokenType.NULLISH },
     { curr: '=', tokenType: TokenType.ASSIGN },
     { curr: '(', tokenType: TokenType.LPAREN },
     { curr: ')', tokenType: TokenType.RPAREN },
     { curr: '{', tokenType: TokenType.LBRACE },
     { curr: '}', tokenType: TokenType.RBRACE },
-    {
-        curr: '[',
-        tokenType: TokenType.LBRACKET,
-    },
-    {
-        curr: ']',
-        tokenType: TokenType.RBRACKET,
-    },
-    {
-        curr: ';',
-        tokenType: TokenType.SEMICOLON,
-    },
+    { curr: '[', tokenType: TokenType.LBRACKET },
+    { curr: ']', tokenType: TokenType.RBRACKET },
+    { curr: ';', tokenType: TokenType.SEMICOLON },
     { curr: '.', tokenType: TokenType.ELEMENT },
     { curr: ',', tokenType: TokenType.COMMA },
     { curr: '+', tokenType: TokenType.PLUS },
     { curr: '-', tokenType: TokenType.MINUS },
-    {
-        curr: '*',
-        tokenType: TokenType.ASTERISK,
-    },
-    {
-        curr: '/',
-        next: '/',
-        commentToken: TokenType.COMMENT,
-    },
+    { curr: '*', tokenType: TokenType.ASTERISK },
     { curr: '/', tokenType: TokenType.SLASH },
     { curr: '%', tokenType: TokenType.PERCENT },
-    {
-        curr: '!',
-        next: '=',
-        tokenType: TokenType.NOT_EQUAL,
-    },
     { curr: '!', tokenType: TokenType.BANG },
-    {
-        curr: '<',
-        next: '-',
-        tokenType: TokenType.ELEMENT,
-    },
-    {
-        curr: '<',
-        next: '=',
-        tokenType: TokenType.LTE,
-    },
-    {
-        curr: '>',
-        next: '=',
-        tokenType: TokenType.GTE,
-    },
     { curr: '<', tokenType: TokenType.LT },
     { curr: '>', tokenType: TokenType.GT },
-    {
-        curr: '&',
-        next: '&',
-        tokenType: TokenType.AND,
-    },
-    { curr: '|', next: '|', tokenType: TokenType.OR },
-    {
-        curr: '?',
-        next: '?',
-        tokenType: TokenType.NULLISH,
-    },
-    {
-        curr: '?',
-        tokenType: TokenType.QUESTION,
-    },
+    { curr: '?', tokenType: TokenType.QUESTION },
     { curr: '@', tokenType: TokenType.AT },
-    {
-        curr: '"',
-        stringToken: TokenType.QUOTE,
-    },
-    {
-        curr: "'",
-        stringToken: TokenType.SINGLE_QUOTE,
-    },
+    { curr: '"', stringToken: TokenType.QUOTE },
+    { curr: "'", stringToken: TokenType.SINGLE_QUOTE },
     { curr: ':', tokenType: TokenType.COLON },
     { curr: '\0', tokenType: TokenType.EOF },
-];
+]
 
 const fromLiteral = (literal: string): TokenType => {
     switch (literal) {
         case 'let':
-            return TokenType.LET;
-
+            return TokenType.LET
         case 'func':
-            return TokenType.FUNCTION;
-
+            return TokenType.FUNCTION
         case 'true':
-            return TokenType.TRUE;
-
+            return TokenType.TRUE
         case 'false':
-            return TokenType.FALSE;
-
+            return TokenType.FALSE
         case 'null':
-            return TokenType.NULL;
-
+            return TokenType.NULL
         case 'if':
-            return TokenType.IF;
-
+            return TokenType.IF
         case 'else':
-            return TokenType.ELSE;
-
+            return TokenType.ELSE
         case 'return':
-            return TokenType.RETURN;
-
+            return TokenType.RETURN
         case 'while':
-            return TokenType.WHILE;
-
+            return TokenType.WHILE
         case 'in':
-            return TokenType.IN;
-
+            return TokenType.IN
         case 'typeof':
-            return TokenType.TYPEOF;
-
+            return TokenType.TYPEOF
         case 'throw':
-            return TokenType.THROW;
-
+            return TokenType.THROW
         case 'delete':
-            return TokenType.DELETE;
-
+            return TokenType.DELETE
         case 'use':
-            return TokenType.USE;
-
+            return TokenType.USE
         case 'void':
-            return TokenType.VOID;
-
+            return TokenType.VOID
         default:
-            return TokenType.IDENT;
+            return TokenType.IDENT
     }
-};
+}
 
-export { TokenType, Token, tokens, fromLiteral };
+export { TokenType, Token, tokens, fromLiteral }

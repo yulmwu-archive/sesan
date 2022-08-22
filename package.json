@@ -6,6 +6,7 @@
     "scripts": {
         "start": "npm run build && node ./dist/api.js",
         "start:repl": "npm run build && node ./dist/tiny/cli/index.js",
+        "repl": "npm run start:repl",
         "build": "if [ -d dist ]; then rm -rf dist; npm run build:tsc; else npm run build:tsc; fi",
         "build:windows": "@echo off && npm run tsc:build && @echo on",
         "build:tsc": "tsc -p tsconfig.json",
@@ -43,5 +44,12 @@
     },
     "publishConfig": {
         "access": "public"
+    },
+    "prettier": {
+        "singleQuote": true,
+        "jsxSingleQuote": true,
+        "tabWidth": 4,
+        "printWidth": 150,
+        "semi": false
     }
 }

@@ -1,5 +1,5 @@
-import { Func, invalidArgument } from '.';
-import * as Tiny from '../../index';
+import { Func, invalidArgument } from '.'
+import * as Tiny from '../../index'
 
 const push: Func = (
     parameters: Array<Tiny.LangObject>,
@@ -7,17 +7,13 @@ const push: Func = (
     evaluator: Tiny.Evaluator,
     position: Tiny.Position
 ): Tiny.LangObject => {
-    if (
-        parameters.length !== 2 ||
-        parameters[0]?.kind !== Tiny.ObjectKind.ARRAY
-    )
-        return invalidArgument(position, evaluator.option);
+    if (parameters.length !== 2 || parameters[0]?.kind !== Tiny.ObjectKind.ARRAY) return invalidArgument(position, evaluator.option)
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
         value: [...(parameters[0] as Tiny.ArrayObject).value, parameters[1]],
-    };
-};
+    }
+}
 
 const pop: Func = (
     parameters: Array<Tiny.LangObject>,
@@ -25,17 +21,13 @@ const pop: Func = (
     evaluator: Tiny.Evaluator,
     position: Tiny.Position
 ): Tiny.LangObject => {
-    if (
-        parameters.length !== 1 ||
-        parameters[0]?.kind !== Tiny.ObjectKind.ARRAY
-    )
-        return invalidArgument(position, evaluator.option);
+    if (parameters.length !== 1 || parameters[0]?.kind !== Tiny.ObjectKind.ARRAY) return invalidArgument(position, evaluator.option)
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
         value: [...(parameters[0] as Tiny.ArrayObject).value.slice(0, -1)],
-    };
-};
+    }
+}
 
 const shift: Func = (
     parameters: Array<Tiny.LangObject>,
@@ -43,17 +35,13 @@ const shift: Func = (
     evaluator: Tiny.Evaluator,
     position: Tiny.Position
 ): Tiny.LangObject => {
-    if (
-        parameters.length !== 1 ||
-        parameters[0]?.kind !== Tiny.ObjectKind.ARRAY
-    )
-        return invalidArgument(position, evaluator.option);
+    if (parameters.length !== 1 || parameters[0]?.kind !== Tiny.ObjectKind.ARRAY) return invalidArgument(position, evaluator.option)
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
         value: [...(parameters[0] as Tiny.ArrayObject).value.slice(1)],
-    };
-};
+    }
+}
 
 const unshift: Func = (
     parameters: Array<Tiny.LangObject>,
@@ -61,17 +49,13 @@ const unshift: Func = (
     evaluator: Tiny.Evaluator,
     position: Tiny.Position
 ): Tiny.LangObject => {
-    if (
-        parameters.length !== 2 ||
-        parameters[0]?.kind !== Tiny.ObjectKind.ARRAY
-    )
-        return invalidArgument(position, evaluator.option);
+    if (parameters.length !== 2 || parameters[0]?.kind !== Tiny.ObjectKind.ARRAY) return invalidArgument(position, evaluator.option)
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
         value: [parameters[1], ...(parameters[0] as Tiny.ArrayObject).value],
-    };
-};
+    }
+}
 
 const slice: Func = (
     parameters: Array<Tiny.LangObject>,
@@ -85,16 +69,13 @@ const slice: Func = (
         parameters[1]?.kind !== Tiny.ObjectKind.NUMBER ||
         parameters[2]?.kind !== Tiny.ObjectKind.NUMBER
     )
-        return invalidArgument(position, evaluator.option);
+        return invalidArgument(position, evaluator.option)
 
     return {
         kind: Tiny.ObjectKind.ARRAY,
-        value: (parameters[0] as Tiny.ArrayObject).value.slice(
-            parameters[1].value,
-            parameters[2].value
-        ),
-    };
-};
+        value: (parameters[0] as Tiny.ArrayObject).value.slice(parameters[1].value, parameters[2].value),
+    }
+}
 
 const join: Func = (
     parameters: Array<Tiny.LangObject>,
@@ -102,20 +83,14 @@ const join: Func = (
     evaluator: Tiny.Evaluator,
     position: Tiny.Position
 ): Tiny.LangObject => {
-    if (
-        parameters.length !== 2 ||
-        parameters[0]?.kind !== Tiny.ObjectKind.ARRAY ||
-        parameters[1]?.kind !== Tiny.ObjectKind.STRING
-    )
-        return invalidArgument(position, evaluator.option);
+    if (parameters.length !== 2 || parameters[0]?.kind !== Tiny.ObjectKind.ARRAY || parameters[1]?.kind !== Tiny.ObjectKind.STRING)
+        return invalidArgument(position, evaluator.option)
 
     return {
         kind: Tiny.ObjectKind.STRING,
-        value: (parameters[0] as Tiny.ArrayObject).value
-            .map((v) => Tiny.objectStringify(v))
-            .join(parameters[1].value),
-    };
-};
+        value: (parameters[0] as Tiny.ArrayObject).value.map((v) => Tiny.objectStringify(v)).join(parameters[1].value),
+    }
+}
 
 const forEach: Func = (
     parameters: Array<Tiny.LangObject>,
@@ -125,16 +100,15 @@ const forEach: Func = (
 ): Tiny.LangObject => {
     if (
         parameters.length !== 2 ||
-        (parameters[0]?.kind !== Tiny.ObjectKind.ARRAY &&
-            parameters[0]?.kind !== Tiny.ObjectKind.BOOLEAN) ||
+        (parameters[0]?.kind !== Tiny.ObjectKind.ARRAY && parameters[0]?.kind !== Tiny.ObjectKind.BOOLEAN) ||
         parameters[1]?.kind !== Tiny.ObjectKind.FUNCTION
     )
-        return invalidArgument(position, evaluator.option);
+        return invalidArgument(position, evaluator.option)
 
-    const func = parameters[1] as Tiny.FunctionObject;
+    const func = parameters[1] as Tiny.FunctionObject
 
     if (parameters[0].kind === Tiny.ObjectKind.ARRAY) {
-        const array = parameters[0] as Tiny.ArrayObject;
+        const array = parameters[0] as Tiny.ArrayObject
 
         for (const [index, value] of array.value.entries()) {
             const result = evaluator.applyFunction(
@@ -150,10 +124,9 @@ const forEach: Func = (
                 enviroment,
                 position,
                 Tiny.NULL
-            );
+            )
 
-            if (result?.kind === Tiny.ObjectKind.BOOLEAN && !result.value)
-                break;
+            if (result?.kind === Tiny.ObjectKind.BOOLEAN && !result.value) break
         }
     } else {
         for (let i = 0; true; i++) {
@@ -169,15 +142,14 @@ const forEach: Func = (
                 enviroment,
                 position,
                 Tiny.NULL
-            );
+            )
 
-            if (result?.kind === Tiny.ObjectKind.BOOLEAN && !result.value)
-                break;
+            if (result?.kind === Tiny.ObjectKind.BOOLEAN && !result.value) break
         }
     }
 
-    return Tiny.NULL;
-};
+    return Tiny.NULL
+}
 
 export const array: Map<string, Func> = new Map([
     ['__builtin_push', push],
@@ -187,4 +159,4 @@ export const array: Map<string, Func> = new Map([
     ['__builtin_slice', slice],
     ['__builtin_join', join],
     ['__builtin_forEach', forEach],
-]);
+])

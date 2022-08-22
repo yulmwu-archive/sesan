@@ -1,4 +1,4 @@
-import Options, { IOptions } from './types';
+import Options, { IOptions } from './types'
 
 export const parseOptions = (option?: string): Options =>
     option
@@ -10,6 +10,6 @@ export const parseOptions = (option?: string): Options =>
               stderrPrefix: true,
               stderrColor: true,
               locale: 'en',
-          } as IOptions);
+          } as IOptions)
 
-export { Options };
+export { Options }

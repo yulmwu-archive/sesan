@@ -1,416 +1,294 @@
-import { readFileSync } from 'node:fs';
-import * as Tiny from '../../index';
+import { readFileSync } from 'node:fs'
+import * as Tiny from '../../index'
 
-export const NULL: Tiny.LangObject = { kind: Tiny.ObjectKind.NULL };
-export const UNDEFINED: Tiny.LangObject = { kind: Tiny.ObjectKind.UNDEFINED };
+export const NULL: Tiny.LangObject = { kind: Tiny.ObjectKind.NULL }
+export const UNDEFINED: Tiny.LangObject = { kind: Tiny.ObjectKind.UNDEFINED }
 
 export interface EvaluatorOptions extends Tiny.Options {
-    stdio: Record<'stdin' | 'stdout' | 'stderr', Tiny.Stdio>;
-    filename: string;
-    root: string;
+    stdio: Record<'stdin' | 'stdout' | 'stderr', Tiny.Stdio>
+    filename: string
+    root: string
 }
 
 export default class Evaluator {
-    public messages: Tiny.Errors;
+    public messages: Tiny.Errors
 
-    constructor(
-        public program: Tiny.Program,
-        public enviroment: Tiny.Enviroment,
-        public option: EvaluatorOptions
-    ) {
-        this.messages = Tiny.localization(option);
+    constructor(public program: Tiny.Program, public enviroment: Tiny.Enviroment, public option: EvaluatorOptions) {
+        this.messages = Tiny.localization(option)
     }
 
     public eval(): Tiny.LangObject {
-        if (this.program.errors.length > 0) return null;
+        if (this.program.errors.length > 0) return null
 
-        const result = this.evalStatements(
-            this.program.statements,
-            this.enviroment
-        );
+        const result = this.evalStatements(this.program.statements, this.enviroment)
 
         if (result?.kind === Tiny.ObjectKind.ERROR) {
-            Tiny.printError(
-                result,
-                this.option.filename,
-                this.option.stdio.stderr,
-                this.option
-            );
+            Tiny.printError(result, this.option.filename, this.option.stdio.stderr, this.option)
 
-            return null;
+            return null
         }
 
-        return result;
+        return result
     }
 
-    private evalStatements(
-        statements: Array<Tiny.Statement>,
-        enviroment: Tiny.Enviroment
-    ): Tiny.LangObject {
-        let results: Array<Tiny.LangObject> = [];
+    private evalStatements(statements: Array<Tiny.Statement>, enviroment: Tiny.Enviroment): Tiny.LangObject {
+        let results: Array<Tiny.LangObject> = []
 
         for (const statement of statements) {
-            const result = this.evalStatement(statement, enviroment);
+            const result = this.evalStatement(statement, enviroment)
 
-            results.push(result);
+            results.push(result)
 
             if (result) {
-                if (result.kind === Tiny.ObjectKind.RETURN_VALUE)
-                    return result.value;
-                if (result.kind === Tiny.ObjectKind.ERROR) return result;
+                if (result.kind === Tiny.ObjectKind.RETURN_VALUE) return result.value
+                if (result.kind === Tiny.ObjectKind.ERROR) return result
             }
         }
 
-        if (results.length === 0) return UNDEFINED;
+        if (results.length === 0) return UNDEFINED
 
-        return results[results.length - 1];
+        return results[results.length - 1]
     }
 
-    private evalBlockStatements(
-        statement: Tiny.BlockStatement,
-        enviroment: Tiny.Enviroment
-    ): Tiny.LangObject {
-        const { statements, returnFinal } = statement;
+    private evalBlockStatements(statement: Tiny.BlockStatement, enviroment: Tiny.Enviroment): Tiny.LangObject {
+        const { statements, returnFinal } = statement
 
-        let results: Array<Tiny.LangObject> = [];
+        let results: Array<Tiny.LangObject> = []
 
         for (const statement of statements) {
-            const result = this.evalStatement(statement, enviroment);
+            const result = this.evalStatement(statement, enviroment)
 
-            results.push(result);
+            results.push(result)
 
             if (result) {
-                if (result.kind === Tiny.ObjectKind.RETURN_VALUE) return result;
-                if (result.kind === Tiny.ObjectKind.ERROR) return result;
+                if (result.kind === Tiny.ObjectKind.RETURN_VALUE) return result
+                if (result.kind === Tiny.ObjectKind.ERROR) return result
             }
         }
 
-        if (results.length === 0) return UNDEFINED;
+        if (results.length === 0) return UNDEFINED
 
-        if (returnFinal) return results[results.length - 1];
-        else return UNDEFINED;
+        if (returnFinal) return results[results.length - 1]
+        else return UNDEFINED
     }
 
-    private evalStatement(
-        statement: Tiny.Statement,
-        enviroment: Tiny.Enviroment
-    ): Tiny.LangObject {
+    private evalStatement(statement: Tiny.Statement, enviroment: Tiny.Enviroment): Tiny.LangObject {
         switch (statement.kind) {
             case Tiny.NodeKind.ExpressionStatement:
-                return this.evalExpression(statement.expression, enviroment);
+                return this.evalExpression(statement.expression, enviroment)
 
             case Tiny.NodeKind.LetStatement: {
-                const value = this.evalExpression(statement.value, enviroment);
-                if (value?.kind === Tiny.ObjectKind.ERROR) return value;
+                const value = this.evalExpression(statement.value, enviroment)
+                if (value?.kind === Tiny.ObjectKind.ERROR) return value
 
-                const name = (statement.ident as unknown as Tiny.StringLiteral)
-                    .value;
+                const name = (statement.ident as unknown as Tiny.StringLiteral).value
 
-                if (statement.ident && name !== '_')
-                    enviroment.set(name, value);
+                if (statement.ident && name !== '_') enviroment.set(name, value)
 
-                return null;
+                return null
             }
 
             case Tiny.NodeKind.ReturnStatement: {
-                const expression = this.evalExpression(
-                    (statement as unknown as Tiny.ReturnStatement).value,
-                    enviroment
-                );
+                const expression = this.evalExpression((statement as unknown as Tiny.ReturnStatement).value, enviroment)
 
                 if (expression)
                     return {
                         value: expression,
                         kind: Tiny.ObjectKind.RETURN_VALUE,
-                    };
+                    }
 
-                return NULL;
+                return NULL
             }
 
             case Tiny.NodeKind.WhileStatement: {
-                let condition = this.evalExpression(
-                    (statement as unknown as Tiny.WhileStatement).condition,
-                    enviroment
-                );
+                let condition = this.evalExpression((statement as unknown as Tiny.WhileStatement).condition, enviroment)
 
-                if (condition?.kind === Tiny.ObjectKind.ERROR) return condition;
+                if (condition?.kind === Tiny.ObjectKind.ERROR) return condition
 
-                const resultExpr: Array<Tiny.LangObject> = [];
+                const resultExpr: Array<Tiny.LangObject> = []
 
                 while (this.isTruthy(condition)) {
-                    const result = this.evalExpression(
-                        (statement as unknown as Tiny.WhileStatement).body,
-                        enviroment
-                    );
+                    const result = this.evalExpression((statement as unknown as Tiny.WhileStatement).body, enviroment)
 
-                    if (result?.kind === Tiny.ObjectKind.ERROR) return result;
+                    if (result?.kind === Tiny.ObjectKind.ERROR) return result
 
-                    condition = this.evalExpression(
-                        (statement as unknown as Tiny.WhileStatement).condition,
-                        enviroment
-                    );
+                    condition = this.evalExpression((statement as unknown as Tiny.WhileStatement).condition, enviroment)
 
-                    if (condition?.kind === Tiny.ObjectKind.ERROR)
-                        return condition;
+                    if (condition?.kind === Tiny.ObjectKind.ERROR) return condition
 
-                    resultExpr.push(result);
+                    resultExpr.push(result)
                 }
 
-                return NULL;
+                return NULL
             }
 
             case Tiny.NodeKind.DecoratorStatement: {
-                const decorator =
-                    statement as unknown as Tiny.DecoratorStatement;
+                const decorator = statement as unknown as Tiny.DecoratorStatement
 
-                const value = this.evalExpression(decorator.value, enviroment);
+                const value = this.evalExpression(decorator.value, enviroment)
 
-                if (value?.kind === Tiny.ObjectKind.ERROR) return value;
+                if (value?.kind === Tiny.ObjectKind.ERROR) return value
 
-                const func = this.evalFunction(
-                    decorator.function as Tiny.FunctionExpression,
-                    enviroment,
-                    value
-                );
+                const func = this.evalFunction(decorator.function as Tiny.FunctionExpression, enviroment, value)
 
-                if (func?.kind !== Tiny.ObjectKind.FUNCTION) return null;
+                if (func?.kind !== Tiny.ObjectKind.FUNCTION) return null
 
-                return func;
+                return func
             }
 
             default:
-                return NULL;
+                return NULL
         }
     }
 
-    private evalExpression(
-        expression: Tiny.Expression,
-        enviroment: Tiny.Enviroment
-    ): Tiny.LangObject {
-        if (!expression) return null;
+    private evalExpression(expression: Tiny.Expression, enviroment: Tiny.Enviroment): Tiny.LangObject {
+        if (!expression) return null
 
         switch (expression.kind) {
             case Tiny.ExpressionKind.Literal:
-                return this.evalLiteral(expression as Tiny.LiteralExpression);
+                return this.evalLiteral(expression as Tiny.LiteralExpression)
 
             case Tiny.ExpressionKind.Prefix: {
-                return this.evalPrefix(
-                    expression.operator,
-                    expression.right,
-                    enviroment,
-                    {
-                        line: expression.line,
-                        column: expression.column,
-                    }
-                );
+                return this.evalPrefix(expression.operator, expression.right, enviroment, {
+                    line: expression.line,
+                    column: expression.column,
+                })
             }
 
             case Tiny.ExpressionKind.Infix:
-                const infix = expression as unknown as Tiny.InfixExpression;
+                const infix = expression as unknown as Tiny.InfixExpression
 
                 switch (infix.operator) {
                     case Tiny.TokenType.ASSIGN:
-                        return this.evalIdentInfix(
-                            infix.operator,
-                            infix.left,
-                            infix.right,
-                            enviroment,
-                            {
-                                line: infix.line,
-                                column: infix.column,
-                            }
-                        );
+                        return this.evalIdentInfix(infix.operator, infix.left, infix.right, enviroment, {
+                            line: infix.line,
+                            column: infix.column,
+                        })
 
                     case Tiny.TokenType.ELEMENT:
-                        return this.evalElementInfix(
-                            infix.left,
-                            infix.right,
-                            enviroment,
-                            {
-                                line: infix.line,
-                                column: infix.column,
-                            }
-                        );
+                        return this.evalElementInfix(infix.left, infix.right, enviroment, {
+                            line: infix.line,
+                            column: infix.column,
+                        })
                 }
 
-                return this.evalInfix(
-                    infix.operator,
-                    infix.left,
-                    infix.right,
-                    enviroment,
-                    {
-                        line: infix.line,
-                        column: infix.column,
-                    }
-                );
+                return this.evalInfix(infix.operator, infix.left, infix.right, enviroment, {
+                    line: infix.line,
+                    column: infix.column,
+                })
 
             case Tiny.ExpressionKind.Block:
-                return this.evalBlockStatements(
-                    expression as unknown as Tiny.BlockStatement,
-                    enviroment
-                );
+                return this.evalBlockStatements(expression as unknown as Tiny.BlockStatement, enviroment)
 
             case Tiny.ExpressionKind.If: {
-                return this.evalIfExpression(
-                    expression.condition,
-                    expression.consequence,
-                    expression.alternative,
-                    enviroment
-                );
+                return this.evalIfExpression(expression.condition, expression.consequence, expression.alternative, enviroment)
             }
 
             case Tiny.ExpressionKind.Ident:
-                return this.evalIdent(
-                    (expression as unknown as Tiny.StringLiteral).value,
-                    enviroment,
-                    {
-                        line: expression.line,
-                        column: expression.column,
-                    }
-                );
+                return this.evalIdent((expression as unknown as Tiny.StringLiteral).value, enviroment, {
+                    line: expression.line,
+                    column: expression.column,
+                })
 
             case Tiny.ExpressionKind.Function:
-                return this.evalFunction(
-                    expression as unknown as Tiny.FunctionExpression,
-                    enviroment
-                );
+                return this.evalFunction(expression as unknown as Tiny.FunctionExpression, enviroment)
 
             case Tiny.ExpressionKind.Call:
-                return this.evalCallExpression(
-                    expression as unknown as Tiny.CallExpression,
-                    enviroment
-                );
+                return this.evalCallExpression(expression as unknown as Tiny.CallExpression, enviroment)
 
             case Tiny.ExpressionKind.Array: {
-                const args = this.evalExpressions(
-                    expression.elements,
-                    enviroment
-                );
+                const args = this.evalExpressions(expression.elements, enviroment)
 
-                if (args.length == 1 && args[0]?.kind === Tiny.ObjectKind.ERROR)
-                    return args[0];
+                if (args.length == 1 && args[0]?.kind === Tiny.ObjectKind.ERROR) return args[0]
 
                 return {
                     value: args,
                     kind: Tiny.ObjectKind.ARRAY,
-                };
+                }
             }
 
             case Tiny.ExpressionKind.Index: {
-                const resultExpr = this.evalExpression(
-                    expression.left,
-                    enviroment
-                );
-                if (!resultExpr) return null;
+                const resultExpr = this.evalExpression(expression.left, enviroment)
+                if (!resultExpr) return null
 
-                if (resultExpr.kind === Tiny.ObjectKind.ERROR) return NULL;
+                if (resultExpr.kind === Tiny.ObjectKind.ERROR) return NULL
 
-                const index = this.evalExpression(expression.index, enviroment);
-                if (!index) return null;
+                const index = this.evalExpression(expression.index, enviroment)
+                if (!index) return null
 
-                if (index.kind === Tiny.ObjectKind.ERROR) return NULL;
+                if (index.kind === Tiny.ObjectKind.ERROR) return NULL
 
                 return this.evalIndex(resultExpr, index, {
                     line: expression.line,
                     column: expression.column,
-                });
+                })
             }
 
             case Tiny.ExpressionKind.Object:
-                return this.evalObjectParameters(
-                    (expression as unknown as Tiny.ObjectExpression).pairs,
-                    enviroment
-                );
+                return this.evalObjectParameters((expression as unknown as Tiny.ObjectExpression).pairs, enviroment)
 
             case Tiny.ExpressionKind.Typeof: {
-                const value = this.evalExpression(expression.value, enviroment);
+                const value = this.evalExpression(expression.value, enviroment)
 
-                if (value?.kind === Tiny.ObjectKind.ERROR) return value;
+                if (value?.kind === Tiny.ObjectKind.ERROR) return value
 
-                if (!value) return NULL;
+                if (!value) return NULL
 
                 return {
                     kind: Tiny.ObjectKind.STRING,
                     value: Tiny.objectKindStringify(value.kind),
-                };
+                }
             }
 
             case Tiny.ExpressionKind.Throw: {
-                const message = this.evalExpression(
-                    expression.message,
-                    enviroment
-                );
+                const message = this.evalExpression(expression.message, enviroment)
 
-                if (message?.kind === Tiny.ObjectKind.ERROR) return message;
+                if (message?.kind === Tiny.ObjectKind.ERROR) return message
 
-                if (!message) return NULL;
+                if (!message) return NULL
 
-                return Tiny.error(
-                    Tiny.objectStringify(message),
-                    expression.line,
-                    expression.column
-                );
+                return Tiny.error(Tiny.objectStringify(message), expression.line, expression.column)
             }
 
             case Tiny.ExpressionKind.Delete: {
                 if (expression.value?.kind !== Tiny.ExpressionKind.Ident)
-                    return Tiny.error(
-                        this.messages.runtimeError.deleteRequiresIdentifier,
-                        expression.line,
-                        expression.column
-                    );
+                    return Tiny.error(this.messages.runtimeError.deleteRequiresIdentifier, expression.line, expression.column)
 
-                enviroment.delete(
-                    (expression.value as unknown as Tiny.StringLiteral).value
-                );
+                enviroment.delete((expression.value as unknown as Tiny.StringLiteral).value)
 
-                return NULL;
+                return NULL
             }
 
             case Tiny.ExpressionKind.Use: {
-                const path = this.evalExpression(expression.path, enviroment);
+                const path = this.evalExpression(expression.path, enviroment)
 
-                if (path?.kind === Tiny.ObjectKind.ERROR) return path;
+                if (path?.kind === Tiny.ObjectKind.ERROR) return path
 
                 if (path?.kind !== Tiny.ObjectKind.STRING)
-                    return Tiny.error(
-                        this.messages.runtimeError.useRequiresString,
-                        expression.line,
-                        expression.column
-                    );
+                    return Tiny.error(this.messages.runtimeError.useRequiresString, expression.line, expression.column)
 
-                return this.importEnv(
-                    (path as unknown as Tiny.StringObject).value,
-                    enviroment,
-                    this,
-                    {
-                        line: expression.line,
-                        column: expression.column,
-                    }
-                );
+                return this.importEnv((path as unknown as Tiny.StringObject).value, enviroment, this, {
+                    line: expression.line,
+                    column: expression.column,
+                })
             }
 
             case Tiny.ExpressionKind.Void: {
-                const value = this.evalExpression(expression.value, enviroment);
+                const value = this.evalExpression(expression.value, enviroment)
 
-                if (value?.kind === Tiny.ObjectKind.ERROR) return value;
+                if (value?.kind === Tiny.ObjectKind.ERROR) return value
 
-                return UNDEFINED;
+                return UNDEFINED
             }
 
             default:
-                return null;
+                return null
         }
     }
 
-    public importEnv(
-        path: string,
-        enviroment: Tiny.Enviroment,
-        evaluator: Evaluator,
-        position: Tiny.Position
-    ): Tiny.LangObject {
+    public importEnv(path: string, enviroment: Tiny.Enviroment, evaluator: Evaluator, position: Tiny.Position): Tiny.LangObject {
         try {
-            if (!path.endsWith('.tiny')) path += '.tiny';
+            if (!path.endsWith('.tiny')) path += '.tiny'
 
             const parsed = new Tiny.Parser(
                 new Tiny.Lexer(
@@ -422,32 +300,28 @@ export default class Evaluator {
                     path
                 ),
                 evaluator.option
-            ).parseProgram();
+            ).parseProgram()
 
             parsed.errors.forEach((error) =>
                 Tiny.printError(error, path, evaluator.option.stdio.stderr, {
                     ...evaluator.option,
                 })
-            );
+            )
 
             return new Tiny.Evaluator(parsed, enviroment, {
                 ...evaluator.option,
                 filename: path,
-            }).eval();
+            }).eval()
         } catch (e) {
             return {
                 kind: Tiny.ObjectKind.ERROR,
                 message: `Could not import file: ${evaluator.option.root}${path}`,
                 ...position,
-            };
+            }
         }
     }
 
-    private evalFunction(
-        expression: Tiny.FunctionExpression,
-        enviroment: Tiny.Enviroment,
-        decorator?: Tiny.LangObject
-    ): Tiny.LangObject {
+    private evalFunction(expression: Tiny.FunctionExpression, enviroment: Tiny.Enviroment, decorator?: Tiny.LangObject): Tiny.LangObject {
         const functionObject: Tiny.LangObject = {
             function: expression.function ?? null,
             parameters: expression.parameters,
@@ -456,35 +330,23 @@ export default class Evaluator {
             option: this.option,
             decorator: decorator as Tiny.ObjectObject,
             kind: Tiny.ObjectKind.FUNCTION,
-        };
+        }
 
-        const name = functionObject.function
-            ? (functionObject.function as unknown as Tiny.StringLiteral)
-                  .value ?? null
-            : null;
+        const name = functionObject.function ? (functionObject.function as unknown as Tiny.StringLiteral).value ?? null : null
 
-        if (expression.function && name && name !== '_')
-            enviroment.set(name, functionObject);
+        if (expression.function && name && name !== '_') enviroment.set(name, functionObject)
 
-        return functionObject;
+        return functionObject
     }
 
-    private evalCallExpression(
-        expression: Tiny.CallExpression,
-        enviroment: Tiny.Enviroment
-    ): Tiny.LangObject {
-        const functionObject = this.evalExpression(
-            expression.function,
-            enviroment
-        );
+    private evalCallExpression(expression: Tiny.CallExpression, enviroment: Tiny.Enviroment): Tiny.LangObject {
+        const functionObject = this.evalExpression(expression.function, enviroment)
 
-        if (functionObject?.kind === Tiny.ObjectKind.ERROR)
-            return functionObject;
+        if (functionObject?.kind === Tiny.ObjectKind.ERROR) return functionObject
 
-        const args = this.evalExpressions(expression.parameters, enviroment);
+        const args = this.evalExpressions(expression.parameters, enviroment)
 
-        if (args.length == 1 && args[0]?.kind === Tiny.ObjectKind.ERROR)
-            return args[0];
+        if (args.length == 1 && args[0]?.kind === Tiny.ObjectKind.ERROR) return args[0]
 
         return this.applyFunction(
             functionObject as Tiny.FunctionObject,
@@ -497,10 +359,7 @@ export default class Evaluator {
             },
             {
                 kind: Tiny.ObjectKind.OBJECT,
-                pairs: new Map<
-                    Tiny.StringObject | Tiny.NumberObject,
-                    Tiny.LangObject
-                >([
+                pairs: new Map<Tiny.StringObject | Tiny.NumberObject, Tiny.LangObject>([
                     [
                         {
                             kind: Tiny.ObjectKind.STRING,
@@ -516,69 +375,46 @@ export default class Evaluator {
                             kind: Tiny.ObjectKind.STRING,
                             value: 'decorator',
                         },
-                        (functionObject as Tiny.FunctionObject).decorator ??
-                            NULL,
+                        (functionObject as Tiny.FunctionObject).decorator ?? NULL,
                     ],
                 ]),
             }
-        );
+        )
     }
 
-    private evalObjectParameters(
-        parameters: Array<Tiny.ObjectPair>,
-        enviroment: Tiny.Enviroment
-    ): Tiny.ObjectObject {
+    private evalObjectParameters(parameters: Array<Tiny.ObjectPair>, enviroment: Tiny.Enviroment): Tiny.ObjectObject {
         const object: Tiny.ObjectObject = {
             kind: Tiny.ObjectKind.OBJECT,
             pairs: new Map(),
-        };
+        }
 
         parameters.forEach((arg: Tiny.ObjectPair) => {
-            const key = this.evalExpression(arg.key, enviroment);
-            if (!key) return;
+            const key = this.evalExpression(arg.key, enviroment)
+            if (!key) return
 
-            if (key.kind === Tiny.ObjectKind.ERROR) return key;
+            if (key.kind === Tiny.ObjectKind.ERROR) return key
 
-            const value = this.evalExpression(arg.value, enviroment);
-            if (!value) return;
+            const value = this.evalExpression(arg.value, enviroment)
+            if (!value) return
 
-            if (value.kind === Tiny.ObjectKind.ERROR) return key;
+            if (value.kind === Tiny.ObjectKind.ERROR) return key
 
-            if (
-                key.kind !== Tiny.ObjectKind.STRING &&
-                key.kind !== Tiny.ObjectKind.NUMBER
-            )
-                return;
+            if (key.kind !== Tiny.ObjectKind.STRING && key.kind !== Tiny.ObjectKind.NUMBER) return
 
-            if (key) object.pairs.set(key, value);
-        });
+            if (key) object.pairs.set(key, value)
+        })
 
-        return object;
+        return object
     }
 
-    private evalExpressions(
-        expression: Array<Tiny.Expression>,
-        enviroment: Tiny.Enviroment
-    ): Array<Tiny.LangObject> {
-        return expression.map((expression: Tiny.Expression) =>
-            this.evalExpression(expression, enviroment)
-        );
+    private evalExpressions(expression: Array<Tiny.Expression>, enviroment: Tiny.Enviroment): Array<Tiny.LangObject> {
+        return expression.map((expression: Tiny.Expression) => this.evalExpression(expression, enviroment))
     }
 
-    private getDecorator(
-        key: string | number,
-        func: Tiny.FunctionObject
-    ): Tiny.LangObject | null {
-        if (!func.decorator) return null;
+    private getDecorator(key: string | number, func: Tiny.FunctionObject): Tiny.LangObject | null {
+        if (!func.decorator) return null
 
-        return (
-            new Map(
-                [...func.decorator.pairs].map(([key, value]) => [
-                    key.value,
-                    value,
-                ])
-            ).get(key) ?? NULL
-        );
+        return new Map([...func.decorator.pairs].map(([key, value]) => [key.value, value])).get(key) ?? NULL
     }
 
     public applyFunction(
@@ -590,10 +426,7 @@ export default class Evaluator {
         thisObject: Tiny.LangObject
     ): Tiny.LangObject {
         if (functionObject?.kind === Tiny.ObjectKind.FUNCTION) {
-            if (
-                !this.getDecorator('skipCheckArguments', functionObject) &&
-                functionObject.parameters.length !== parameters.length
-            )
+            if (!this.getDecorator('skipCheckArguments', functionObject) && functionObject.parameters.length !== parameters.length)
                 return Tiny.error(
                     Tiny.errorFormatter(
                         this.messages.runtimeError.invalidArgument,
@@ -603,7 +436,7 @@ export default class Evaluator {
                     ),
                     position.line,
                     position.column
-                );
+                )
 
             const result = this.evalExpression(
                 functionObject.body,
@@ -612,38 +445,20 @@ export default class Evaluator {
                     parameters,
                     enviroment,
                     thisObject,
-                    (
-                        this.getDecorator(
-                            'noCapture',
-                            functionObject
-                        ) as Tiny.BooleanObject
-                    )?.value ?? false
+                    (this.getDecorator('noCapture', functionObject) as Tiny.BooleanObject)?.value ?? false
                 )
-            );
+            )
 
-            if (result?.kind === Tiny.ObjectKind.RETURN_VALUE)
-                return result.value;
-            if (result?.kind === Tiny.ObjectKind.ERROR) return result;
+            if (result?.kind === Tiny.ObjectKind.RETURN_VALUE) return result.value
+            if (result?.kind === Tiny.ObjectKind.ERROR) return result
 
-            return result;
+            return result
         }
 
         if (functionObject?.kind === Tiny.ObjectKind.BUILTIN)
-            return (functionObject as unknown as Tiny.BuiltinFunction).func(
-                parameters,
-                enviroment,
-                this,
-                position
-            );
+            return (functionObject as unknown as Tiny.BuiltinFunction).func(parameters, enviroment, this, position)
 
-        return Tiny.error(
-            Tiny.errorFormatter(
-                this.messages.runtimeError.invalidFunction,
-                name ?? '<unknown>'
-            ),
-            position.line,
-            position.column
-        );
+        return Tiny.error(Tiny.errorFormatter(this.messages.runtimeError.invalidFunction, name ?? '<unknown>'), position.line, position.column)
     }
 
     private extendFunctionEnv(
@@ -654,48 +469,30 @@ export default class Evaluator {
         noCapture: boolean
     ): Tiny.Enviroment {
         if (functionObject?.kind === Tiny.ObjectKind.FUNCTION) {
-            let extendEnviroment = new Tiny.Enviroment(enviroment);
+            let extendEnviroment = new Tiny.Enviroment(enviroment)
 
-            if (!noCapture) extendEnviroment.outer = functionObject.enviroment;
+            if (!noCapture) extendEnviroment.outer = functionObject.enviroment
 
-            functionObject.parameters.forEach(
-                (param: Tiny.Expression, i: number) => {
-                    if (param?.kind === Tiny.ExpressionKind.Ident)
-                        extendEnviroment.set(
-                            (param as unknown as Tiny.StringLiteral).value,
-                            parameters[i]
-                        );
-                }
-            );
+            functionObject.parameters.forEach((param: Tiny.Expression, i: number) => {
+                if (param?.kind === Tiny.ExpressionKind.Ident) extendEnviroment.set((param as unknown as Tiny.StringLiteral).value, parameters[i])
+            })
 
-            extendEnviroment.set('this', thisObject);
+            extendEnviroment.set('this', thisObject)
 
-            return extendEnviroment;
+            return extendEnviroment
         }
 
-        return new Tiny.Enviroment();
+        return new Tiny.Enviroment()
     }
 
-    private evalIdent(
-        name: string,
-        enviroment: Tiny.Enviroment,
-        position: Tiny.Position
-    ): Tiny.LangObject {
-        if (enviroment.get(name)) return enviroment.get(name);
+    private evalIdent(name: string, enviroment: Tiny.Enviroment, position: Tiny.Position): Tiny.LangObject {
+        if (enviroment.get(name)) return enviroment.get(name)
 
-        const builtin = Tiny.builtinFunction(name);
+        const builtin = Tiny.builtinFunction(name)
 
-        if (!builtin)
-            return Tiny.error(
-                Tiny.errorFormatter(
-                    this.messages.runtimeError.identifierNotDefined_2,
-                    name
-                ),
-                position.line,
-                position.column
-            );
+        if (!builtin) return Tiny.error(Tiny.errorFormatter(this.messages.runtimeError.identifierNotDefined_2, name), position.line, position.column)
 
-        return builtin;
+        return builtin
     }
 
     private evalLiteral(literal: Tiny.LiteralExpression): Tiny.LangObject {
@@ -704,44 +501,39 @@ export default class Evaluator {
                 return {
                     kind: Tiny.ObjectKind.NUMBER,
                     value: literal.value.value,
-                };
+                }
 
             case Tiny.LiteralKind.String:
                 return {
                     kind: Tiny.ObjectKind.STRING,
                     value: literal.value.value,
-                };
+                }
 
             case Tiny.LiteralKind.Boolean:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: literal.value.value,
-                };
+                }
 
             default:
-                return NULL;
+                return NULL
         }
     }
 
-    private evalPrefix(
-        operator: Tiny.TokenType,
-        right: Tiny.Expression,
-        enviroment: Tiny.Enviroment,
-        position: Tiny.Position
-    ): Tiny.LangObject {
-        const expression = this.evalExpression(right, enviroment);
+    private evalPrefix(operator: Tiny.TokenType, right: Tiny.Expression, enviroment: Tiny.Enviroment, position: Tiny.Position): Tiny.LangObject {
+        const expression = this.evalExpression(right, enviroment)
 
-        if (expression?.kind === Tiny.ObjectKind.ERROR) return expression;
+        if (expression?.kind === Tiny.ObjectKind.ERROR) return expression
 
         switch (operator) {
             case Tiny.TokenType.MINUS:
-                return this.evalMinus(expression, position);
+                return this.evalMinus(expression, position)
 
             case Tiny.TokenType.BANG:
-                return this.evalBang(expression);
+                return this.evalBang(expression)
 
             default:
-                return NULL;
+                return NULL
         }
     }
 
@@ -752,51 +544,42 @@ export default class Evaluator {
         enviroment: Tiny.Enviroment,
         position: Tiny.Position
     ): Tiny.LangObject {
-        const left = this.evalExpression(leftOperand, enviroment);
+        const left = this.evalExpression(leftOperand, enviroment)
 
-        if (left?.kind === Tiny.ObjectKind.ERROR) return left;
+        if (left?.kind === Tiny.ObjectKind.ERROR) return left
 
-        const right = this.evalExpression(rightOperand, enviroment);
+        const right = this.evalExpression(rightOperand, enviroment)
 
-        if (right?.kind === Tiny.ObjectKind.ERROR) return right;
+        if (right?.kind === Tiny.ObjectKind.ERROR) return right
 
-        if (operator === Tiny.TokenType.NULLISH)
-            return left?.kind === Tiny.ObjectKind.NULL ? right : left;
+        if (operator === Tiny.TokenType.NULLISH) return left?.kind === Tiny.ObjectKind.NULL ? right : left
 
         switch (left?.kind) {
             case Tiny.ObjectKind.NUMBER:
-                return this.evalNumberInfix(operator, left, right, position);
+                return this.evalNumberInfix(operator, left, right, position)
 
             case Tiny.ObjectKind.STRING:
-                return this.evalStringInfix(operator, left, right, position);
+                return this.evalStringInfix(operator, left, right, position)
 
             case Tiny.ObjectKind.BOOLEAN:
-                return this.evalBooleanInfix(operator, left, right, position);
+                return this.evalBooleanInfix(operator, left, right, position)
 
             case Tiny.ObjectKind.OBJECT:
-                return this.evalObjectInfix(operator, left, right, position);
+                return this.evalObjectInfix(operator, left, right, position)
 
             case Tiny.ObjectKind.ARRAY:
-                return this.evalArrayInfix(operator, left, right, position);
+                return this.evalArrayInfix(operator, left, right, position)
 
             default:
                 return Tiny.error(
-                    Tiny.errorFormatter(
-                        this.messages.runtimeError.typeMismatch_2,
-                        left?.kind,
-                        right?.kind
-                    ),
+                    Tiny.errorFormatter(this.messages.runtimeError.typeMismatch_2, left?.kind, right?.kind),
                     position.line,
                     position.column
-                );
+                )
         }
     }
 
-    private typeMissmatch(
-        left: Tiny.LangObject,
-        right: Tiny.LangObject,
-        position: Tiny.Position
-    ): Tiny.LangObject {
+    private typeMissmatch(left: Tiny.LangObject, right: Tiny.LangObject, position: Tiny.Position): Tiny.LangObject {
         return Tiny.error(
             Tiny.errorFormatter(
                 this.messages.runtimeError.typeMismatch_2,
@@ -805,7 +588,7 @@ export default class Evaluator {
             ),
             position.line,
             position.column
-        );
+        )
     }
 
     private evalNumberInfix(
@@ -814,84 +597,80 @@ export default class Evaluator {
         rightOperand: Tiny.LangObject,
         position: Tiny.Position
     ): Tiny.LangObject {
-        if (operator === Tiny.TokenType.IN)
-            return this.evalInOperator(leftOperand, rightOperand, position);
+        if (operator === Tiny.TokenType.IN) return this.evalInOperator(leftOperand, rightOperand, position)
 
-        if (
-            leftOperand?.kind !== Tiny.ObjectKind.NUMBER ||
-            rightOperand?.kind !== Tiny.ObjectKind.NUMBER
-        )
-            return this.typeMissmatch(leftOperand, rightOperand, position);
+        if (leftOperand?.kind !== Tiny.ObjectKind.NUMBER || rightOperand?.kind !== Tiny.ObjectKind.NUMBER)
+            return this.typeMissmatch(leftOperand, rightOperand, position)
 
         switch (operator) {
             case Tiny.TokenType.PLUS:
                 return {
                     kind: Tiny.ObjectKind.NUMBER,
                     value: leftOperand.value + rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.MINUS:
                 return {
                     kind: Tiny.ObjectKind.NUMBER,
                     value: leftOperand.value - rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.SLASH:
                 return {
                     kind: Tiny.ObjectKind.NUMBER,
                     value: leftOperand.value / rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.ASTERISK:
                 return {
                     kind: Tiny.ObjectKind.NUMBER,
                     value: leftOperand.value * rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.PERCENT:
                 return {
                     kind: Tiny.ObjectKind.NUMBER,
                     value: leftOperand.value % rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.EQUAL:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: leftOperand.value === rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.NOT_EQUAL:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: leftOperand.value !== rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.GT:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: leftOperand.value > rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.LT:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: leftOperand.value < rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.GTE:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: leftOperand.value >= rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.LTE:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: leftOperand.value <= rightOperand.value,
-                };
+                }
 
             default:
-                return null;
+                return null
         }
     }
 
@@ -901,42 +680,38 @@ export default class Evaluator {
         rightOperand: Tiny.LangObject,
         position: Tiny.Position
     ): Tiny.LangObject {
-        if (operator === Tiny.TokenType.IN)
-            return this.evalInOperator(leftOperand, rightOperand, position);
+        if (operator === Tiny.TokenType.IN) return this.evalInOperator(leftOperand, rightOperand, position)
 
-        if (
-            leftOperand?.kind !== Tiny.ObjectKind.BOOLEAN ||
-            rightOperand?.kind !== Tiny.ObjectKind.BOOLEAN
-        )
-            return this.typeMissmatch(leftOperand, rightOperand, position);
+        if (leftOperand?.kind !== Tiny.ObjectKind.BOOLEAN || rightOperand?.kind !== Tiny.ObjectKind.BOOLEAN)
+            return this.typeMissmatch(leftOperand, rightOperand, position)
 
         switch (operator) {
             case Tiny.TokenType.EQUAL:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: leftOperand.value === rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.NOT_EQUAL:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: leftOperand.value !== rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.AND:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: leftOperand.value && rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.OR:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: leftOperand.value || rightOperand.value,
-                };
+                }
 
             default:
-                return null;
+                return null
         }
     }
 
@@ -946,36 +721,32 @@ export default class Evaluator {
         rightOperand: Tiny.LangObject,
         position: Tiny.Position
     ): Tiny.LangObject {
-        if (operator === Tiny.TokenType.IN)
-            return this.evalInOperator(leftOperand, rightOperand, position);
+        if (operator === Tiny.TokenType.IN) return this.evalInOperator(leftOperand, rightOperand, position)
 
-        if (
-            leftOperand?.kind !== Tiny.ObjectKind.STRING ||
-            rightOperand?.kind !== Tiny.ObjectKind.STRING
-        )
-            return this.typeMissmatch(leftOperand, rightOperand, position);
+        if (leftOperand?.kind !== Tiny.ObjectKind.STRING || rightOperand?.kind !== Tiny.ObjectKind.STRING)
+            return this.typeMissmatch(leftOperand, rightOperand, position)
 
         switch (operator) {
             case Tiny.TokenType.PLUS:
                 return {
                     kind: Tiny.ObjectKind.STRING,
                     value: `${leftOperand.value}${rightOperand.value}`,
-                };
+                }
 
             case Tiny.TokenType.EQUAL:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: leftOperand.value === rightOperand.value,
-                };
+                }
 
             case Tiny.TokenType.NOT_EQUAL:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
                     value: leftOperand.value !== rightOperand.value,
-                };
+                }
 
             default:
-                return null;
+                return null
         }
     }
 
@@ -987,62 +758,46 @@ export default class Evaluator {
     ): Tiny.LangObject {
         switch (operator) {
             case Tiny.TokenType.IN:
-                return this.evalInOperator(leftOperand, rightOperand, position);
+                return this.evalInOperator(leftOperand, rightOperand, position)
         }
 
-        if (
-            leftOperand?.kind !== Tiny.ObjectKind.OBJECT ||
-            rightOperand?.kind !== Tiny.ObjectKind.OBJECT
-        )
+        if (leftOperand?.kind !== Tiny.ObjectKind.OBJECT || rightOperand?.kind !== Tiny.ObjectKind.OBJECT)
             return Tiny.error(
                 Tiny.errorFormatter(
                     this.messages.runtimeError.typeMismatch_2,
-                    Tiny.objectKindStringify(
-                        leftOperand?.kind ?? Tiny.ObjectKind.NULL
-                    ),
-                    Tiny.objectKindStringify(
-                        rightOperand?.kind ?? Tiny.ObjectKind.NULL
-                    )
+                    Tiny.objectKindStringify(leftOperand?.kind ?? Tiny.ObjectKind.NULL),
+                    Tiny.objectKindStringify(rightOperand?.kind ?? Tiny.ObjectKind.NULL)
                 ),
                 position.line,
                 position.column
-            );
+            )
 
         switch (operator) {
             case Tiny.TokenType.EQUAL:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
-                    value:
-                        JSON.stringify(leftOperand.pairs) ===
-                        JSON.stringify(rightOperand.pairs),
-                };
+                    value: JSON.stringify(leftOperand.pairs) === JSON.stringify(rightOperand.pairs),
+                }
 
             case Tiny.TokenType.NOT_EQUAL:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
-                    value:
-                        JSON.stringify(leftOperand.pairs) !==
-                        JSON.stringify(rightOperand.pairs),
-                };
+                    value: JSON.stringify(leftOperand.pairs) !== JSON.stringify(rightOperand.pairs),
+                }
 
             case Tiny.TokenType.PLUS:
                 return {
                     kind: Tiny.ObjectKind.OBJECT,
                     pairs: new Map([
                         ...[...leftOperand.pairs.entries()].filter(
-                            ([k]) =>
-                                !new Map(
-                                    [...rightOperand.pairs.entries()].map(
-                                        ([k, v]) => [JSON.stringify(k), v]
-                                    )
-                                ).has(JSON.stringify(k))
+                            ([k]) => !new Map([...rightOperand.pairs.entries()].map(([k, v]) => [JSON.stringify(k), v])).has(JSON.stringify(k))
                         ),
                         ...rightOperand.pairs,
                     ]),
-                };
+                }
 
             default:
-                return null;
+                return null
         }
     }
 
@@ -1054,52 +809,41 @@ export default class Evaluator {
     ): Tiny.LangObject {
         switch (operator) {
             case Tiny.TokenType.IN:
-                return this.evalInOperator(leftOperand, rightOperand, position);
+                return this.evalInOperator(leftOperand, rightOperand, position)
         }
 
-        if (
-            leftOperand?.kind !== Tiny.ObjectKind.ARRAY ||
-            rightOperand?.kind !== Tiny.ObjectKind.ARRAY
-        )
+        if (leftOperand?.kind !== Tiny.ObjectKind.ARRAY || rightOperand?.kind !== Tiny.ObjectKind.ARRAY)
             return Tiny.error(
                 Tiny.errorFormatter(
                     this.messages.runtimeError.typeMismatch_2,
-                    Tiny.objectKindStringify(
-                        leftOperand?.kind ?? Tiny.ObjectKind.NULL
-                    ),
-                    Tiny.objectKindStringify(
-                        rightOperand?.kind ?? Tiny.ObjectKind.NULL
-                    )
+                    Tiny.objectKindStringify(leftOperand?.kind ?? Tiny.ObjectKind.NULL),
+                    Tiny.objectKindStringify(rightOperand?.kind ?? Tiny.ObjectKind.NULL)
                 ),
                 position.line,
                 position.column
-            );
+            )
 
         switch (operator) {
             case Tiny.TokenType.PLUS:
                 return {
                     kind: Tiny.ObjectKind.ARRAY,
                     value: [...leftOperand.value, ...rightOperand.value],
-                };
+                }
 
             case Tiny.TokenType.EQUAL:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
-                    value:
-                        JSON.stringify(leftOperand.value) ===
-                        JSON.stringify(rightOperand.value),
-                };
+                    value: JSON.stringify(leftOperand.value) === JSON.stringify(rightOperand.value),
+                }
 
             case Tiny.TokenType.NOT_EQUAL:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
-                    value:
-                        JSON.stringify(leftOperand.value) !==
-                        JSON.stringify(rightOperand.value),
-                };
+                    value: JSON.stringify(leftOperand.value) !== JSON.stringify(rightOperand.value),
+                }
 
             default:
-                return null;
+                return null
         }
     }
 
@@ -1111,167 +855,101 @@ export default class Evaluator {
         position: Tiny.Position
     ): Tiny.LangObject {
         if (operator === Tiny.TokenType.ASSIGN) {
-            const right = this.evalExpression(rightOperand, enviroment);
+            const right = this.evalExpression(rightOperand, enviroment)
 
-            if (right?.kind === Tiny.ObjectKind.ERROR) return right;
+            if (right?.kind === Tiny.ObjectKind.ERROR) return right
 
-            if (
-                leftOperand?.kind !== Tiny.ExpressionKind.Ident &&
-                leftOperand?.kind !== Tiny.ExpressionKind.Index
-            )
-                return Tiny.error(
-                    this.messages.runtimeError.typeMismatch_1,
-                    position.line,
-                    position.column
-                );
+            if (leftOperand?.kind !== Tiny.ExpressionKind.Ident && leftOperand?.kind !== Tiny.ExpressionKind.Index)
+                return Tiny.error(this.messages.runtimeError.typeMismatch_1, position.line, position.column)
 
             switch (leftOperand.kind) {
                 case Tiny.ExpressionKind.Ident: {
-                    if (
-                        !enviroment.get(
-                            (leftOperand as unknown as Tiny.StringLiteral).value
-                        )
-                    )
+                    if (!enviroment.get((leftOperand as unknown as Tiny.StringLiteral).value))
                         return Tiny.error(
                             Tiny.errorFormatter(
-                                this.messages.runtimeError
-                                    .identifierNotDefined_1,
-                                (leftOperand as unknown as Tiny.StringLiteral)
-                                    .value
+                                this.messages.runtimeError.identifierNotDefined_1,
+                                (leftOperand as unknown as Tiny.StringLiteral).value
                             ),
                             position.line,
                             position.column
-                        );
+                        )
 
-                    enviroment.update(
-                        (leftOperand as unknown as Tiny.StringLiteral).value,
-                        right
-                    );
+                    enviroment.update((leftOperand as unknown as Tiny.StringLiteral).value, right)
 
-                    return right;
+                    return right
                 }
 
                 case Tiny.ExpressionKind.Index: {
-                    const index = (
-                        leftOperand as unknown as Tiny.IndexExpression
-                    ).index;
+                    const index = (leftOperand as unknown as Tiny.IndexExpression).index
 
-                    const left = this.evalExpression(
-                        (leftOperand as unknown as Tiny.IndexExpression).left,
-                        enviroment
-                    );
+                    const left = this.evalExpression((leftOperand as unknown as Tiny.IndexExpression).left, enviroment)
 
-                    if (left?.kind === Tiny.ObjectKind.ERROR) return left;
+                    if (left?.kind === Tiny.ObjectKind.ERROR) return left
 
-                    if (
-                        left?.kind !== Tiny.ObjectKind.ARRAY &&
-                        left?.kind !== Tiny.ObjectKind.OBJECT
-                    )
+                    if (left?.kind !== Tiny.ObjectKind.ARRAY && left?.kind !== Tiny.ObjectKind.OBJECT)
                         return Tiny.error(
                             Tiny.errorFormatter(
                                 this.messages.runtimeError.typeMismatch_2,
-                                Tiny.objectKindStringify(
-                                    left?.kind ?? Tiny.ObjectKind.NULL
-                                ),
+                                Tiny.objectKindStringify(left?.kind ?? Tiny.ObjectKind.NULL),
                                 Tiny.objectKindStringify(Tiny.ObjectKind.ARRAY)
                             ),
                             position.line,
                             position.column
-                        );
+                        )
 
                     if (left?.kind === Tiny.ObjectKind.ARRAY) {
-                        const resultIdx = this.evalExpression(
-                            index,
-                            enviroment
-                        );
+                        const resultIdx = this.evalExpression(index, enviroment)
 
-                        if (resultIdx?.kind === Tiny.ObjectKind.ERROR)
-                            return resultIdx;
+                        if (resultIdx?.kind === Tiny.ObjectKind.ERROR) return resultIdx
 
                         if (resultIdx?.kind !== Tiny.ObjectKind.NUMBER)
-                            return Tiny.error(
-                                this.messages.runtimeError.typeMismatch_1,
-                                position.line,
-                                position.column
-                            );
+                            return Tiny.error(this.messages.runtimeError.typeMismatch_1, position.line, position.column)
 
-                        const value = this.evalExpression(
-                            rightOperand,
-                            enviroment
-                        );
+                        const value = this.evalExpression(rightOperand, enviroment)
 
-                        if (value?.kind === Tiny.ObjectKind.ERROR) return value;
+                        if (value?.kind === Tiny.ObjectKind.ERROR) return value
 
                         if (value?.kind !== Tiny.ObjectKind.NUMBER)
-                            return Tiny.error(
-                                this.messages.runtimeError.typeMismatch_2,
-                                position.line,
-                                position.column
-                            );
+                            return Tiny.error(this.messages.runtimeError.typeMismatch_2, position.line, position.column)
+                        ;(left as unknown as Tiny.ArrayObject).value[resultIdx.value] = value
 
-                        (left as unknown as Tiny.ArrayObject).value[
-                            resultIdx.value
-                        ] = value;
-
-                        return value;
+                        return value
                     } else {
-                        const resultIdx = this.evalExpression(
-                            index,
-                            enviroment
-                        );
+                        const resultIdx = this.evalExpression(index, enviroment)
 
-                        if (resultIdx?.kind === Tiny.ObjectKind.ERROR)
-                            return resultIdx;
+                        if (resultIdx?.kind === Tiny.ObjectKind.ERROR) return resultIdx
 
-                        if (
-                            resultIdx?.kind !== Tiny.ObjectKind.STRING &&
-                            resultIdx?.kind !== Tiny.ObjectKind.NUMBER
-                        )
-                            return Tiny.error(
-                                this.messages.runtimeError.typeMismatch_1,
-                                position.line,
-                                position.column
-                            );
+                        if (resultIdx?.kind !== Tiny.ObjectKind.STRING && resultIdx?.kind !== Tiny.ObjectKind.NUMBER)
+                            return Tiny.error(this.messages.runtimeError.typeMismatch_1, position.line, position.column)
 
-                        const value = this.evalExpression(
-                            rightOperand,
-                            enviroment
-                        );
+                        const value = this.evalExpression(rightOperand, enviroment)
 
-                        if (value?.kind === Tiny.ObjectKind.ERROR) return value;
+                        if (value?.kind === Tiny.ObjectKind.ERROR) return value
 
                         left.pairs = new Map(
-                            Array.from(
-                                new Map([
-                                    ...new Map(
-                                        [...left.pairs].map(([k, v]) => [
-                                            k.value,
-                                            v,
-                                        ])
-                                    ),
-                                    [resultIdx.value, value],
-                                ]).entries()
-                            ).map(([k, v]) => [
-                                typeof k === 'string'
-                                    ? {
-                                          value: k,
-                                          kind: Tiny.ObjectKind.STRING,
-                                      }
-                                    : {
-                                          value: k,
-                                          kind: Tiny.ObjectKind.NUMBER,
-                                      },
-                                v,
-                            ])
-                        );
+                            Array.from(new Map([...new Map([...left.pairs].map(([k, v]) => [k.value, v])), [resultIdx.value, value]]).entries()).map(
+                                ([k, v]) => [
+                                    typeof k === 'string'
+                                        ? {
+                                              value: k,
+                                              kind: Tiny.ObjectKind.STRING,
+                                          }
+                                        : {
+                                              value: k,
+                                              kind: Tiny.ObjectKind.NUMBER,
+                                          },
+                                    v,
+                                ]
+                            )
+                        )
 
-                        return value;
+                        return value
                     }
                 }
             }
         }
 
-        return null;
+        return null
     }
 
     private evalElementInfix(
@@ -1280,67 +958,47 @@ export default class Evaluator {
         enviroment: Tiny.Enviroment,
         position: Tiny.Position
     ): Tiny.LangObject {
-        const left = this.evalExpression(leftOperand, enviroment);
+        const left = this.evalExpression(leftOperand, enviroment)
 
-        if (left?.kind === Tiny.ObjectKind.ERROR) return left;
+        if (left?.kind === Tiny.ObjectKind.ERROR) return left
 
-        if (
-            left?.kind !== Tiny.ObjectKind.OBJECT &&
-            left?.kind !== Tiny.ObjectKind.ARRAY
-        )
-            return null;
+        if (left?.kind !== Tiny.ObjectKind.OBJECT && left?.kind !== Tiny.ObjectKind.ARRAY) return null
 
-        let right: Tiny.LangObject | Tiny.CallExpression = null;
+        let right: Tiny.LangObject | Tiny.CallExpression = null
 
         if (rightOperand?.kind === Tiny.ExpressionKind.Ident)
             right = {
                 kind: Tiny.ObjectKind.STRING,
                 value: rightOperand.value,
-            };
-        else if (rightOperand?.kind === Tiny.ExpressionKind.Call)
-            right = rightOperand;
-        else right = this.evalExpression(rightOperand, enviroment);
+            }
+        else if (rightOperand?.kind === Tiny.ExpressionKind.Call) right = rightOperand
+        else right = this.evalExpression(rightOperand, enviroment)
 
-        if (right?.kind === Tiny.ObjectKind.ERROR) return right;
+        if (right?.kind === Tiny.ObjectKind.ERROR) return right
 
         if (left.kind === Tiny.ObjectKind.ARRAY)
-            if (right?.kind === Tiny.ObjectKind.NUMBER)
-                return this.evalIndex(left, right, position);
-            else NULL;
+            if (right?.kind === Tiny.ObjectKind.NUMBER) return this.evalIndex(left, right, position)
+            else NULL
 
-        if (
-            right?.kind === Tiny.ObjectKind.NUMBER ||
-            right?.kind === Tiny.ObjectKind.STRING
-        ) {
-            return (
-                new Map(
-                    [...(left as Tiny.ObjectObject).pairs].map(
-                        ([key, value]) => [key.value, value]
-                    )
-                ).get(right.value) ?? UNDEFINED
-            );
+        if (right?.kind === Tiny.ObjectKind.NUMBER || right?.kind === Tiny.ObjectKind.STRING) {
+            return new Map([...(left as Tiny.ObjectObject).pairs].map(([key, value]) => [key.value, value])).get(right.value) ?? UNDEFINED
         } else if (right?.kind === Tiny.ExpressionKind.Call) {
             const expression =
-                new Map(
-                    [...(left as Tiny.ObjectObject).pairs].map(
-                        ([key, value]) => [key.value, value]
-                    )
-                ).get(
+                new Map([...(left as Tiny.ObjectObject).pairs].map(([key, value]) => [key.value, value])).get(
                     (right.function as unknown as Tiny.StringLiteral).value
-                ) ?? UNDEFINED;
+                ) ?? UNDEFINED
 
-            if (expression?.kind === Tiny.ObjectKind.ERROR) return expression;
+            if (expression?.kind === Tiny.ObjectKind.ERROR) return expression
 
             if (expression?.kind !== Tiny.ObjectKind.FUNCTION)
                 return Tiny.error(
                     Tiny.errorFormatter(
                         this.messages.runtimeError.invalidFunction,
-                        (right.function as unknown as Tiny.StringLiteral)
-                            .value ?? '<unknown>'
+                        (right.function as unknown as Tiny.StringLiteral).value ?? '<unknown>'
                     ),
                     position.line,
                     position.column
-                );
+                )
 
             return this.evalCallExpression(
                 {
@@ -1356,80 +1014,51 @@ export default class Evaluator {
                     ...position,
                 },
                 enviroment
-            );
-        } else return NULL;
+            )
+        } else return NULL
     }
 
-    private evalInOperator(
-        leftOperand: Tiny.LangObject,
-        rightOperand: Tiny.LangObject,
-        position: Tiny.Position
-    ): Tiny.LangObject {
+    private evalInOperator(leftOperand: Tiny.LangObject, rightOperand: Tiny.LangObject, position: Tiny.Position): Tiny.LangObject {
         switch (rightOperand?.kind) {
             case Tiny.ObjectKind.ARRAY:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
-                    value: rightOperand.value
-                        .map((x) => JSON.stringify(x))
-                        .includes(JSON.stringify(leftOperand)),
-                };
+                    value: rightOperand.value.map((x) => JSON.stringify(x)).includes(JSON.stringify(leftOperand)),
+                }
 
             case Tiny.ObjectKind.OBJECT: {
-                if (
-                    leftOperand?.kind === Tiny.ObjectKind.STRING ||
-                    leftOperand?.kind === Tiny.ObjectKind.NUMBER
-                )
+                if (leftOperand?.kind === Tiny.ObjectKind.STRING || leftOperand?.kind === Tiny.ObjectKind.NUMBER)
                     return {
                         kind: Tiny.ObjectKind.BOOLEAN,
-                        value: [...rightOperand.pairs.keys()]
-                            .map((x) => JSON.stringify(x))
-                            .includes(JSON.stringify(leftOperand)),
-                    };
-                else
-                    return this.typeMissmatch(
-                        leftOperand,
-                        rightOperand,
-                        position
-                    );
+                        value: [...rightOperand.pairs.keys()].map((x) => JSON.stringify(x)).includes(JSON.stringify(leftOperand)),
+                    }
+                else return this.typeMissmatch(leftOperand, rightOperand, position)
             }
 
             case Tiny.ObjectKind.STRING:
                 return {
                     kind: Tiny.ObjectKind.BOOLEAN,
-                    value: rightOperand.value.includes(
-                        (leftOperand as Tiny.StringObject).value
-                    ),
-                };
+                    value: rightOperand.value.includes((leftOperand as Tiny.StringObject).value),
+                }
 
             case Tiny.ObjectKind.NUMBER:
                 if (leftOperand?.kind === Tiny.ObjectKind.OBJECT)
                     return {
                         kind: Tiny.ObjectKind.BOOLEAN,
-                        value: [...leftOperand.pairs.values()]
-                            .map((x) => JSON.stringify(x))
-                            .includes(JSON.stringify(rightOperand)),
-                    };
-                else
-                    return this.typeMissmatch(
-                        leftOperand,
-                        rightOperand,
-                        position
-                    );
+                        value: [...leftOperand.pairs.values()].map((x) => JSON.stringify(x)).includes(JSON.stringify(rightOperand)),
+                    }
+                else return this.typeMissmatch(leftOperand, rightOperand, position)
 
             default:
                 return Tiny.error(
                     Tiny.errorFormatter(
                         this.messages.runtimeError.typeMismatch_2,
-                        Tiny.objectKindStringify(
-                            leftOperand?.kind ?? Tiny.ObjectKind.NULL
-                        ),
-                        Tiny.objectKindStringify(
-                            rightOperand?.kind ?? Tiny.ObjectKind.NULL
-                        )
+                        Tiny.objectKindStringify(leftOperand?.kind ?? Tiny.ObjectKind.NULL),
+                        Tiny.objectKindStringify(rightOperand?.kind ?? Tiny.ObjectKind.NULL)
                     ),
                     position.line,
                     position.column
-                );
+                )
         }
     }
 
@@ -1439,108 +1068,70 @@ export default class Evaluator {
         alternative: Tiny.Expression,
         enviroment: Tiny.Enviroment
     ): Tiny.LangObject {
-        const conditionExpression = this.evalExpression(condition, enviroment);
+        const conditionExpression = this.evalExpression(condition, enviroment)
 
-        if (conditionExpression?.kind === Tiny.ObjectKind.ERROR)
-            return conditionExpression;
+        if (conditionExpression?.kind === Tiny.ObjectKind.ERROR) return conditionExpression
 
-        if (this.isTruthy(conditionExpression))
-            return this.evalExpression(consequence, enviroment);
-        else if (alternative)
-            return this.evalExpression(alternative, enviroment);
-        else return NULL;
+        if (this.isTruthy(conditionExpression)) return this.evalExpression(consequence, enviroment)
+        else if (alternative) return this.evalExpression(alternative, enviroment)
+        else return NULL
     }
 
-    private evalIndex(
-        left: Tiny.LangObject,
-        index: Tiny.LangObject,
-        position: Tiny.Position
-    ): Tiny.LangObject {
+    private evalIndex(left: Tiny.LangObject, index: Tiny.LangObject, position: Tiny.Position): Tiny.LangObject {
         switch (left?.kind) {
             case Tiny.ObjectKind.ARRAY: {
-                if (index?.kind === Tiny.ObjectKind.NUMBER)
-                    return this.evalArrayIndex(left, index, position);
+                if (index?.kind === Tiny.ObjectKind.NUMBER) return this.evalArrayIndex(left, index, position)
 
-                return Tiny.error(
-                    this.messages.runtimeError.typeMismatch_1,
-                    position.line,
-                    position.column
-                );
+                return Tiny.error(this.messages.runtimeError.typeMismatch_1, position.line, position.column)
             }
 
             case Tiny.ObjectKind.OBJECT: {
-                let key: string | number;
+                let key: string | number
 
                 switch (index?.kind) {
                     case Tiny.ObjectKind.STRING:
                     case Tiny.ObjectKind.NUMBER:
-                        key = index.value;
-                        break;
+                        key = index.value
+                        break
 
                     default:
-                        return Tiny.error(
-                            this.messages.runtimeError.typeMismatch_1,
-                            position.line,
-                            position.column
-                        );
+                        return Tiny.error(this.messages.runtimeError.typeMismatch_1, position.line, position.column)
                 }
 
-                return (
-                    new Map(
-                        [...left.pairs].map(([key, value]) => [
-                            key.value,
-                            value,
-                        ])
-                    ).get(key) ?? UNDEFINED
-                );
+                return new Map([...left.pairs].map(([key, value]) => [key.value, value])).get(key) ?? UNDEFINED
             }
 
             default:
-                return NULL;
+                return NULL
         }
     }
 
-    private evalArrayIndex(
-        left: Tiny.LangObject,
-        index: Tiny.LangObject,
-        position: Tiny.Position
-    ): Tiny.LangObject {
-        if (
-            index?.kind !== Tiny.ObjectKind.NUMBER ||
-            left?.kind !== Tiny.ObjectKind.ARRAY
-        )
-            return Tiny.error(
-                this.messages.runtimeError.typeMismatch_1,
-                position.line,
-                position.column
-            );
+    private evalArrayIndex(left: Tiny.LangObject, index: Tiny.LangObject, position: Tiny.Position): Tiny.LangObject {
+        if (index?.kind !== Tiny.ObjectKind.NUMBER || left?.kind !== Tiny.ObjectKind.ARRAY)
+            return Tiny.error(this.messages.runtimeError.typeMismatch_1, position.line, position.column)
 
         if (index.value < 0 || index.value >= left.value.length)
-            return Tiny.error(
-                this.messages.runtimeError.indexOutOfRange,
-                position.line,
-                position.column
-            );
+            return Tiny.error(this.messages.runtimeError.indexOutOfRange, position.line, position.column)
 
-        return left.value[index.value];
+        return left.value[index.value]
     }
 
     private isTruthy(object: Tiny.LangObject): boolean {
-        if (!object) return false;
+        if (!object) return false
 
         switch (object.kind) {
             case Tiny.ObjectKind.BOOLEAN:
-                return object.value;
+                return object.value
 
             case Tiny.ObjectKind.NUMBER:
-                return object.value !== 0;
+                return object.value !== 0
 
             case Tiny.ObjectKind.NULL:
             case Tiny.ObjectKind.UNDEFINED:
-                return false;
+                return false
 
             default:
-                return true;
+                return true
         }
     }
 
@@ -1548,23 +1139,15 @@ export default class Evaluator {
         return {
             kind: Tiny.ObjectKind.BOOLEAN,
             value: !this.isTruthy(object),
-        };
+        }
     }
 
-    private evalMinus(
-        object: Tiny.LangObject,
-        position: Tiny.Position
-    ): Tiny.LangObject {
-        if (object?.kind !== Tiny.ObjectKind.NUMBER)
-            return Tiny.error(
-                this.messages.runtimeError.typeMismatch_1,
-                position.line,
-                position.column
-            );
+    private evalMinus(object: Tiny.LangObject, position: Tiny.Position): Tiny.LangObject {
+        if (object?.kind !== Tiny.ObjectKind.NUMBER) return Tiny.error(this.messages.runtimeError.typeMismatch_1, position.line, position.column)
 
         return {
             kind: Tiny.ObjectKind.NUMBER,
             value: -object.value,
-        };
+        }
     }
 }

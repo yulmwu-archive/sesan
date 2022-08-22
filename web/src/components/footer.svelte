@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { evaluating, errors } from '../stores.js';
-    let [isEvaluating, countErrors] = [false, 0];
+    import { evaluating, errors } from '../stores.js'
+    let [isEvaluating, countErrors] = [false, 0]
 
-    evaluating.subscribe((v) => (isEvaluating = v));
-    errors.subscribe((v) => (countErrors = v));
+    evaluating.subscribe((v) => (isEvaluating = v))
+    errors.subscribe((v) => (countErrors = v))
 </script>
 
 <div class="clear-both fixed bottom-0 w-full h-[1.4rem] bg-footer">
@@ -23,8 +23,6 @@
             </p>
         {/if}
     {:else}
-        <p class="pl-3 inline text-center float-left cursor-pointer">
-            Evaluating...
-        </p>
+        <p class="pl-3 inline text-center float-left cursor-pointer">Evaluating...</p>
     {/if}
 </div>

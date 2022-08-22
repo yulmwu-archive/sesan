@@ -1,42 +1,24 @@
-import App from './App.svelte';
-import type { IExamplesGroup } from './types';
+import App from './App.svelte'
+import type { IExamplesGroup } from './types'
 
 // @ts-ignore
 require.config({
     paths: {
         vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.26.1/min/vs',
     },
-});
+})
 
-let editor = null;
+let editor = null
 
-window
-    .matchMedia('(prefers-color-scheme: dark)')
-    .addEventListener('change', (e) =>
-        editor.updateOptions({
-            theme: e.matches ? 'tinyTheme' : 'tinyTheme-light',
-        })
-    );
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) =>
+    editor.updateOptions({
+        theme: e.matches ? 'tinyTheme' : 'tinyTheme-light',
+    })
+)
 
 // @ts-ignore
 require(['vs/editor/editor.main'], () => {
-    const keywords = [
-        'let',
-        'func',
-        'true',
-        'false',
-        'if',
-        'else',
-        'return',
-        'while',
-        'in',
-        'typeof',
-        'null',
-        'throw',
-        'delete',
-        'use',
-        'void',
-    ];
+    const keywords = ['let', 'func', 'true', 'false', 'if', 'else', 'return', 'while', 'in', 'typeof', 'null', 'throw', 'delete', 'use', 'void']
 
     const stds = [
         // IO
@@ -66,23 +48,12 @@ require(['vs/editor/editor.main'], () => {
         'replace',
         'split',
         'concat',
-        'regex'
-    ];
+        'regex',
+    ]
 
-    const builtins = [
-        'import',
-        'eval',
-        'js',
-        'convert',
-        'options',
-        'regExp',
-        'this',
-        '__root',
-        '__pos',
-        '__filename',
-    ];
+    const builtins = ['import', 'eval', 'js', 'convert', 'options', 'regExp', 'this', '__root', '__pos', '__filename']
 
-    monaco.languages.register({ id: 'tiny' });
+    monaco.languages.register({ id: 'tiny' })
 
     monaco.languages.setLanguageConfiguration('tiny', {
         autoClosingPairs: [
@@ -100,7 +71,7 @@ require(['vs/editor/editor.main'], () => {
         comments: {
             lineComment: '//',
         },
-    });
+    })
 
     monaco.languages.setMonarchTokensProvider('tiny', {
         keywords,
@@ -132,7 +103,7 @@ require(['vs/editor/editor.main'], () => {
                 [/\s+/, 'white'],
             ],
         },
-    });
+    })
 
     monaco.editor.defineTheme('tinyTheme', {
         base: 'vs-dark',
@@ -145,7 +116,7 @@ require(['vs/editor/editor.main'], () => {
             { token: 'function', foreground: '#dcdc90' },
             { token: 'builtin', foreground: '#f75278' },
         ],
-    });
+    })
 
     monaco.editor.defineTheme('tinyTheme-light', {
         base: 'vs',
@@ -158,7 +129,7 @@ require(['vs/editor/editor.main'], () => {
             { token: 'function', foreground: '#94a31f' },
             { token: 'builtin', foreground: '#b82144' },
         ],
-    });
+    })
 
     monaco.languages.registerCompletionItemProvider('tiny', {
         provideCompletionItems: () => ({
@@ -170,91 +141,67 @@ require(['vs/editor/editor.main'], () => {
                 })),
                 {
                     label: 'let',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: 'let ${1:name} = ${2:literal};',
                 },
                 {
                     label: 'func',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: 'func ${1:name}(${2:params}) {\n\t${3:body}\n}',
                 },
                 {
                     label: 'if',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: 'if (${1:condition}) {\n\t${2:body}\n}',
                 },
                 {
                     label: 'else',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: 'else {\n\t${1:body}\n}',
                 },
                 {
                     label: 'return',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: 'return ${1:expression};',
                 },
                 {
                     label: 'while',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: 'while (${1:condition}) {\n\t${2:body}\n}',
                 },
                 {
                     label: 'in',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: 'in',
                 },
                 {
                     label: 'typeof',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: 'typeof ${1:expression}',
                 },
                 {
                     label: 'throw',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: "throw '${1:message}';",
                 },
                 {
                     label: 'delete',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: 'delete ${1:env};',
                 },
                 {
                     label: 'use',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: "use '${1:path}';",
                 },
                 {
                     label: 'void',
-                    insertTextRules:
-                        monaco.languages.CompletionItemInsertTextRule
-                            .InsertAsSnippet,
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
                     insertText: 'void ${1:expression};',
                 },
             ],
         }),
-    });
+    })
 
     editor = monaco.editor.create(document.getElementById('editor'), {
         value: window.location.hash
@@ -275,17 +222,13 @@ let someVariable = 'Hello, World!';
 println(someVariable);
 `,
         language: 'tiny',
-        theme:
-            window.matchMedia &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches
-                ? 'tinyTheme'
-                : 'tinyTheme-light',
+        theme: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'tinyTheme' : 'tinyTheme-light',
         automaticLayout: true,
         fontSize: 17,
         fontFamily: 'Fira Code',
         fontLigatures: true,
-    });
-});
+    })
+})
 
 const examples: Array<IExamplesGroup> = [
     {
@@ -373,11 +316,11 @@ const examples: Array<IExamplesGroup> = [
             },
         ],
     },
-];
+]
 
 const app = new App({
     target: document.body,
-});
+})
 
-export default app;
-export { editor, examples };
+export default app
+export { editor, examples }
