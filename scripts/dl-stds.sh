@@ -2,7 +2,7 @@
 
 FILES=("array.tiny" "io.tiny" "lib.tiny" "string.tiny" "util.tiny")
 
-STD_PATH="./@stds"
+STD_PATH="./@std"
 
 if [ ! -d $STD_PATH ]; then
     if [ ! -d STD_PATH ]; then

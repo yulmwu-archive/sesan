@@ -262,6 +262,10 @@ console.log(
 
 `@std/` must exist in root (`./`).
 
+```sh
+curl -O https://raw.githubusercontent.com/tsukiroku/tiny/main/scripts/dl-stds.sh && . ./dl-stds.sh && rm ./dl-stds.sh
+```
+
 <br />
 
 # Examples
