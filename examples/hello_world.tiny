@@ -3,7 +3,11 @@ func hello() concat('Hello,', join(this <- arguments, ''));
 
 println(
     hello(
-        reduce(['W', 'o', 'r', 'l', 'd'], func (prev, curr) prev + curr, ''),
+        reduce(
+            ['W', 'o', 'r', 'l', 'd'],
+            func (prev, curr) prev + curr,
+            ''
+        ),
         '!'
     )
 );

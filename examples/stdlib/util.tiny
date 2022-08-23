@@ -9,8 +9,4 @@ println(match(3, [
     return v * 10;
 }));
 
-let y = string(x);
-
-println('x is ' + string(1 + 2));
-println(number(y) + 20);
-println(boolean(1));
+println(ternary(x == 3, 3, '?'));

@@ -1,7 +1,7 @@
 /// Standard Library: Utility
 /// 
 /// Author: @tsukiroku (https://github.com/tsukiroku)
-/// Updated on 2022/08/18 (08:25 PM, KST)
+/// Updated on 2022/08/23 (06:45 PM, KST)
 
 // `capture` deprecated from 0.3.65^.
 let funcTools = {
@@ -23,12 +23,6 @@ func match(value, case, default) {
 
     return result;
 }
-
-func number(value) convert(value, 'number');
-
-func string(value) convert(value, 'string');
-
-func boolean(value) convert(value, 'boolean');
 
 func ternary(condition, trueValue, falseValue) 
     if (condition) trueValue else falseValue;

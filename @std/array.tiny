@@ -1,7 +1,7 @@
 /// Standard Library: Array
 /// 
 /// Author: @tsukiroku (https://github.com/tsukiroku)
-/// Updated on 2022/08/15 (08:25 PM, KST)
+/// Updated on 2022/08/23 (06:45 PM, KST)
 
 func push(arr, value) __builtin_push(arr, value);
 
@@ -13,7 +13,10 @@ func unshift(arr, value) __builtin_unshift(arr, value);
 
 func slice(arr, start, end) __builtin_slice(arr, start, end);
 
-func join(arr, separator) __builtin_join(arr, separator);
+@funcTools <- skip;
+func join(arr, separator) 
+    if (length(this <- arguments) == 2) __builtin_join(arr, separator)
+    else __builtin_join(arr, ' ');
 
 func forEach(arr, callback) __builtin_forEach(arr, callback);
 
@@ -21,23 +24,23 @@ func forEach(arr, callback) __builtin_forEach(arr, callback);
 func repeat(x, r) 
     match(length(this <- arguments), [
         [1, func(value) {
-            let _x = 0;
+            let count = 0;
             let result = [];
 
-            while (_x < x) {
+            while (count < x) {
                 result = push(result, null);
-                _x = _x + 1;
+                count = count + 1;
             }
 
             return result;
         }],
         [2, func(value) {
-            let _x = 0;
+            let count = 0;
             let result = [];
 
-            while (_x < r) {
+            while (count < r) {
                 result = push(result, x);
-                _x = _x + 1;
+                count = count + 1;
             }
 
             return result;
@@ -48,12 +51,20 @@ func reduce(arr, callback, initial) {
     let result = initial;
 
     forEach(arr, func (value, _) { 
-        let _result = callback(result, value); 
+        let callbackResult = callback(result, value); 
 
-        if (typeof _result == 'BOOLEAN') _result;
+        if (typeof callbackResult == 'BOOLEAN') callbackResult;
 
-        result = _result;
+        result = callbackResult;
     });
+
+    return result;
+}
+
+func map(arr, callback) {
+    let result = [];
+
+    forEach(arr, func (value, _) (result = push(result, callback(value))));
 
     return result;
 }

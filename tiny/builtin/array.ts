@@ -83,12 +83,22 @@ const join: Func = (
     evaluator: Tiny.Evaluator,
     position: Tiny.Position
 ): Tiny.LangObject => {
-    if (parameters.length !== 2 || parameters[0]?.kind !== Tiny.ObjectKind.ARRAY || parameters[1]?.kind !== Tiny.ObjectKind.STRING)
+    if (
+        (parameters.length !== 1 && parameters.length !== 2) ||
+        parameters[0]?.kind !== Tiny.ObjectKind.ARRAY ||
+        parameters[1]?.kind !== Tiny.ObjectKind.STRING
+    )
         return invalidArgument(position, evaluator.option)
+
+    if (parameters.length === 1)
+        return {
+            kind: Tiny.ObjectKind.STRING,
+            value: (parameters[0] as Tiny.ArrayObject).value.map((v) => Tiny.objectStringify(v)).join(parameters[1].value),
+        }
 
     return {
         kind: Tiny.ObjectKind.STRING,
-        value: (parameters[0] as Tiny.ArrayObject).value.map((v) => Tiny.objectStringify(v)).join(parameters[1].value),
+        value: (parameters[0] as Tiny.ArrayObject).value.map((v) => Tiny.objectStringify(v)).join(''),
     }
 }
 

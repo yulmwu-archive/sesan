@@ -102,14 +102,12 @@ export default class Evaluator {
 
             case Tiny.NodeKind.WhileStatement: {
                 let condition = this.evalExpression((statement as unknown as Tiny.WhileStatement).condition, enviroment)
-
                 if (condition?.kind === Tiny.ObjectKind.ERROR) return condition
 
                 const resultExpr: Array<Tiny.LangObject> = []
 
                 while (this.isTruthy(condition)) {
                     const result = this.evalExpression((statement as unknown as Tiny.WhileStatement).body, enviroment)
-
                     if (result?.kind === Tiny.ObjectKind.ERROR) return result
 
                     condition = this.evalExpression((statement as unknown as Tiny.WhileStatement).condition, enviroment)
@@ -126,7 +124,6 @@ export default class Evaluator {
                 const decorator = statement as unknown as Tiny.DecoratorStatement
 
                 const value = this.evalExpression(decorator.value, enviroment)
-
                 if (value?.kind === Tiny.ObjectKind.ERROR) return value
 
                 const func = this.evalFunction(decorator.function as Tiny.FunctionExpression, enviroment, value)
@@ -229,7 +226,6 @@ export default class Evaluator {
 
             case Tiny.ExpressionKind.Typeof: {
                 const value = this.evalExpression(expression.value, enviroment)
-
                 if (value?.kind === Tiny.ObjectKind.ERROR) return value
 
                 if (!value) return NULL
@@ -242,7 +238,6 @@ export default class Evaluator {
 
             case Tiny.ExpressionKind.Throw: {
                 const message = this.evalExpression(expression.message, enviroment)
-
                 if (message?.kind === Tiny.ObjectKind.ERROR) return message
 
                 if (!message) return NULL
@@ -261,7 +256,6 @@ export default class Evaluator {
 
             case Tiny.ExpressionKind.Use: {
                 const path = this.evalExpression(expression.path, enviroment)
-
                 if (path?.kind === Tiny.ObjectKind.ERROR) return path
 
                 if (path?.kind !== Tiny.ObjectKind.STRING)
@@ -275,7 +269,6 @@ export default class Evaluator {
 
             case Tiny.ExpressionKind.Void: {
                 const value = this.evalExpression(expression.value, enviroment)
-
                 if (value?.kind === Tiny.ObjectKind.ERROR) return value
 
                 return UNDEFINED
@@ -341,7 +334,6 @@ export default class Evaluator {
 
     private evalCallExpression(expression: Tiny.CallExpression, enviroment: Tiny.Enviroment): Tiny.LangObject {
         const functionObject = this.evalExpression(expression.function, enviroment)
-
         if (functionObject?.kind === Tiny.ObjectKind.ERROR) return functionObject
 
         const args = this.evalExpressions(expression.parameters, enviroment)
@@ -522,7 +514,6 @@ export default class Evaluator {
 
     private evalPrefix(operator: Tiny.TokenType, right: Tiny.Expression, enviroment: Tiny.Enviroment, position: Tiny.Position): Tiny.LangObject {
         const expression = this.evalExpression(right, enviroment)
-
         if (expression?.kind === Tiny.ObjectKind.ERROR) return expression
 
         switch (operator) {
@@ -545,11 +536,9 @@ export default class Evaluator {
         position: Tiny.Position
     ): Tiny.LangObject {
         const left = this.evalExpression(leftOperand, enviroment)
-
         if (left?.kind === Tiny.ObjectKind.ERROR) return left
 
         const right = this.evalExpression(rightOperand, enviroment)
-
         if (right?.kind === Tiny.ObjectKind.ERROR) return right
 
         if (operator === Tiny.TokenType.NULLISH) return left?.kind === Tiny.ObjectKind.NULL ? right : left
@@ -856,7 +845,6 @@ export default class Evaluator {
     ): Tiny.LangObject {
         if (operator === Tiny.TokenType.ASSIGN) {
             const right = this.evalExpression(rightOperand, enviroment)
-
             if (right?.kind === Tiny.ObjectKind.ERROR) return right
 
             if (leftOperand?.kind !== Tiny.ExpressionKind.Ident && leftOperand?.kind !== Tiny.ExpressionKind.Index)
@@ -883,7 +871,6 @@ export default class Evaluator {
                     const index = (leftOperand as unknown as Tiny.IndexExpression).index
 
                     const left = this.evalExpression((leftOperand as unknown as Tiny.IndexExpression).left, enviroment)
-
                     if (left?.kind === Tiny.ObjectKind.ERROR) return left
 
                     if (left?.kind !== Tiny.ObjectKind.ARRAY && left?.kind !== Tiny.ObjectKind.OBJECT)
@@ -899,14 +886,12 @@ export default class Evaluator {
 
                     if (left?.kind === Tiny.ObjectKind.ARRAY) {
                         const resultIdx = this.evalExpression(index, enviroment)
-
                         if (resultIdx?.kind === Tiny.ObjectKind.ERROR) return resultIdx
 
                         if (resultIdx?.kind !== Tiny.ObjectKind.NUMBER)
                             return Tiny.error(this.messages.runtimeError.typeMismatch_1, position.line, position.column)
 
                         const value = this.evalExpression(rightOperand, enviroment)
-
                         if (value?.kind === Tiny.ObjectKind.ERROR) return value
 
                         if (value?.kind !== Tiny.ObjectKind.NUMBER)
@@ -916,14 +901,12 @@ export default class Evaluator {
                         return value
                     } else {
                         const resultIdx = this.evalExpression(index, enviroment)
-
                         if (resultIdx?.kind === Tiny.ObjectKind.ERROR) return resultIdx
 
                         if (resultIdx?.kind !== Tiny.ObjectKind.STRING && resultIdx?.kind !== Tiny.ObjectKind.NUMBER)
                             return Tiny.error(this.messages.runtimeError.typeMismatch_1, position.line, position.column)
 
                         const value = this.evalExpression(rightOperand, enviroment)
-
                         if (value?.kind === Tiny.ObjectKind.ERROR) return value
 
                         left.pairs = new Map(
@@ -959,7 +942,6 @@ export default class Evaluator {
         position: Tiny.Position
     ): Tiny.LangObject {
         const left = this.evalExpression(leftOperand, enviroment)
-
         if (left?.kind === Tiny.ObjectKind.ERROR) return left
 
         if (left?.kind !== Tiny.ObjectKind.OBJECT && left?.kind !== Tiny.ObjectKind.ARRAY) return null
@@ -1000,7 +982,7 @@ export default class Evaluator {
                     position.column
                 )
 
-            return this.evalCallExpression(
+            const callResult = this.evalCallExpression(
                 {
                     kind: Tiny.ExpressionKind.Call,
                     function: {
@@ -1015,6 +997,10 @@ export default class Evaluator {
                 },
                 enviroment
             )
+
+            if (callResult?.kind === Tiny.ObjectKind.ERROR) return callResult
+
+            return callResult
         } else return NULL
     }
 
@@ -1069,12 +1055,19 @@ export default class Evaluator {
         enviroment: Tiny.Enviroment
     ): Tiny.LangObject {
         const conditionExpression = this.evalExpression(condition, enviroment)
-
         if (conditionExpression?.kind === Tiny.ObjectKind.ERROR) return conditionExpression
 
-        if (this.isTruthy(conditionExpression)) return this.evalExpression(consequence, enviroment)
-        else if (alternative) return this.evalExpression(alternative, enviroment)
-        else return NULL
+        if (this.isTruthy(conditionExpression)) {
+            const consequenceResult = this.evalExpression(consequence, enviroment)
+            if (consequenceResult?.kind === Tiny.ObjectKind.ERROR) return consequenceResult
+
+            return consequenceResult
+        } else if (alternative) {
+            const alternativeResult = this.evalExpression(alternative, enviroment)
+            if (alternativeResult?.kind === Tiny.ObjectKind.ERROR) return alternativeResult
+
+            return alternativeResult
+        } else return NULL
     }
 
     private evalIndex(left: Tiny.LangObject, index: Tiny.LangObject, position: Tiny.Position): Tiny.LangObject {

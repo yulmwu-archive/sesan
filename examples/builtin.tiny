@@ -17,3 +17,10 @@ let object = {
 };
 
 object <- hello();
+
+let y = to_s(x);
+
+println('x is ' + to_s(1 + 2));
+println(to_n(y) + 20);
+println(to_b(1));
+println(to_a(object));

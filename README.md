@@ -160,15 +160,17 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 # Built-in functions
 
-| Function           | Arguments          |
-| ------------------ | ------------------ |
-| `import`           | `string`           |
-| `eval`             | `string`           |
-| `js`               | `string`           |
-| `convert`          | `Any`              |
-| `options`          |                    |
-| `setOption`        | `string`, `string` |
-| [`regExp`](#regex) |                    |
+| Function           | Arguments |
+| ------------------ | --------- |
+| `import`           | `string`  |
+| `eval`             | `string`  |
+| `js`               | `string`  |
+| `to_s`             | `Any`     |
+| `to_n`             | `Any`     |
+| `to_b`             | `Any`     |
+| `to_a`             | `Any`     |
+| `options`          |           |
+| [`regExp`](#regex) |           |
 
 <br />
 
@@ -191,13 +193,12 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
         -   `repeat(value, count) -> array`, `repeat(count) -> array`
         -   `reduce(array, callback, initial) -> Any`
             -   `callback(previous, current)`
+        -   `map(array, callback) -> array`
+            -   `callback(value, index)`
     -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
         -   `funcTools -> object`
         -   `length(array) -> number`
         -   `match(value, [pattern], default) -> Any`
-        -   `string(value) -> string`
-        -   `number(value) -> number`
-        -   `boolean(value) -> boolean`
         -   `ternary(condition, trueValue, falseValue) -> Any`
     -   [`string`]
         -   `split(string, separator) -> array`
@@ -339,6 +340,7 @@ console.log(
         -   [forEach](#foreach)
         -   [repeat](#repeat)
         -   [reduce](#reduce)
+        -   [map](#map)
     -   [String](#string-1)
         -   [split](#split)
         -   [concat](#concat)
@@ -724,10 +726,6 @@ js("console.log('foo')");
 
 **this feature is a dangerous feature. be careful.**
 
-## convert
-
-> extends [`string()`, `number()`, `boolean()`](#string-number-boolean)
-
 ## options
 
 ```
@@ -784,12 +782,13 @@ println(match(3, [
 }));
 ```
 
-### string, number, boolean
+### to_s, to_n, to_b, to_a
 
 ```
-string(5); // "5"
-number("5"); // 5
-boolean(0); // false
+to_s(1); // '1'
+to_n('1'); // 1
+to_b(1); // true
+to_a({ foo: 'bar', bar: 1 }); // ['bar', 1]
 ```
 
 ### ternary
@@ -889,9 +888,9 @@ callback is given a value to traverse and an index value.
 
 ```
 forEach(true, func (i) {
-    if (i % 2 == 0) return true;
+    if (i % 2 == 0) { return true };
 
-    if (i >= 10) return false;
+    if (i >= 10) { return false };
 
     println(i);
 });
@@ -916,14 +915,20 @@ if there are two parameters, it iterates the first parameter by the second param
 ### reduce
 
 ```
-reduce([ 1, 2, 3 ], func (prev, curr) {
-    return prev + curr;
-}, 0);
+reduce([ 1, 2, 3 ], func (prev, curr) prev + curr, 0);
 ```
 
 Iterates through each element of the provided array, accumulating the return value of the callback and returning it.
 
 can specify the initial value of the accumulated values.
+
+### map
+
+```
+map([1, 2, 3], func (x, _) x * 10);
+```
+
+Iterates through each element of the provided array, returning a new array with the return value of the callback.
 
 <br />
 

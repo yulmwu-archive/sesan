@@ -24,7 +24,6 @@ require(['vs/editor/editor.main'], () => {
         // IO
         'print',
         'println',
-        'readline',
         // ARRAY
         'push',
         'pop',
@@ -35,13 +34,11 @@ require(['vs/editor/editor.main'], () => {
         'forEach',
         'repeat',
         'reduce',
+        'map',
         // UTIL
         'funcTools',
         'length',
         'match',
-        'string',
-        'number',
-        'boolean',
         'ternary',
         // STRING
         'subString',
@@ -51,7 +48,7 @@ require(['vs/editor/editor.main'], () => {
         'regex',
     ]
 
-    const builtins = ['import', 'eval', 'js', 'convert', 'options', 'regExp', 'this', '__root', '__pos', '__filename']
+    const builtins = ['import', 'eval', 'js', 'convert', 'options', 'regExp', 'this', 'to_s', 'to_n', 'to_b', 'to_a', '__root', '__pos', '__filename']
 
     monaco.languages.register({ id: 'tiny' })
 

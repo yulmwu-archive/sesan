@@ -120,65 +120,109 @@ const evalJSCode: Tiny.Func = (
     }
 }
 
-const convert: Tiny.Func = (
+const toString: Tiny.Func = (
     parameters: Array<Tiny.LangObject>,
     enviroment: Tiny.Enviroment,
     evaluator: Tiny.Evaluator,
     position: Tiny.Position
 ): Tiny.LangObject => {
-    if (parameters.length !== 2 || parameters[1]?.kind !== Tiny.ObjectKind.STRING) return Tiny.invalidArgument(position, evaluator.option)
+    if (parameters.length !== 1) return Tiny.invalidArgument(position, evaluator.option)
 
-    const to = parameters[1].value.toLowerCase()
-
-    if (to === 'number') {
-        switch (parameters[0]?.kind) {
-            case Tiny.ObjectKind.NUMBER:
-                return parameters[0]
-
-            case Tiny.ObjectKind.BOOLEAN:
-                return {
-                    kind: Tiny.ObjectKind.NUMBER,
-                    value: parameters[0].value ? 1 : 0,
-                }
-
-            case Tiny.ObjectKind.STRING:
-                const num = Number(parameters[0]?.value)
-                return isNaN(num) ? Tiny.NULL : { kind: Tiny.ObjectKind.NUMBER, value: num }
-
-            default:
-                return Tiny.NULL
-        }
-    } else if (to === 'string')
-        return {
-            kind: Tiny.ObjectKind.STRING,
-            value: Tiny.objectStringify(parameters[0]),
-        }
-    else if (to === 'boolean') {
-        switch (parameters[0]?.kind) {
-            case Tiny.ObjectKind.BOOLEAN:
-                return {
-                    kind: Tiny.ObjectKind.BOOLEAN,
-                    value: parameters[0].value,
-                }
-
-            case Tiny.ObjectKind.NUMBER:
-                return {
-                    kind: Tiny.ObjectKind.BOOLEAN,
-                    value: parameters[0].value !== 0,
-                }
-
-            case Tiny.ObjectKind.STRING:
-                return {
-                    kind: Tiny.ObjectKind.BOOLEAN,
-                    value: parameters[0].value !== '',
-                }
-
-            default:
-                return Tiny.NULL
-        }
+    return {
+        kind: Tiny.ObjectKind.STRING,
+        value: Tiny.objectStringify(parameters[0]),
     }
+}
 
-    return { kind: Tiny.ObjectKind.NULL }
+const toNumber: Tiny.Func = (
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
+): Tiny.LangObject => {
+    if (parameters.length !== 1) return Tiny.invalidArgument(position, evaluator.option)
+
+    switch (parameters[0]?.kind) {
+        case Tiny.ObjectKind.NUMBER:
+            return parameters[0]
+
+        case Tiny.ObjectKind.BOOLEAN:
+            return {
+                kind: Tiny.ObjectKind.NUMBER,
+                value: parameters[0].value ? 1 : 0,
+            }
+
+        case Tiny.ObjectKind.STRING:
+            const num = Number(parameters[0]?.value)
+            return isNaN(num) ? Tiny.NULL : { kind: Tiny.ObjectKind.NUMBER, value: num }
+
+        default:
+            return Tiny.NULL
+    }
+}
+
+const toBoolean: Tiny.Func = (
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
+): Tiny.LangObject => {
+    if (parameters.length !== 1) return Tiny.invalidArgument(position, evaluator.option)
+
+    switch (parameters[0]?.kind) {
+        case Tiny.ObjectKind.BOOLEAN:
+            return {
+                kind: Tiny.ObjectKind.BOOLEAN,
+                value: parameters[0].value,
+            }
+
+        case Tiny.ObjectKind.NUMBER:
+            return {
+                kind: Tiny.ObjectKind.BOOLEAN,
+                value: parameters[0].value !== 0,
+            }
+
+        case Tiny.ObjectKind.STRING:
+            return {
+                kind: Tiny.ObjectKind.BOOLEAN,
+                value: parameters[0].value !== '',
+            }
+
+        default:
+            return Tiny.NULL
+    }
+}
+
+const toArray: Tiny.Func = (
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
+): Tiny.LangObject => {
+    if (parameters.length !== 1) return Tiny.invalidArgument(position, evaluator.option)
+
+    switch (parameters[0]?.kind) {
+        case Tiny.ObjectKind.ARRAY:
+            return parameters[0]
+
+        case Tiny.ObjectKind.OBJECT:
+            return {
+                kind: Tiny.ObjectKind.ARRAY,
+                value: [...(parameters[0] as Tiny.ObjectObject).pairs.values()],
+            }
+
+        case Tiny.ObjectKind.STRING:
+            return {
+                kind: Tiny.ObjectKind.ARRAY,
+                value: parameters[0].value.split('').map((v) => ({
+                    kind: Tiny.ObjectKind.STRING,
+                    value: v,
+                })),
+            }
+
+        default:
+            return Tiny.NULL
+    }
 }
 
 const options: Tiny.Func = (parameters: Array<Tiny.LangObject>, enviroment: Tiny.Enviroment, evaluator: Tiny.Evaluator): Tiny.LangObject => {
@@ -269,7 +313,10 @@ export const builtin: Map<string, Tiny.Func> = new Map([
     ['import', importEnviroment],
     ['eval', evalCode],
     ['js', evalJSCode],
-    ['convert', convert],
+    ['to_s', toString],
+    ['to_n', toNumber],
+    ['to_b', toBoolean],
+    ['to_a', toArray],
     ['options', options],
     ['setOption', setOption],
     ['__builtin_length', length],

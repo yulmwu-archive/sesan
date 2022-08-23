@@ -31,3 +31,5 @@ forEach(true, func (index) {
 println();
 
 println(reduce(array, func (prev, curr) prev + curr, 0));
+
+println(map([1, 2, 3], func (x) x * 10));
