@@ -988,6 +988,28 @@ println(pattern <- replace('b'));
 <expression>;
 ```
 
+## expr keyword
+
+```
+expr <expression>
+```
+
+> extends [`expression`](#expression)
+
+Evaluates the expression, and if the result is an error,
+
+```
+{
+    'message': 'error message',
+    'filename': 'file name',
+    'line': 0,       // line number
+    'column': 0,     // column number
+    'error': true    // true if error
+}
+```
+
+an Object containing the error message is returned.
+
 # Block Expression
 
 ```
@@ -1019,14 +1041,14 @@ IIFE (Immediately Invoked Function Expression) pattern
 # Keywords
 
 ```
-<let>, <func>, <true>, <false>, <if>, <else>, <return>, <while>, <in>, <typeof>, <null>, <throw>, <delete>, <use>, <void>
+<let>, <func>, <true>, <false>, <if>, <else>, <return>, <while>, <in>, <typeof>, <null>, <throw>, <delete>, <use>, <void>, <expr>
 
 Not used, but may be added later
 
-<class>, <for>, <expr>, <const>
+<class>, <for>, <const>
 ```
 
-> extends [`<let>`](#variables), [`<func>`](#function), [`<true>`](#boolean), [`<false>`](#boolean), [`<if>`](#if), [`<else>`](#if), [`<return>`](#return), [`<while>`](#while), [`<in>`](#operators-1), [`<use>`](#import-1), [`<void>`](#undefined)
+> extends [`<let>`](#variables), [`<func>`](#function), [`<true>`](#boolean), [`<false>`](#boolean), [`<if>`](#if), [`<else>`](#if), [`<return>`](#return), [`<while>`](#while), [`<in>`](#operators-1), [`<use>`](#import-1), [`<void>`](#undefined), [`<expr>`](#expr-keyword)
 
 ---
 

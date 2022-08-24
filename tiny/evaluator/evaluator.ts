@@ -274,6 +274,69 @@ export default class Evaluator {
                 return UNDEFINED
             }
 
+            case Tiny.ExpressionKind.Expr: {
+                const value = this.evalExpression(expression.value, enviroment)
+
+                if (value?.kind === Tiny.ObjectKind.ERROR)
+                    return {
+                        kind: Tiny.ObjectKind.OBJECT,
+                        pairs: new Map([
+                            [
+                                {
+                                    kind: Tiny.ObjectKind.STRING,
+                                    value: 'message',
+                                },
+                                {
+                                    kind: Tiny.ObjectKind.STRING,
+                                    value: value.message,
+                                },
+                            ],
+                            [
+                                {
+                                    kind: Tiny.ObjectKind.STRING,
+                                    value: 'line',
+                                },
+                                {
+                                    kind: Tiny.ObjectKind.NUMBER,
+                                    value: value.line,
+                                },
+                            ],
+                            [
+                                {
+                                    kind: Tiny.ObjectKind.STRING,
+                                    value: 'column',
+                                },
+                                {
+                                    kind: Tiny.ObjectKind.NUMBER,
+                                    value: value.column,
+                                },
+                            ],
+                            [
+                                {
+                                    kind: Tiny.ObjectKind.STRING,
+                                    value: 'filename',
+                                },
+                                {
+                                    kind: Tiny.ObjectKind.STRING,
+                                    value: this.option.filename,
+                                },
+                            ],
+                            [
+                                {
+                                    kind: Tiny.ObjectKind.STRING,
+                                    value: 'error',
+                                },
+                                {
+                                    kind: Tiny.ObjectKind.BOOLEAN,
+                                    value: true,
+                                },
+                            ],
+                        ]),
+                    }
+
+                return value
+            }
+
             default:
                 return null
         }

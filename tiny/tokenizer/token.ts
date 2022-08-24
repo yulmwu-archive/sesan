@@ -57,10 +57,10 @@ enum TokenType {
     DELETE = 'DELETE',
     USE = 'USE',
     VOID = 'VOID',
+    EXPR = 'EXPR',
 
     CLASS = 'CLASS',
     FOR = 'FOR',
-    EXPR = 'EXPR',
     CONST = 'CONST',
 }
 
@@ -139,13 +139,13 @@ const fromLiteral = (literal: string): TokenType => {
             return TokenType.USE
         case 'void':
             return TokenType.VOID
+        case 'expr':
+            return TokenType.EXPR
         // Not used, but may be added later
         case 'class':
             return TokenType.CLASS
         case 'for':
             return TokenType.FOR
-        case 'expr':
-            return TokenType.EXPR
         case 'const':
             return TokenType.CONST
         default:

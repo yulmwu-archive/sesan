@@ -18,7 +18,24 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
 
 // @ts-ignore
 require(['vs/editor/editor.main'], () => {
-    const keywords = ['let', 'func', 'true', 'false', 'if', 'else', 'return', 'while', 'in', 'typeof', 'null', 'throw', 'delete', 'use', 'void']
+    const keywords = [
+        'let',
+        'func',
+        'true',
+        'false',
+        'if',
+        'else',
+        'return',
+        'while',
+        'in',
+        'typeof',
+        'null',
+        'throw',
+        'delete',
+        'use',
+        'void',
+        'expr',
+    ]
 
     const stds = [
         // IO
@@ -139,7 +156,7 @@ require(['vs/editor/editor.main'], () => {
                 {
                     label: 'let',
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: 'let ${1:name} = ${2:literal};',
+                    insertText: 'let ${1:name} = ${2:literal}',
                 },
                 {
                     label: 'func',
@@ -159,7 +176,7 @@ require(['vs/editor/editor.main'], () => {
                 {
                     label: 'return',
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: 'return ${1:expression};',
+                    insertText: 'return ${1:expression}',
                 },
                 {
                     label: 'while',
@@ -179,22 +196,27 @@ require(['vs/editor/editor.main'], () => {
                 {
                     label: 'throw',
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: "throw '${1:message}';",
+                    insertText: "throw '${1:message}'",
                 },
                 {
                     label: 'delete',
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: 'delete ${1:env};',
+                    insertText: 'delete ${1:env}',
                 },
                 {
                     label: 'use',
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: "use '${1:path}';",
+                    insertText: "use '${1:path}'",
                 },
                 {
                     label: 'void',
                     insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
-                    insertText: 'void ${1:expression};',
+                    insertText: 'void ${1:expression}',
+                },
+                {
+                    label: 'expr',
+                    insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+                    insertText: 'expr ${1:expression}',
                 },
             ],
         }),
@@ -289,6 +311,10 @@ const examples: Array<IExamplesGroup> = [
             {
                 name: 'Import',
                 source: 'import.tiny',
+            },
+            {
+                name: 'Expr',
+                source: 'expr.tiny',
             },
         ],
     },

@@ -38,6 +38,7 @@ export type Expression =
     | DeleteExpression
     | UseExpression
     | VoidExpression
+    | ExprExpression
     | null
 
 export enum ExpressionKind {
@@ -58,6 +59,7 @@ export enum ExpressionKind {
     Delete,
     Use,
     Void,
+    Expr,
     Null,
 }
 
@@ -220,6 +222,11 @@ export interface UseExpression extends Debug, Position {
 export interface VoidExpression extends Debug, Position {
     value: Expression
     kind: ExpressionKind.Void
+}
+
+export interface ExprExpression extends Debug, Position {
+    value: Expression
+    kind: ExpressionKind.Expr
 }
 
 export interface NumberLiteral extends Debug, Position {

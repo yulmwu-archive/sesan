@@ -491,6 +491,21 @@ export default class Parser {
                 }
             }
 
+            case Tiny.TokenType.EXPR: {
+                this.nextToken()
+
+                const expression = this.parseExpression(Tiny.Priority.PREFIX)
+
+                if (!expression) return null
+
+                return {
+                    debug: 'parsePrefix>case>expr',
+                    value: expression,
+                    kind: Tiny.ExpressionKind.Expr,
+                    ...this.currPos(),
+                }
+            }
+
             default:
                 return null
         }
@@ -729,6 +744,7 @@ export default class Parser {
             case Tiny.TokenType.THROW:
             case Tiny.TokenType.USE:
             case Tiny.TokenType.VOID:
+            case Tiny.TokenType.EXPR:
                 return Tiny.Priority.PREFIX
 
             case Tiny.TokenType.LPAREN:
