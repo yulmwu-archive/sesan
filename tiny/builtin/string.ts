@@ -74,7 +74,25 @@ const regExp: Tiny.Func = (
     return Tiny.invalidArgument(position, evaluator.option)
 }
 
+const split: Tiny.Func = (
+    parameters: Array<Tiny.LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
+): Tiny.LangObject => {
+    if (parameters.length !== 2 || parameters[0]?.kind !== Tiny.ObjectKind.STRING) return Tiny.invalidArgument(position, evaluator.option)
+
+    return {
+        kind: Tiny.ObjectKind.ARRAY,
+        value: (parameters[0] as Tiny.StringObject).value.split((parameters[1] as Tiny.StringObject).value).map((s) => ({
+            kind: Tiny.ObjectKind.STRING,
+            value: s,
+        })),
+    }
+}
+
 export const strings: Map<string, Tiny.Func> = new Map([
     ['regExp', regExp],
     ['__builtin_replace', replace],
+    ['__builtin_split', split],
 ])

@@ -9,10 +9,7 @@ let bool2 = false;
 
 let arr = [1, 2, 3, 4, 5];
 
-let object = {
-    name: 'John',
-    age: 30
-};
+let object = { name: 'John', age: 30 };
 
 let function = func (x, y) {
     return x + y;

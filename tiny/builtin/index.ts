@@ -4,7 +4,7 @@ import { array } from './array'
 import { builtin } from './builtin'
 import { strings } from './string'
 
-type Func = Tiny.BuiltinFunction['func']
+type Func = Tiny.BuiltinFunctionType
 
 const invalidArgument = (position: Tiny.Position, options: Tiny.Options): Tiny.LangObject => ({
     kind: Tiny.ObjectKind.ERROR,

@@ -11,7 +11,6 @@ println(array); // no change
 println(repeat('foo', 5));
 println(repeat(3));
 
-
 forEach(array, func(value, index) println(value, index));
 
 forEach([1, 2, 3, 4, 5, 6, 7, 8, 9], func (value, index) {

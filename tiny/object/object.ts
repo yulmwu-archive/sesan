@@ -146,9 +146,16 @@ export interface FunctionObject {
 }
 
 export interface BuiltinFunction {
-    func: (parameters: Array<LangObject>, enviroment: Tiny.Enviroment, evaluator: Tiny.Evaluator, position: Tiny.Position) => LangObject
+    func: BuiltinFunctionType
     kind: ObjectKind.BUILTIN
 }
+
+export type BuiltinFunctionType = (
+    parameters: Array<LangObject>,
+    enviroment: Tiny.Enviroment,
+    evaluator: Tiny.Evaluator,
+    position: Tiny.Position
+) => LangObject
 
 export interface ReturnValue {
     value: LangObject

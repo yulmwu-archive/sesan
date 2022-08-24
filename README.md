@@ -1020,6 +1020,10 @@ IIFE (Immediately Invoked Function Expression) pattern
 
 ```
 <let>, <func>, <true>, <false>, <if>, <else>, <return>, <while>, <in>, <typeof>, <null>, <throw>, <delete>, <use>, <void>
+
+Not used, but may be added later
+
+<class>, <for>, <expr>, <const>
 ```
 
 > extends [`<let>`](#variables), [`<func>`](#function), [`<true>`](#boolean), [`<false>`](#boolean), [`<if>`](#if), [`<else>`](#if), [`<return>`](#return), [`<while>`](#while), [`<in>`](#operators-1), [`<use>`](#import-1), [`<void>`](#undefined)
@@ -1092,10 +1096,10 @@ a; // Identifier 'a' is not defined.
 <keywords> {
     implement();
 
-    return null();
+    return null;
 } // `NULL`
 
-<if> null(); // `NULL`
+<if> null; // `NULL`
 ```
 
 Returns a value.

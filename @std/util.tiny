@@ -1,7 +1,7 @@
 /// Standard Library: Utility
 /// 
 /// Author: @tsukiroku (https://github.com/tsukiroku)
-/// Updated on 2022/08/23 (06:45 PM, KST)
+/// Updated on 2022/08/24 (07:37 PM, KST)
 
 // `capture` deprecated from 0.3.65^.
 let funcTools = {
@@ -15,11 +15,11 @@ func length(value) __builtin_length(value);
 func match(value, case, default) {
     let result = null;
 
-    forEach(case, func (item, index) {
-        if (item[0] == value) result = item[1](value);
-    });
+    forEach(case, func (item, index) 
+        if (item[0] == value) (result = item[1](value))
+    );
 
-    if ((typeof result) == 'NULL') result = default(value);
+    if (typeof result == 'NULL') result = default(value);
 
     return result;
 }

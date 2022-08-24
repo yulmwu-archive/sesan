@@ -1,42 +1,23 @@
-println([
-    2 == 2,
-    1 != 2,
-    1 < 2,
-    2 > 1,
-    1 <= 2,
-    2 >= 1
-]);
+println(2 == 2, 1 != 2, 1 < 2, 2 > 1, 1 <= 2, 2 >= 1);
 
 println('a' + 'b' + 'c');
 println([1, 2, 3] + [4, 5, 6]);
-println({
-    a: 1,
-    b: 2,
-    c: 3
-} + {
-    a: 4,
-    c: 5,
-    d: 6
-});
+println({ a: 1, b: 2, c: 3 } + { a: 4, c: 5, d: 6 });
 
-let dict = {
-    'a': 1,
-    'b': 2,
-    'c': 3,
-};
+let dict = { 'a': 1, 'b': 2, 'c': 3 };
 
 println(dict['a']);
 println(dict <- a);
 println(dict <- 'b');
 println([1, 2, 3] <- 1);
 
-println([
+println(
     3 in [1, 2, 3],
     'a' in ['a', 'b', 'c'],
     'a' in 'abc',
     3 in { 1: 'a', 2: 'b', 3: 'c' },
     { 'a': 1, 'b': 2, 'c': 3 } in 3
-]);
+);
 
 println(null ?? 5);
 println(10 ?? 5);

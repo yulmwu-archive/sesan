@@ -4,4 +4,8 @@ while (x < 10) {
     println(x);
 
     x = x + 1;
+
+    // if break, continue as support the `for`, they also support it.
 }
+
+println('x is', x);

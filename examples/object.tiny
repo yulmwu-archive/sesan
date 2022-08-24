@@ -11,8 +11,6 @@ println(myObject['bar']['baz']());
 println(myObject <- bar <- baz());
 println(myObject.bar.baz());
 
-myObject['bar']['baz'] = func (x, y) {
-    return x * y;
-};
+myObject['bar']['baz'] = func (x, y) x * y;
 
 println(myObject.bar.baz(2, 3));

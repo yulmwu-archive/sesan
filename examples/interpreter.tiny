@@ -36,6 +36,7 @@ func tokenizer(input) {
             return {
                 type: (
                         if (literal == 'let') 'LET'
+                        else if (literal == 'fn') 'FN'
                         else 'IDENT'
                     ),
                 literal

@@ -6,10 +6,8 @@ func my_function(x, y) {
 
 println(my_function(2, 3));
 
-let anonymous_function = func(x, y) {
+println((func(x, y) { // IIFE, Anonymous function
     let z = x + y;
 
     return z;
-};
-
-println(anonymous_function(2, 3));
+})(2, 3));
