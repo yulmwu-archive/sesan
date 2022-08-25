@@ -390,7 +390,12 @@ export default class Evaluator {
 
         const name = functionObject.function ? (functionObject.function as unknown as Tiny.StringLiteral).value ?? null : null
 
-        if (expression.function && name && name !== '_') enviroment.set(name, functionObject)
+        if (
+            expression.function &&
+            name &&
+            name !== '_'
+        )
+            enviroment.set(name, functionObject)
 
         return functionObject
     }

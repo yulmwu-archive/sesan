@@ -988,28 +988,6 @@ println(pattern <- replace('b'));
 <expression>;
 ```
 
-## expr keyword
-
-```
-expr <expression>
-```
-
-> extends [`expression`](#expression)
-
-Evaluates the expression, and if the result is an error,
-
-```
-{
-    'message': 'error message',
-    'filename': 'file name',
-    'line': 0,       // line number
-    'column': 0,     // column number
-    'error': true    // true if error
-}
-```
-
-an Object containing the error message is returned.
-
 # Block Expression
 
 ```
@@ -1085,6 +1063,28 @@ null; // NULL
 ```
 
 Throws an error in the provided expression.
+
+## expr keyword
+
+```
+expr <expression>
+```
+
+> extends [`expression`](#expression)
+
+Evaluates the expression, and if the result is an error,
+
+```
+{
+    'message': 'error message',
+    'filename': 'file name',
+    'line': 0,       // line number
+    'column': 0,     // column number
+    'error': true    // true if error
+}
+```
+
+an Object containing the error message is returned.
 
 <br />
 

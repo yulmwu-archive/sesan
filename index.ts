@@ -5,16 +5,15 @@ import {
     NULL,
     printError,
     Enviroment,
-    ObjectKind,
     objectStringify,
     Options,
     Lexer,
     Parser,
     Program,
     LangObject,
-} from './tiny'
+} from './core'
 
-export * from './tiny'
+export * from './core'
 
 type Stdio = (...x: Array<any>) => any
 

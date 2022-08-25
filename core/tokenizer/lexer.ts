@@ -240,6 +240,8 @@ export default class Lexer {
 
         token = this.check(Tiny.tokens)
 
+        if (token.type === Tiny.TokenType.COMMENT) return this.nextToken()
+
         if (token.type === Tiny.TokenType.ILLEGAL) {
             if (this.isLetter(this.ch)) token = this.readIdentifier()
             else if (this.isDigit(this.ch)) token = this.readNumber()

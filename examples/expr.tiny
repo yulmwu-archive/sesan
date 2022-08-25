@@ -1,16 +1,14 @@
 println(expr throw 'Error!');
 
 func catchExpr(x, callback)
-    if (typeof x == 'OBJECT') {
-        if (
-            'message' in x &&
-            'line' in x &&
-            'column' in x &&
-            'filename' in x
-        ) {
-            return callback(x);
-        }
-    } else x;
+    if (
+        'message' in x &&
+        'line' in x &&
+        'column' in x &&
+        'filename' in x &&
+        x <- 'error' == true
+    ) callback(x)
+    else x;
 
 let myError = expr qwerty; // Identifier 'qwerty' is not defined.
 

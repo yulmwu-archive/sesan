@@ -3,9 +3,8 @@
 /// Author: @tsukiroku (https://github.com/tsukiroku)
 /// Updated on 2022/08/24 (07:37 PM, KST)
 
-// `capture` deprecated from 0.3.65^.
 let funcTools = {
-    capture: {},
+    capture: {}, // `capture` deprecated from 0.3.65^.
     noCapture: { noCapture: true },
     skip: { skipCheckArguments: true }
 };

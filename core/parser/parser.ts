@@ -49,9 +49,6 @@ export default class Parser {
             case Tiny.TokenType.AT:
                 return this.parseDecorator()
 
-            case Tiny.TokenType.COMMENT:
-                return null
-
             default:
                 return this.parseExpressionStatement()
         }
