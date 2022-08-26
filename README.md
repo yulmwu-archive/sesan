@@ -20,8 +20,6 @@
 
 # Introduce
 
-<br />
-
 ## Start REPL
 
 ```sh
@@ -1041,13 +1039,14 @@ Returns the type of the given expression.
 <br />
 
 ```
-typeof 10; // NUMBER
-typeof 'foo'; // STRING
-typeof true; // BOOLEAN
-typeof {}; // OBJECT
-typeof []; // ARRAY
-typeof null; // NULL
-typeof func() {}; // FUNCTION
+typeof 10; // number
+typeof 'foo'; // string
+typeof true; // boolean
+typeof {}; // object
+typeof []; // array
+typeof null; // null
+typeof func() {}; // function
+typeof void 0; // undefined
 ```
 
 ## null

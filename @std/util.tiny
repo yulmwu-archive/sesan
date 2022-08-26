@@ -18,7 +18,7 @@ func match(value, case, default) {
         if (item[0] == value) (result = item[1](value))
     );
 
-    if (typeof result == 'NULL') result = default(value);
+    if (typeof result == 'null') result = default(value);
 
     return result;
 }

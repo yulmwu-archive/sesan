@@ -1,6 +1,6 @@
 let x = 5 * 2;
 
-if ((typeof x) == 'NUMBER') (x = x + 1);
+if ((typeof x) == 'number') (x = x + 1);
 
 let option = options();
 

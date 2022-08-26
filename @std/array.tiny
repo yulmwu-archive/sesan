@@ -53,7 +53,7 @@ func reduce(arr, callback, initial) {
     forEach(arr, func (value, _) { 
         let callbackResult = callback(result, value); 
 
-        if (typeof callbackResult == 'BOOLEAN') callbackResult;
+        if (typeof callbackResult == 'boolean') callbackResult;
 
         result = callbackResult;
     });

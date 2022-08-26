@@ -30,7 +30,7 @@ export const enum ObjectKind {
 }
 
 export const objectStringify = (obj: LangObject, strW: boolean = false): string => {
-    if (!obj) return 'NULL'
+    if (!obj) return 'null'
 
     switch (obj.kind) {
         case ObjectKind.NUMBER:
@@ -57,13 +57,13 @@ export const objectStringify = (obj: LangObject, strW: boolean = false): string 
             return 'builtin'
 
         case ObjectKind.NULL:
-            return 'NULL'
+            return 'null'
 
         case ObjectKind.UNDEFINED:
-            return 'UNDEFINED'
+            return 'undefined'
 
         case ObjectKind.ERROR:
-            return `ERROR: ${obj.message}`
+            return `error: ${obj.message}`
 
         default:
             return `[Unknown]`
@@ -73,40 +73,37 @@ export const objectStringify = (obj: LangObject, strW: boolean = false): string 
 export const objectKindStringify = (kind: ObjectKind): string => {
     switch (kind) {
         case ObjectKind.NUMBER:
-            return 'NUMBER'
+            return 'number'
 
         case ObjectKind.STRING:
-            return 'STRING'
+            return 'string'
 
         case ObjectKind.BOOLEAN:
-            return 'BOOLEAN'
+            return 'boolean'
 
         case ObjectKind.ARRAY:
-            return 'ARRAY'
+            return 'array'
 
         case ObjectKind.OBJECT:
-            return 'OBJECT'
+            return 'object'
 
         case ObjectKind.FUNCTION:
-            return 'FUNCTION'
+            return 'function'
 
         case ObjectKind.BUILTIN:
-            return 'BUILTIN'
-
-        case ObjectKind.RETURN_VALUE:
-            return 'RETURN_VALUE'
+            return 'builtin'
 
         case ObjectKind.ERROR:
-            return 'ERROR'
+            return 'error'
 
         case ObjectKind.NULL:
-            return 'NULL'
+            return 'null'
 
         case ObjectKind.UNDEFINED:
-            return 'UNDEFINED'
+            return 'undefined'
 
         default:
-            return 'UNKNOWN'
+            return 'unknown'
     }
 }
 

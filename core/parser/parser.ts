@@ -578,8 +578,8 @@ export default class Parser {
                 return {
                     debug: 'parseInfixExpression>case>default',
                     left,
-                    operator: operator.type,
                     right,
+                    operator: operator.type,
                     kind: Tiny.ExpressionKind.Infix,
                     ...this.currPos(),
                 }
