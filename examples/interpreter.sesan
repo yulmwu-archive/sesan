@@ -1,4 +1,4 @@
-// Tiny interpreter in Tiny language
+// Simple interpreter in Sesan language
 // WIP, For reference only.
 
 func tokenizer(input) {

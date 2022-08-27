@@ -1,3 +1,9 @@
+`Sesan` Interpreter offical repository.
+
+It can be used directly as a [Web Playground](#web-playground), and can be built according to the [build instructions](#start-repl).
+
+---
+
 -   [Introduce](#introduce)
     -   [Start REPL](#start-repl)
     -   [REPL commands](#repl-commands)
@@ -15,12 +21,20 @@
 -   [Npm package](#npm-package)
 -   [Examples](#examples)
 -   [Documentation](#documentation)
+-   [Todo](#todo)
 
 <br />
 
 # Introduce
 
 ## Start REPL
+
+### Download
+
+```sh
+git clone https://github.com/tsukiroku/sesan.git
+cd sesan
+```
 
 ```sh
 # Install dependencies
@@ -1126,3 +1140,51 @@ a; // Identifier 'a' is not defined.
 Returns a value.
 
 > extends [`<keywords>`](#keywords), [`<if>`](#if), [`<block expression>`](#block-expression)
+
+<br>
+
+# Todo
+
+> **Warning**
+>
+> This plan is subject to change at any time.
+
+## Syntax
+
+-   `switch` (`match`) expression
+    -   `[switch|match] <expr> { ...<case>, <default|_>: body }`
+        -   `case`
+            -   `<expr>: body`
+-   `const` statement
+    -   `const <identifier> = <expr>;`
+-   `class` statement
+    -   `class <identifier> { ...<method> }`
+        -   `method`
+            -   `<identifier> ( ...<parameter> ) <body>`
+-   `for` statement
+    -   `for (<identifier> [in|of] <expr>) <body>`
+        -   `of`
+            -   `<expr> of <expr>`
+-   Bitwise operators
+    -   `<expr> & <expr>`
+    -   `<expr> | <expr>`
+    -   `<expr> ^ <expr>`
+    -   `<expr> << <expr>`
+    -   `<expr> >> <expr>`
+    -   `<expr> >>> <expr>`
+-   Power operator
+    -   `<expr> ** <expr>`
+
+## Features
+
+-   Compiling to JavaScript
+    -   Supporting `ES6` syntax
+-   CLI, Repl refectoring
+
+<br>
+
+# Contributing
+
+Contributions are free, but please follow the [`guidelines`] below.
+
+###
