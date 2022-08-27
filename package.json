@@ -4,7 +4,7 @@
     "description": "Sesan interpreter",
     "main": "dist/index.js",
     "scripts": {
-        "start": "npm run build && node ./dist/core/api.js",
+        "start": "npm run build && node ./dist/api.js",
         "start:repl": "npm run build && node ./dist/core/cli/index.js",
         "repl": "npm run start:repl",
         "build": "if [ -d dist ]; then rm -rf dist; npm run build:tsc; else npm run build:tsc; fi",
