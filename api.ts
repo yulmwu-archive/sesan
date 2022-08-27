@@ -1,5 +1,5 @@
-import { NULL } from './evaluator'
-import Tiny from '../index'
+import { NULL } from './core/evaluator'
+import Tiny from './index'
 import express from 'express'
 
 const app = express()
