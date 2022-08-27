@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+// import { readFileSync } from 'node:fs'
 import * as Tiny from '../../index'
 
 export const NULL: Tiny.LangObject = { kind: Tiny.ObjectKind.NULL }
@@ -348,7 +348,8 @@ export default class Evaluator {
 
             const parsed = new Tiny.Parser(
                 new Tiny.Lexer(
-                    readFileSync(`${evaluator.option.root}${path}`, 'utf8'),
+                    // readFileSync(`${evaluator.option.root}${path}`, 'utf8'),
+                    '',
                     {
                         ...evaluator.option,
                         stderr: evaluator.option.stdio.stderr,

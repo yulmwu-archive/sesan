@@ -53,10 +53,9 @@ export default {
         }),
         commonjs(),
         typescript({
-            sourceMap: !production,
-            inlineSources: !production
+            sourceMap: true,
+            inlineSources: true
         }),
-        // json(),
         !production && serve(),
         !production && livereload('public'),
         production && terser()

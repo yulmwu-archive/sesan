@@ -1,17 +1,4 @@
-import {
-    builtinsEval,
-    Func,
-    Evaluator,
-    NULL,
-    printError,
-    Enviroment,
-    objectStringify,
-    Options,
-    Lexer,
-    Parser,
-    Program,
-    LangObject,
-} from './core'
+import { builtinsEval, Func, Evaluator, NULL, printError, Enviroment, objectStringify, Options, Lexer, Parser, Program, LangObject } from './core'
 
 export * from './core'
 
@@ -30,8 +17,8 @@ interface StdioOptions {
 }
 
 const stdin: Stdio = (...x) => NULL
-const stdout: Stdio = (...x) => process.stdout.write(x.join(' '))
-const stderr: Stdio = (...x) => process.stderr.write(`${x.join(' ')}\n`)
+const stdout: Stdio = (...x) => (process ? process.stdout.write(x.join(' ')) : console.log(x.join(' ')))
+const stderr: Stdio = (...x) => (process ? process.stderr.write(`${x.join(' ')}\n`) : console.error(x.join(' ')))
 
 const defaultFilename: string = '<Tiny>'
 
