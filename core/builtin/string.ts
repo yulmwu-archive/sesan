@@ -1,97 +1,97 @@
-import * as Tiny from '../../index'
+import * as Sesan from '../../index'
 
-const replace: Tiny.Func = (
-    parameters: Array<Tiny.LangObject>,
-    enviroment: Tiny.Enviroment,
-    evaluator: Tiny.Evaluator,
-    position: Tiny.Position
-): Tiny.LangObject => {
+const replace: Sesan.Func = (
+    parameters: Array<Sesan.LangObject>,
+    enviroment: Sesan.Enviroment,
+    evaluator: Sesan.Evaluator,
+    position: Sesan.Position
+): Sesan.LangObject => {
     if (
         parameters.length !== 3 ||
-        parameters[0]?.kind !== Tiny.ObjectKind.STRING ||
-        parameters[1]?.kind !== Tiny.ObjectKind.STRING ||
-        parameters[2]?.kind !== Tiny.ObjectKind.STRING
+        parameters[0]?.kind !== Sesan.ObjectKind.STRING ||
+        parameters[1]?.kind !== Sesan.ObjectKind.STRING ||
+        parameters[2]?.kind !== Sesan.ObjectKind.STRING
     )
-        return Tiny.invalidArgument(position, evaluator.option)
+        return Sesan.invalidArgument(position, evaluator.option)
 
     return {
-        kind: Tiny.ObjectKind.STRING,
+        kind: Sesan.ObjectKind.STRING,
         value: parameters[0].value.replaceAll(parameters[1].value, parameters[2].value),
     }
 }
 
-const regExp: Tiny.Func = (
-    parameters: Array<Tiny.LangObject>,
-    enviroment: Tiny.Enviroment,
-    evaluator: Tiny.Evaluator,
-    position: Tiny.Position
-): Tiny.LangObject => {
-    if (parameters.length !== 2 || parameters[0]?.kind !== Tiny.ObjectKind.OBJECT || parameters[1]?.kind !== Tiny.ObjectKind.OBJECT)
-        return Tiny.invalidArgument(position, evaluator.option)
+const regExp: Sesan.Func = (
+    parameters: Array<Sesan.LangObject>,
+    enviroment: Sesan.Enviroment,
+    evaluator: Sesan.Evaluator,
+    position: Sesan.Position
+): Sesan.LangObject => {
+    if (parameters.length !== 2 || parameters[0]?.kind !== Sesan.ObjectKind.OBJECT || parameters[1]?.kind !== Sesan.ObjectKind.OBJECT)
+        return Sesan.invalidArgument(position, evaluator.option)
 
-    const get = (object: Map<Tiny.NumberObject | Tiny.StringObject, Tiny.LangObject>, key: string, defaultType: 'string' | 'object' = 'string') =>
+    const get = (object: Map<Sesan.NumberObject | Sesan.StringObject, Sesan.LangObject>, key: string, defaultType: 'string' | 'object' = 'string') =>
         new Map([...object].map(([key, value]) => [key.value, value])).get(key) ??
         (defaultType === 'string'
-            ? { kind: Tiny.ObjectKind.STRING, value: '' }
+            ? { kind: Sesan.ObjectKind.STRING, value: '' }
             : {
-                  kind: Tiny.ObjectKind.OBJECT,
+                  kind: Sesan.ObjectKind.OBJECT,
                   value: new Map(),
               })
 
     const regex = new RegExp(
-        (get(parameters[0].pairs, 'pattern') as Tiny.StringObject)?.value,
-        (get(parameters[0].pairs, 'flags') as Tiny.StringObject)?.value
+        (get(parameters[0].pairs, 'pattern') as Sesan.StringObject)?.value,
+        (get(parameters[0].pairs, 'flags') as Sesan.StringObject)?.value
     )
 
-    const str = (get(parameters[1].pairs, 'str') as Tiny.StringObject)?.value
+    const str = (get(parameters[1].pairs, 'str') as Sesan.StringObject)?.value
 
-    switch ((get(parameters[1].pairs, 'type') as Tiny.StringObject)?.value) {
+    switch ((get(parameters[1].pairs, 'type') as Sesan.StringObject)?.value) {
         case 'match':
             return {
-                kind: Tiny.ObjectKind.ARRAY,
+                kind: Sesan.ObjectKind.ARRAY,
                 value:
                     str.match(regex)?.map((s) => ({
-                        kind: Tiny.ObjectKind.STRING,
+                        kind: Sesan.ObjectKind.STRING,
                         value: s,
                     })) ?? [],
             }
 
         case 'test':
             return {
-                kind: Tiny.ObjectKind.BOOLEAN,
+                kind: Sesan.ObjectKind.BOOLEAN,
                 value: regex.test(str),
             }
 
         case 'replace':
             return {
-                kind: Tiny.ObjectKind.STRING,
+                kind: Sesan.ObjectKind.STRING,
                 value: str.replace(regex, (match) =>
-                    (get((parameters[1] as Tiny.ObjectObject).pairs, 'replace') as Tiny.StringObject)?.value.replaceAll('$1', match)
+                    (get((parameters[1] as Sesan.ObjectObject).pairs, 'replace') as Sesan.StringObject)?.value.replaceAll('$1', match)
                 ),
             }
     }
 
-    return Tiny.invalidArgument(position, evaluator.option)
+    return Sesan.invalidArgument(position, evaluator.option)
 }
 
-const split: Tiny.Func = (
-    parameters: Array<Tiny.LangObject>,
-    enviroment: Tiny.Enviroment,
-    evaluator: Tiny.Evaluator,
-    position: Tiny.Position
-): Tiny.LangObject => {
-    if (parameters.length !== 2 || parameters[0]?.kind !== Tiny.ObjectKind.STRING) return Tiny.invalidArgument(position, evaluator.option)
+const split: Sesan.Func = (
+    parameters: Array<Sesan.LangObject>,
+    enviroment: Sesan.Enviroment,
+    evaluator: Sesan.Evaluator,
+    position: Sesan.Position
+): Sesan.LangObject => {
+    if (parameters.length !== 2 || parameters[0]?.kind !== Sesan.ObjectKind.STRING) return Sesan.invalidArgument(position, evaluator.option)
 
     return {
-        kind: Tiny.ObjectKind.ARRAY,
-        value: (parameters[0] as Tiny.StringObject).value.split((parameters[1] as Tiny.StringObject).value).map((s) => ({
-            kind: Tiny.ObjectKind.STRING,
+        kind: Sesan.ObjectKind.ARRAY,
+        value: (parameters[0] as Sesan.StringObject).value.split((parameters[1] as Sesan.StringObject).value).map((s) => ({
+            kind: Sesan.ObjectKind.STRING,
             value: s,
         })),
     }
 }
 
-export const strings: Map<string, Tiny.Func> = new Map([
+export const strings: Map<string, Sesan.Func> = new Map([
     ['regExp', regExp],
     ['__builtin_replace', replace],
     ['__builtin_split', split],

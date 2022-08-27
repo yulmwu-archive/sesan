@@ -1,4 +1,4 @@
-import * as Tiny from '../../index'
+import * as Sesan from '../../index'
 import colors from 'colors'
 
 colors.enabled = true
@@ -94,20 +94,20 @@ const errorsLocale: Record<'en' | 'ko', Errors> = {
     },
 }
 
-export const localization = (options: Tiny.Options) =>
+export const localization = (options: Sesan.Options) =>
     options.locale ? (errorsLocale as { [key: string]: Errors })[options.locale] ?? errorsLocale.en : errorsLocale.en
 
 export const errorFormatter = (message: string, ...args: Array<any>): string =>
     args.reduce((message, curr, index) => message.replaceAll(`{${index}}`, curr), message)
 
-export const error = (message: string, line: number, column: number): Tiny.LangObject => ({
-    kind: Tiny.ObjectKind.ERROR,
+export const error = (message: string, line: number, column: number): Sesan.LangObject => ({
+    kind: Sesan.ObjectKind.ERROR,
     message,
     line,
     column,
 })
 
-export const printError = (error: Tiny.ParseError, file: string, stderr: Tiny.Stdio, options: Tiny.Options) => {
+export const printError = (error: Sesan.ParseError, file: string, stderr: Sesan.Stdio, options: Sesan.Options) => {
     const { line, column, message } = error
 
     stderr(

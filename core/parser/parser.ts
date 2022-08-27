@@ -1,29 +1,29 @@
-import * as Tiny from '../../index'
+import * as Sesan from '../../index'
 
 export default class Parser {
-    public currToken!: Tiny.Token
-    public peekToken!: Tiny.Token
+    public currToken!: Sesan.Token
+    public peekToken!: Sesan.Token
     public currLine: number = 1
     public currColumn: number = 1
 
-    public messages: Tiny.Errors
+    public messages: Sesan.Errors
 
-    public errors: Array<Tiny.ParseError> = []
+    public errors: Array<Sesan.ParseError> = []
 
-    constructor(public lexer: Tiny.Lexer, public option: Tiny.Options) {
-        this.messages = Tiny.localization(option)
+    constructor(public lexer: Sesan.Lexer, public option: Sesan.Options) {
+        this.messages = Sesan.localization(option)
 
         this.nextToken()
         this.nextToken()
     }
 
-    public parseProgram(): Tiny.Program {
-        let program: Tiny.Program = {
+    public parseProgram(): Sesan.Program {
+        let program: Sesan.Program = {
             statements: [],
             errors: [],
         }
 
-        while (this.currToken.type !== Tiny.TokenType.EOF) {
+        while (this.currToken.type !== Sesan.TokenType.EOF) {
             const statement = this.parseStatement()
             if (statement) program.statements.push(statement)
 
@@ -35,18 +35,18 @@ export default class Parser {
         return program
     }
 
-    private parseStatement(): Tiny.Statement | null {
+    private parseStatement(): Sesan.Statement | null {
         switch (this.currToken.type) {
-            case Tiny.TokenType.LET:
+            case Sesan.TokenType.LET:
                 return this.parseLetStatement()
 
-            case Tiny.TokenType.RETURN:
+            case Sesan.TokenType.RETURN:
                 return this.parseReturnStatement()
 
-            case Tiny.TokenType.WHILE:
+            case Sesan.TokenType.WHILE:
                 return this.parseWhileStatement()
 
-            case Tiny.TokenType.AT:
+            case Sesan.TokenType.AT:
                 return this.parseDecorator()
 
             default:
@@ -68,21 +68,21 @@ export default class Parser {
         }
     }
 
-    private expectPeek(tokenType: Tiny.TokenType): boolean {
+    private expectPeek(tokenType: Sesan.TokenType): boolean {
         if (this.peekTokenIs(tokenType)) {
             this.nextToken()
 
             return true
         }
 
-        this.pushError(Tiny.errorFormatter(this.messages.parseError.unexpectedToken, tokenType, this.peekToken.type))
+        this.pushError(Sesan.errorFormatter(this.messages.parseError.unexpectedToken, tokenType, this.peekToken.type))
 
         return false
     }
 
-    private peekTokenIs(tokenType: Tiny.TokenType): boolean {
-        if (tokenType === Tiny.TokenType.IDENT) {
-            if (this.peekToken.type === Tiny.TokenType.IDENT) return true
+    private peekTokenIs(tokenType: Sesan.TokenType): boolean {
+        if (tokenType === Sesan.TokenType.IDENT) {
+            if (this.peekToken.type === Sesan.TokenType.IDENT) return true
 
             return false
         }
@@ -90,7 +90,7 @@ export default class Parser {
         return this.peekToken.type === tokenType
     }
 
-    private currTokenIs(tokenType: Tiny.TokenType): boolean {
+    private currTokenIs(tokenType: Sesan.TokenType): boolean {
         return this.currToken.type === tokenType
     }
 
@@ -102,72 +102,72 @@ export default class Parser {
         })
     }
 
-    private parseLetStatement(): Tiny.LetStatement | null {
-        if (!this.expectPeek(Tiny.TokenType.IDENT)) return null
+    private parseLetStatement(): Sesan.LetStatement | null {
+        if (!this.expectPeek(Sesan.TokenType.IDENT)) return null
 
-        const ident: Tiny.IdentExpression = {
+        const ident: Sesan.IdentExpression = {
             debug: 'parseLetStatement>ident',
-            value: this.currToken.type === Tiny.TokenType.IDENT ? this.currToken.literal : '',
-            kind: Tiny.ExpressionKind.Ident,
+            value: this.currToken.type === Sesan.TokenType.IDENT ? this.currToken.literal : '',
+            kind: Sesan.ExpressionKind.Ident,
             ...this.currPos(),
         }
 
-        if (!this.expectPeek(Tiny.TokenType.ASSIGN)) return null
+        if (!this.expectPeek(Sesan.TokenType.ASSIGN)) return null
 
         this.nextToken()
 
-        const expression = this.parseExpression(Tiny.Priority.LOWEST)
+        const expression = this.parseExpression(Sesan.Priority.LOWEST)
 
-        if (!this.expectPeek(Tiny.TokenType.SEMICOLON)) return null
+        if (!this.expectPeek(Sesan.TokenType.SEMICOLON)) return null
 
         return {
             debug: 'parseLetStatement>return',
             ident,
             value: expression,
-            kind: Tiny.NodeKind.LetStatement,
+            kind: Sesan.NodeKind.LetStatement,
             ...this.currPos(),
         }
     }
 
-    private parseReturnStatement(): Tiny.ReturnStatement | null {
+    private parseReturnStatement(): Sesan.ReturnStatement | null {
         this.nextToken()
 
-        const expression = this.parseExpression(Tiny.Priority.LOWEST)
+        const expression = this.parseExpression(Sesan.Priority.LOWEST)
 
-        if (this.peekTokenIs(Tiny.TokenType.SEMICOLON)) this.nextToken()
+        if (this.peekTokenIs(Sesan.TokenType.SEMICOLON)) this.nextToken()
 
         return {
             debug: 'parseReturnStatement>return',
             value: expression,
-            kind: Tiny.NodeKind.ReturnStatement,
+            kind: Sesan.NodeKind.ReturnStatement,
             ...this.currPos(),
         }
     }
 
-    private parseWhileStatement(): Tiny.WhileStatement | null {
-        if (!this.expectPeek(Tiny.TokenType.LPAREN)) return null
+    private parseWhileStatement(): Sesan.WhileStatement | null {
+        if (!this.expectPeek(Sesan.TokenType.LPAREN)) return null
 
         return {
             debug: 'parseWhileStatement>return',
-            condition: this.parseExpression(Tiny.Priority.LOWEST),
+            condition: this.parseExpression(Sesan.Priority.LOWEST),
             body: this.parseBlockStatement(),
-            kind: Tiny.NodeKind.WhileStatement,
+            kind: Sesan.NodeKind.WhileStatement,
             ...this.currPos(),
         }
     }
 
-    private parseDecorator(): Tiny.DecoratorStatement | null {
+    private parseDecorator(): Sesan.DecoratorStatement | null {
         this.nextToken()
 
-        const value = this.parseExpression(Tiny.Priority.LOWEST)
+        const value = this.parseExpression(Sesan.Priority.LOWEST)
 
         this.nextToken()
 
-        if (this.currTokenIs(Tiny.TokenType.SEMICOLON)) this.nextToken()
+        if (this.currTokenIs(Sesan.TokenType.SEMICOLON)) this.nextToken()
 
-        const func = this.parseExpression(Tiny.Priority.LOWEST)
+        const func = this.parseExpression(Sesan.Priority.LOWEST)
 
-        if (func?.kind !== Tiny.ExpressionKind.Function) {
+        if (func?.kind !== Sesan.ExpressionKind.Function) {
             this.pushError(this.messages.parseError.decoratorRequiresFunction)
 
             return null
@@ -177,20 +177,20 @@ export default class Parser {
             debug: 'parseDecorator>return',
             value,
             function: func,
-            kind: Tiny.NodeKind.DecoratorStatement,
+            kind: Sesan.NodeKind.DecoratorStatement,
             ...this.currPos(),
         }
     }
 
-    private parseExpression(priority: Tiny.Priority): Tiny.Expression | null {
-        let left: Tiny.Expression = this.parsePrefix()
+    private parseExpression(priority: Sesan.Priority): Sesan.Expression | null {
+        let left: Sesan.Expression = this.parsePrefix()
 
         if (!left)
-            if (!this.currTokenIs(Tiny.TokenType.SEMICOLON))
-                this.pushError(Tiny.errorFormatter(this.messages.parseError.unexpectedExpression, this.currToken.type))
+            if (!this.currTokenIs(Sesan.TokenType.SEMICOLON))
+                this.pushError(Sesan.errorFormatter(this.messages.parseError.unexpectedExpression, this.currToken.type))
             else return null
 
-        while (!this.peekTokenIs(Tiny.TokenType.SEMICOLON) && priority < this.peekPriority()) {
+        while (!this.peekTokenIs(Sesan.TokenType.SEMICOLON) && priority < this.peekPriority()) {
             this.nextToken()
             left = this.parseInfixExpression(left)
         }
@@ -198,113 +198,113 @@ export default class Parser {
         return left
     }
 
-    private parseExpressionStatement(): Tiny.ExpressionStatement | null {
-        const expression = this.parseExpression(Tiny.Priority.LOWEST)
+    private parseExpressionStatement(): Sesan.ExpressionStatement | null {
+        const expression = this.parseExpression(Sesan.Priority.LOWEST)
         if (!expression) return null
 
         if (
-            expression.kind !== Tiny.ExpressionKind.If &&
-            expression.kind !== Tiny.ExpressionKind.Function &&
-            !this.expectPeek(Tiny.TokenType.SEMICOLON)
+            expression.kind !== Sesan.ExpressionKind.If &&
+            expression.kind !== Sesan.ExpressionKind.Function &&
+            !this.expectPeek(Sesan.TokenType.SEMICOLON)
         )
             return null
 
         return {
             debug: 'parseExpressionStatement>return',
             expression,
-            kind: Tiny.NodeKind.ExpressionStatement,
+            kind: Sesan.NodeKind.ExpressionStatement,
             ...this.currPos(),
         }
     }
 
-    private parsePrefix(): Tiny.Expression | null {
+    private parsePrefix(): Sesan.Expression | null {
         switch (this.currToken.type) {
-            case Tiny.TokenType.IDENT:
+            case Sesan.TokenType.IDENT:
                 return {
                     debug: 'parsePrefix>case>ident',
                     value: this.currToken.literal,
-                    kind: Tiny.ExpressionKind.Ident,
+                    kind: Sesan.ExpressionKind.Ident,
                     ...this.currPos(),
                 }
 
-            case Tiny.TokenType.NUMBER:
+            case Sesan.TokenType.NUMBER:
                 return {
                     debug: 'parsePrefix>case>number',
                     value: {
                         value: Number(this.currToken.literal),
-                        kind: Tiny.LiteralKind.Number,
+                        kind: Sesan.LiteralKind.Number,
                         ...this.currPos(),
                     },
-                    kind: Tiny.ExpressionKind.Literal,
+                    kind: Sesan.ExpressionKind.Literal,
                     ...this.currPos(),
                 }
 
-            case Tiny.TokenType.STRING:
+            case Sesan.TokenType.STRING:
                 return {
                     debug: 'parsePrefix>case>string',
                     value: {
                         value: this.currToken.literal,
-                        kind: Tiny.LiteralKind.String,
+                        kind: Sesan.LiteralKind.String,
                         ...this.currPos(),
                     },
-                    kind: Tiny.ExpressionKind.Literal,
+                    kind: Sesan.ExpressionKind.Literal,
                     ...this.currPos(),
                 }
 
-            case Tiny.TokenType.BANG:
-            case Tiny.TokenType.MINUS:
+            case Sesan.TokenType.BANG:
+            case Sesan.TokenType.MINUS:
                 return this.prefixParseOps()
 
-            case Tiny.TokenType.TRUE:
-            case Tiny.TokenType.FALSE:
+            case Sesan.TokenType.TRUE:
+            case Sesan.TokenType.FALSE:
                 return {
                     debug: 'parsePrefix>case>true',
                     value: {
-                        value: this.currToken.type === Tiny.TokenType.TRUE,
-                        kind: Tiny.LiteralKind.Boolean,
+                        value: this.currToken.type === Sesan.TokenType.TRUE,
+                        kind: Sesan.LiteralKind.Boolean,
                         ...this.currPos(),
                     },
-                    kind: Tiny.ExpressionKind.Literal,
+                    kind: Sesan.ExpressionKind.Literal,
                     ...this.currPos(),
                 }
 
-            case Tiny.TokenType.NULL:
+            case Sesan.TokenType.NULL:
                 return {
                     debug: 'parsePrefix>case>null',
                     value: {
-                        kind: Tiny.LiteralKind.Null,
+                        kind: Sesan.LiteralKind.Null,
                         ...this.currPos(),
                     },
-                    kind: Tiny.ExpressionKind.Literal,
+                    kind: Sesan.ExpressionKind.Literal,
                     ...this.currPos(),
                 }
 
-            case Tiny.TokenType.LPAREN: {
+            case Sesan.TokenType.LPAREN: {
                 this.nextToken()
 
-                const expression = this.parseExpression(Tiny.Priority.LOWEST)
+                const expression = this.parseExpression(Sesan.Priority.LOWEST)
 
-                if (!this.expectPeek(Tiny.TokenType.RPAREN)) return null
+                if (!this.expectPeek(Sesan.TokenType.RPAREN)) return null
 
                 if (!expression) return null
 
                 return expression
             }
 
-            case Tiny.TokenType.IF: {
-                if (!this.expectPeek(Tiny.TokenType.LPAREN)) return null
+            case Sesan.TokenType.IF: {
+                if (!this.expectPeek(Sesan.TokenType.LPAREN)) return null
 
                 this.nextToken()
 
-                const condition = this.parseExpression(Tiny.Priority.LOWEST)
+                const condition = this.parseExpression(Sesan.Priority.LOWEST)
 
-                if (!this.expectPeek(Tiny.TokenType.RPAREN)) return null
+                if (!this.expectPeek(Sesan.TokenType.RPAREN)) return null
 
                 const consequence = this.parseBlockStatement()
 
-                let alternative: Tiny.Expression | null = null
+                let alternative: Sesan.Expression | null = null
 
-                if (this.peekTokenIs(Tiny.TokenType.ELSE)) {
+                if (this.peekTokenIs(Sesan.TokenType.ELSE)) {
                     this.nextToken()
 
                     alternative = this.parseBlockStatement()
@@ -315,27 +315,27 @@ export default class Parser {
                     condition,
                     consequence,
                     alternative,
-                    kind: Tiny.ExpressionKind.If,
+                    kind: Sesan.ExpressionKind.If,
                     ...this.currPos(),
                 }
             }
 
-            case Tiny.TokenType.FUNCTION: {
-                let name: Tiny.Expression | null = null
+            case Sesan.TokenType.FUNCTION: {
+                let name: Sesan.Expression | null = null
 
-                if (!this.peekTokenIs(Tiny.TokenType.IDENT)) name = null
+                if (!this.peekTokenIs(Sesan.TokenType.IDENT)) name = null
                 else {
                     this.nextToken()
 
                     name = {
                         debug: 'parsePrefix>case>function>name',
                         value: this.currToken.literal,
-                        kind: Tiny.ExpressionKind.Ident,
+                        kind: Sesan.ExpressionKind.Ident,
                         ...this.currPos(),
                     }
                 }
 
-                if (!this.expectPeek(Tiny.TokenType.LPAREN)) return null
+                if (!this.expectPeek(Sesan.TokenType.LPAREN)) return null
 
                 const parameters = this.parseFunctionParameters()
 
@@ -347,51 +347,51 @@ export default class Parser {
                     function: name,
                     parameters: parameters,
                     body,
-                    kind: Tiny.ExpressionKind.Function,
+                    kind: Sesan.ExpressionKind.Function,
                     ...this.currPos(),
                 }
             }
 
-            case Tiny.TokenType.LBRACKET:
+            case Sesan.TokenType.LBRACKET:
                 return {
                     debug: 'parsePrefix>case>Lbracket',
-                    elements: this.parseExpressionParameters(Tiny.TokenType.RBRACKET),
-                    kind: Tiny.ExpressionKind.Array,
+                    elements: this.parseExpressionParameters(Sesan.TokenType.RBRACKET),
+                    kind: Sesan.ExpressionKind.Array,
                     ...this.currPos(),
                 }
 
-            case Tiny.TokenType.LBRACE: {
-                const pairs: Array<Tiny.ObjectPair> = []
+            case Sesan.TokenType.LBRACE: {
+                const pairs: Array<Sesan.ObjectPair> = []
 
-                while (!this.peekTokenIs(Tiny.TokenType.RBRACE)) {
+                while (!this.peekTokenIs(Sesan.TokenType.RBRACE)) {
                     this.nextToken()
 
-                    let key = this.parseExpression(Tiny.Priority.LOWEST)
+                    let key = this.parseExpression(Sesan.Priority.LOWEST)
 
-                    if (key?.kind === Tiny.ExpressionKind.Ident)
+                    if (key?.kind === Sesan.ExpressionKind.Ident)
                         key = {
                             debug: 'parseHash>ident>key',
                             value: {
                                 debug: 'parseHash>ident>key>value',
                                 value: key.value,
-                                kind: Tiny.LiteralKind.String,
+                                kind: Sesan.LiteralKind.String,
                                 ...this.currPos(),
                             },
-                            kind: Tiny.ExpressionKind.Literal,
+                            kind: Sesan.ExpressionKind.Literal,
                             ...this.currPos(),
                         }
 
-                    let value: Tiny.Expression = null
+                    let value: Sesan.Expression = null
 
-                    if (!this.peekTokenIs(Tiny.TokenType.COLON)) value = this.parseExpression(Tiny.Priority.LOWEST)
+                    if (!this.peekTokenIs(Sesan.TokenType.COLON)) value = this.parseExpression(Sesan.Priority.LOWEST)
                     else {
                         this.nextToken()
                         this.nextToken()
 
-                        value = this.parseExpression(Tiny.Priority.LOWEST)
+                        value = this.parseExpression(Sesan.Priority.LOWEST)
                     }
 
-                    if (!this.peekTokenIs(Tiny.TokenType.RBRACE) && !this.expectPeek(Tiny.TokenType.COMMA)) return null
+                    if (!this.peekTokenIs(Sesan.TokenType.RBRACE) && !this.expectPeek(Sesan.TokenType.COMMA)) return null
 
                     if (key === null || value === null) continue
 
@@ -402,35 +402,35 @@ export default class Parser {
                     })
                 }
 
-                if (!this.expectPeek(Tiny.TokenType.RBRACE)) return null
+                if (!this.expectPeek(Sesan.TokenType.RBRACE)) return null
 
                 return {
                     debug: 'parseHash>return',
                     pairs,
-                    kind: Tiny.ExpressionKind.Object,
+                    kind: Sesan.ExpressionKind.Object,
                     ...this.currPos(),
                 }
             }
 
-            case Tiny.TokenType.TYPEOF: {
+            case Sesan.TokenType.TYPEOF: {
                 this.nextToken()
 
-                const expression = this.parseExpression(Tiny.Priority.PREFIX)
+                const expression = this.parseExpression(Sesan.Priority.PREFIX)
 
                 if (!expression) return null
 
                 return {
                     debug: 'parsePrefix>case>typeof',
                     value: expression,
-                    kind: Tiny.ExpressionKind.Typeof,
+                    kind: Sesan.ExpressionKind.Typeof,
                     ...this.currPos(),
                 }
             }
 
-            case Tiny.TokenType.THROW: {
+            case Sesan.TokenType.THROW: {
                 this.nextToken()
 
-                const expression = this.parseExpression(Tiny.Priority.PREFIX)
+                const expression = this.parseExpression(Sesan.Priority.PREFIX)
 
                 if (!expression) return null
 
@@ -439,66 +439,66 @@ export default class Parser {
                     message: expression,
                     line: this.currPos().line,
                     column: this.currPos().column,
-                    kind: Tiny.ExpressionKind.Throw,
+                    kind: Sesan.ExpressionKind.Throw,
                 }
             }
 
-            case Tiny.TokenType.DELETE: {
-                if (!this.expectPeek(Tiny.TokenType.IDENT)) return null
+            case Sesan.TokenType.DELETE: {
+                if (!this.expectPeek(Sesan.TokenType.IDENT)) return null
 
-                const expression = this.parseExpression(Tiny.Priority.PREFIX)
+                const expression = this.parseExpression(Sesan.Priority.PREFIX)
 
                 if (!expression) return null
 
                 return {
                     debug: 'parsePrefix>case>delete',
                     value: expression,
-                    kind: Tiny.ExpressionKind.Delete,
+                    kind: Sesan.ExpressionKind.Delete,
                     ...this.currPos(),
                 }
             }
 
-            case Tiny.TokenType.USE: {
-                if (!this.expectPeek(Tiny.TokenType.STRING)) return null
+            case Sesan.TokenType.USE: {
+                if (!this.expectPeek(Sesan.TokenType.STRING)) return null
 
-                const expression = this.parseExpression(Tiny.Priority.PREFIX)
+                const expression = this.parseExpression(Sesan.Priority.PREFIX)
 
                 if (!expression) return null
 
                 return {
                     debug: 'parsePrefix>case>use',
                     path: expression,
-                    kind: Tiny.ExpressionKind.Use,
+                    kind: Sesan.ExpressionKind.Use,
                     ...this.currPos(),
                 }
             }
 
-            case Tiny.TokenType.VOID: {
+            case Sesan.TokenType.VOID: {
                 this.nextToken()
 
-                const expression = this.parseExpression(Tiny.Priority.PREFIX)
+                const expression = this.parseExpression(Sesan.Priority.PREFIX)
 
                 if (!expression) this.pushError(this.messages.parseError.voidRequiresExpression)
 
                 return {
                     debug: 'parsePrefix>case>void',
                     value: expression,
-                    kind: Tiny.ExpressionKind.Void,
+                    kind: Sesan.ExpressionKind.Void,
                     ...this.currPos(),
                 }
             }
 
-            case Tiny.TokenType.EXPR: {
+            case Sesan.TokenType.EXPR: {
                 this.nextToken()
 
-                const expression = this.parseExpression(Tiny.Priority.PREFIX)
+                const expression = this.parseExpression(Sesan.Priority.PREFIX)
 
                 if (!expression) return null
 
                 return {
                     debug: 'parsePrefix>case>expr',
                     value: expression,
-                    kind: Tiny.ExpressionKind.Expr,
+                    kind: Sesan.ExpressionKind.Expr,
                     ...this.currPos(),
                 }
             }
@@ -508,7 +508,7 @@ export default class Parser {
         }
     }
 
-    private prefixParseOps(): Tiny.PrefixExpression | null {
+    private prefixParseOps(): Sesan.PrefixExpression | null {
         const operator = this.currToken
 
         this.nextToken()
@@ -516,28 +516,28 @@ export default class Parser {
         return {
             debug: 'prefixParseOps>return',
             operator: operator.type,
-            right: this.parseExpression(Tiny.Priority.PREFIX),
-            kind: Tiny.ExpressionKind.Prefix,
+            right: this.parseExpression(Sesan.Priority.PREFIX),
+            kind: Sesan.ExpressionKind.Prefix,
             ...this.currPos(),
         }
     }
 
-    private parseInfixExpression(left: Tiny.Expression): Tiny.Expression | null {
+    private parseInfixExpression(left: Sesan.Expression): Sesan.Expression | null {
         switch (this.currToken.type) {
-            case Tiny.TokenType.LPAREN:
+            case Sesan.TokenType.LPAREN:
                 return {
                     debug: 'parseInfixExpression>case>Lparen',
                     function: left,
-                    parameters: this.parseExpressionParameters(Tiny.TokenType.RPAREN),
-                    kind: Tiny.ExpressionKind.Call,
+                    parameters: this.parseExpressionParameters(Sesan.TokenType.RPAREN),
+                    kind: Sesan.ExpressionKind.Call,
                     ...this.currPos(),
                 }
 
-            case Tiny.TokenType.LBRACKET: {
+            case Sesan.TokenType.LBRACKET: {
                 this.nextToken()
-                const expression = this.parseExpression(Tiny.Priority.LOWEST)
+                const expression = this.parseExpression(Sesan.Priority.LOWEST)
 
-                if (!this.expectPeek(Tiny.TokenType.RBRACKET))
+                if (!this.expectPeek(Sesan.TokenType.RBRACKET))
                     return {
                         debug: 'parseInfixExpression>case>Lbracket',
                         left,
@@ -546,13 +546,13 @@ export default class Parser {
                             value: {
                                 debug: 'parseInfixExpression>case>Lbracket>index>value',
                                 value: 0,
-                                kind: Tiny.LiteralKind.Number,
+                                kind: Sesan.LiteralKind.Number,
                                 ...this.currPos(),
                             },
-                            kind: Tiny.ExpressionKind.Literal,
+                            kind: Sesan.ExpressionKind.Literal,
                             ...this.currPos(),
                         },
-                        kind: Tiny.ExpressionKind.Index,
+                        kind: Sesan.ExpressionKind.Index,
                         ...this.currPos(),
                     }
 
@@ -560,7 +560,7 @@ export default class Parser {
                     debug: 'parseInfixExpression>case>Lbracket',
                     left,
                     index: expression,
-                    kind: Tiny.ExpressionKind.Index,
+                    kind: Sesan.ExpressionKind.Index,
                     ...this.currPos(),
                 }
             }
@@ -580,18 +580,18 @@ export default class Parser {
                     left,
                     right,
                     operator: operator.type,
-                    kind: Tiny.ExpressionKind.Infix,
+                    kind: Sesan.ExpressionKind.Infix,
                     ...this.currPos(),
                 }
             }
         }
     }
 
-    private parseBlockStatement(): Tiny.BlockStatement | null {
-        if (!this.peekTokenIs(Tiny.TokenType.LBRACE)) {
+    private parseBlockStatement(): Sesan.BlockStatement | null {
+        if (!this.peekTokenIs(Sesan.TokenType.LBRACE)) {
             this.nextToken()
 
-            const expression = this.parseExpression(Tiny.Priority.LOWEST)
+            const expression = this.parseExpression(Sesan.Priority.LOWEST)
 
             if (!expression) return null
 
@@ -601,31 +601,31 @@ export default class Parser {
                     {
                         debug: 'parseBlockStatement>return>statement',
                         expression,
-                        kind: Tiny.NodeKind.ExpressionStatement,
+                        kind: Sesan.NodeKind.ExpressionStatement,
                         ...this.currPos(),
                     },
                 ],
                 returnFinal: true,
-                kind: Tiny.ExpressionKind.Block,
+                kind: Sesan.ExpressionKind.Block,
                 ...this.currPos(),
             }
         }
 
         this.nextToken()
 
-        let statements: Array<Tiny.Statement> = []
+        let statements: Array<Sesan.Statement> = []
 
         this.nextToken()
 
-        while (!this.currTokenIs(Tiny.TokenType.RBRACE) && !this.currTokenIs(Tiny.TokenType.EOF)) {
+        while (!this.currTokenIs(Sesan.TokenType.RBRACE) && !this.currTokenIs(Sesan.TokenType.EOF)) {
             const statement = this.parseStatement()
             if (statement) statements.push(statement)
 
             this.nextToken()
         }
 
-        if (!this.currTokenIs(Tiny.TokenType.RBRACE)) {
-            this.pushError(Tiny.errorFormatter(this.messages.parseError.unexpectedToken, Tiny.TokenType.RPAREN, this.peekToken.type))
+        if (!this.currTokenIs(Sesan.TokenType.RBRACE)) {
+            this.pushError(Sesan.errorFormatter(this.messages.parseError.unexpectedToken, Sesan.TokenType.RPAREN, this.peekToken.type))
 
             return null
         }
@@ -634,15 +634,15 @@ export default class Parser {
             debug: 'parseBlockStatement>return',
             statements,
             returnFinal: false,
-            kind: Tiny.ExpressionKind.Block,
+            kind: Sesan.ExpressionKind.Block,
             ...this.currPos(),
         }
     }
 
-    private parseFunctionParameters(): Array<Tiny.Expression> {
-        let parameters: Array<Tiny.Expression> = []
+    private parseFunctionParameters(): Array<Sesan.Expression> {
+        let parameters: Array<Sesan.Expression> = []
 
-        if (this.peekTokenIs(Tiny.TokenType.RPAREN)) {
+        if (this.peekTokenIs(Sesan.TokenType.RPAREN)) {
             this.nextToken()
 
             return []
@@ -652,28 +652,28 @@ export default class Parser {
 
         parameters.push({
             value: this.currToken.literal,
-            kind: Tiny.ExpressionKind.Ident,
+            kind: Sesan.ExpressionKind.Ident,
             ...this.currPos(),
         })
 
-        while (this.peekTokenIs(Tiny.TokenType.COMMA)) {
+        while (this.peekTokenIs(Sesan.TokenType.COMMA)) {
             this.nextToken()
             this.nextToken()
 
             parameters.push({
                 value: this.currToken.literal,
-                kind: Tiny.ExpressionKind.Ident,
+                kind: Sesan.ExpressionKind.Ident,
                 ...this.currPos(),
             })
         }
 
-        if (this.expectPeek(Tiny.TokenType.RPAREN)) return parameters
+        if (this.expectPeek(Sesan.TokenType.RPAREN)) return parameters
 
         return parameters
     }
 
-    private parseExpressionParameters(end: Tiny.TokenType): Array<Tiny.Expression> {
-        const parameters: Array<Tiny.Expression> = []
+    private parseExpressionParameters(end: Sesan.TokenType): Array<Sesan.Expression> {
+        const parameters: Array<Sesan.Expression> = []
 
         if (this.peekTokenIs(end)) {
             this.nextToken()
@@ -683,14 +683,14 @@ export default class Parser {
 
         this.nextToken()
 
-        const expression = this.parseExpression(Tiny.Priority.LOWEST)
+        const expression = this.parseExpression(Sesan.Priority.LOWEST)
         if (expression) parameters.push(expression)
 
-        while (this.peekTokenIs(Tiny.TokenType.COMMA)) {
+        while (this.peekTokenIs(Sesan.TokenType.COMMA)) {
             this.nextToken()
             this.nextToken()
 
-            const expression = this.parseExpression(Tiny.Priority.LOWEST)
+            const expression = this.parseExpression(Sesan.Priority.LOWEST)
             if (expression) parameters.push(expression)
         }
 
@@ -699,62 +699,62 @@ export default class Parser {
         return parameters
     }
 
-    private peekPriority(): Tiny.Priority {
+    private peekPriority(): Sesan.Priority {
         return this.getPriority(this.peekToken)
     }
 
-    private currPriority(): Tiny.Priority {
+    private currPriority(): Sesan.Priority {
         return this.getPriority(this.currToken)
     }
 
-    private getPriority(token: Tiny.Token): Tiny.Priority {
+    private getPriority(token: Sesan.Token): Sesan.Priority {
         switch (token.type) {
-            case Tiny.TokenType.ASSIGN:
-                return Tiny.Priority.ASSIGN
+            case Sesan.TokenType.ASSIGN:
+                return Sesan.Priority.ASSIGN
 
-            case Tiny.TokenType.AND:
-            case Tiny.TokenType.OR:
-                return Tiny.Priority.AND_OR
+            case Sesan.TokenType.AND:
+            case Sesan.TokenType.OR:
+                return Sesan.Priority.AND_OR
 
-            case Tiny.TokenType.EQUAL:
-            case Tiny.TokenType.NOT_EQUAL:
-                return Tiny.Priority.EQUAL
+            case Sesan.TokenType.EQUAL:
+            case Sesan.TokenType.NOT_EQUAL:
+                return Sesan.Priority.EQUAL
 
-            case Tiny.TokenType.LT:
-            case Tiny.TokenType.GT:
-            case Tiny.TokenType.LTE:
-            case Tiny.TokenType.GTE:
-            case Tiny.TokenType.IN:
-                return Tiny.Priority.LESS_GREATER
+            case Sesan.TokenType.LT:
+            case Sesan.TokenType.GT:
+            case Sesan.TokenType.LTE:
+            case Sesan.TokenType.GTE:
+            case Sesan.TokenType.IN:
+                return Sesan.Priority.LESS_GREATER
 
-            case Tiny.TokenType.PLUS:
-            case Tiny.TokenType.MINUS:
-                return Tiny.Priority.SUM
+            case Sesan.TokenType.PLUS:
+            case Sesan.TokenType.MINUS:
+                return Sesan.Priority.SUM
 
-            case Tiny.TokenType.SLASH:
-            case Tiny.TokenType.ASTERISK:
-            case Tiny.TokenType.PERCENT:
-                return Tiny.Priority.PRODUCT
+            case Sesan.TokenType.SLASH:
+            case Sesan.TokenType.ASTERISK:
+            case Sesan.TokenType.PERCENT:
+                return Sesan.Priority.PRODUCT
 
-            case Tiny.TokenType.TYPEOF:
-            case Tiny.TokenType.DELETE:
-            case Tiny.TokenType.THROW:
-            case Tiny.TokenType.USE:
-            case Tiny.TokenType.VOID:
-            case Tiny.TokenType.EXPR:
-                return Tiny.Priority.PREFIX
+            case Sesan.TokenType.TYPEOF:
+            case Sesan.TokenType.DELETE:
+            case Sesan.TokenType.THROW:
+            case Sesan.TokenType.USE:
+            case Sesan.TokenType.VOID:
+            case Sesan.TokenType.EXPR:
+                return Sesan.Priority.PREFIX
 
-            case Tiny.TokenType.LPAREN:
-                return Tiny.Priority.CALL
+            case Sesan.TokenType.LPAREN:
+                return Sesan.Priority.CALL
 
-            case Tiny.TokenType.LBRACKET:
-            case Tiny.TokenType.ELEMENT:
-            case Tiny.TokenType.IN:
-            case Tiny.TokenType.NULLISH:
-                return Tiny.Priority.INDEX
+            case Sesan.TokenType.LBRACKET:
+            case Sesan.TokenType.ELEMENT:
+            case Sesan.TokenType.IN:
+            case Sesan.TokenType.NULLISH:
+                return Sesan.Priority.INDEX
 
             default:
-                return Tiny.Priority.LOWEST
+                return Sesan.Priority.LOWEST
         }
     }
 }

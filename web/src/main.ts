@@ -12,7 +12,7 @@ let editor = null
 
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) =>
     editor.updateOptions({
-        theme: e.matches ? 'tinyTheme' : 'tinyTheme-light',
+        theme: e.matches ? 'sesanTheme' : 'sesanTheme-light',
     })
 )
 
@@ -67,9 +67,9 @@ require(['vs/editor/editor.main'], () => {
 
     const builtins = ['import', 'eval', 'js', 'convert', 'options', 'regExp', 'this', 'to_s', 'to_n', 'to_b', 'to_a', '__root', '__pos', '__filename']
 
-    monaco.languages.register({ id: 'tiny' })
+    monaco.languages.register({ id: 'sesan' })
 
-    monaco.languages.setLanguageConfiguration('tiny', {
+    monaco.languages.setLanguageConfiguration('sesan', {
         autoClosingPairs: [
             { open: '{', close: '}' },
             { open: '[', close: ']' },
@@ -87,7 +87,7 @@ require(['vs/editor/editor.main'], () => {
         },
     })
 
-    monaco.languages.setMonarchTokensProvider('tiny', {
+    monaco.languages.setMonarchTokensProvider('sesan', {
         keywords,
         stds,
         builtins,
@@ -119,7 +119,7 @@ require(['vs/editor/editor.main'], () => {
         },
     })
 
-    monaco.editor.defineTheme('tinyTheme', {
+    monaco.editor.defineTheme('sesanTheme', {
         base: 'vs-dark',
         inherit: true,
         rules: [
@@ -132,7 +132,7 @@ require(['vs/editor/editor.main'], () => {
         ],
     })
 
-    monaco.editor.defineTheme('tinyTheme-light', {
+    monaco.editor.defineTheme('sesanTheme-light', {
         base: 'vs',
         inherit: true,
         rules: [
@@ -145,7 +145,7 @@ require(['vs/editor/editor.main'], () => {
         ],
     })
 
-    monaco.languages.registerCompletionItemProvider('tiny', {
+    monaco.languages.registerCompletionItemProvider('sesan', {
         provideCompletionItems: () => ({
             suggestions: [
                 ...keywords.map((keyword) => ({
@@ -225,14 +225,14 @@ require(['vs/editor/editor.main'], () => {
     editor = monaco.editor.create(document.getElementById('editor'), {
         value: window.location.hash
             ? decodeURIComponent(window.location.hash.substr(1))
-            : `// Welcome to the Tiny language playground.
+            : `// Welcome to the Sesan language playground.
 // Try writing some code, try running it.
 // you can run it by clicking the 'Run' button.
 // requests sent to the server only return result values!
 
 // Try it
 // - Share    : you can share your code by url.
-// - Docs     : https://github.com/tsukiroku/tiny/tree/main/docs
+// - Docs     : https://github.com/tsukiroku/sesan/tree/main/docs
 // - Examples : you can find some examples here.
 
 // Enjoy!
@@ -255,15 +255,15 @@ const examples: Array<IExamplesGroup> = [
         examples: [
             {
                 name: 'Hello, World!',
-                source: 'hello_world.tiny',
+                source: 'hello_world.sesan',
             },
             {
                 name: 'Fibonacci',
-                source: 'fibonacci.tiny',
+                source: 'fibonacci.sesan',
             },
             {
-                name: 'Tiny interpreter',
-                source: 'interpreter.tiny',
+                name: 'Simple interpreter',
+                source: 'interpreter.sesan',
             },
         ],
     },
@@ -272,15 +272,15 @@ const examples: Array<IExamplesGroup> = [
         examples: [
             {
                 name: 'Variable',
-                source: 'variable.tiny',
+                source: 'variable.sesan',
             },
             {
                 name: 'Function',
-                source: 'function.tiny',
+                source: 'function.sesan',
             },
             {
                 name: 'Object',
-                source: 'object.tiny',
+                source: 'object.sesan',
             },
         ],
     },
@@ -289,11 +289,11 @@ const examples: Array<IExamplesGroup> = [
         examples: [
             {
                 name: 'Operator',
-                source: 'operators.tiny',
+                source: 'operators.sesan',
             },
             {
                 name: 'Decorator',
-                source: 'decorators.tiny',
+                source: 'decorators.sesan',
             },
         ],
     },
@@ -302,19 +302,19 @@ const examples: Array<IExamplesGroup> = [
         examples: [
             {
                 name: 'If',
-                source: 'if.tiny',
+                source: 'if.sesan',
             },
             {
                 name: 'While',
-                source: 'while.tiny',
+                source: 'while.sesan',
             },
             {
                 name: 'Import',
-                source: 'import.tiny',
+                source: 'import.sesan',
             },
             {
                 name: 'Expr',
-                source: 'expr.tiny',
+                source: 'expr.sesan',
             },
         ],
     },
@@ -323,19 +323,19 @@ const examples: Array<IExamplesGroup> = [
         examples: [
             {
                 name: 'IO',
-                source: '/stdlib/io.tiny',
+                source: '/stdlib/io.sesan',
             },
             {
                 name: 'Array',
-                source: '/stdlib/array.tiny',
+                source: '/stdlib/array.sesan',
             },
             {
                 name: 'String',
-                source: '/stdlib/string.tiny',
+                source: '/stdlib/string.sesan',
             },
             {
                 name: 'Utility',
-                source: '/stdlib/util.tiny',
+                source: '/stdlib/util.sesan',
             },
         ],
     },

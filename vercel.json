@@ -6,7 +6,7 @@
             "src": "api.ts",
             "use": "@vercel/node",
             "config": {
-                "includeFiles": ["@std/**", "examples/function.tiny"]
+                "includeFiles": ["@std/**", "examples/function.sesan"]
             }
         }
     ],

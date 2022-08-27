@@ -48,7 +48,7 @@ npm run start:repl [file]
 
 # Web Playground
 
-[README](./web) | [Playground](https://tsukiroku.github.io/tiny)
+[README](./web) | [Playground](https://tsukiroku.github.io/sesan)
 
 <br />
 
@@ -174,12 +174,12 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 # Standard library
 
--   [**`@std/`**](https://github.com/tsukiroku/tiny/blob/main/@std/)
-    -   [`lib`](https://github.com/tsukiroku/tiny/blob/main/@std/lib.tiny)
-    -   [`io`](https://github.com/tsukiroku/tiny/blob/main/@std/io.tiny)
+-   [**`@std/`**](https://github.com/tsukiroku/sesan/blob/main/@std/)
+    -   [`lib`](https://github.com/tsukiroku/sesan/blob/main/@std/lib.sesan)
+    -   [`io`](https://github.com/tsukiroku/sesan/blob/main/@std/io.sesan)
         -   `print(args*) -> NULL`
         -   `println(args*) -> NULL`
-    -   [`array`](https://github.com/tsukiroku/tiny/blob/main/@std/array.tiny)
+    -   [`array`](https://github.com/tsukiroku/sesan/blob/main/@std/array.sesan)
         -   `push(array, value) -> array`
         -   `pop(array) -> array`
         -   `shift(array) -> array`
@@ -193,7 +193,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
             -   `callback(previous, current)`
         -   `map(array, callback) -> array`
             -   `callback(value, index)`
-    -   [`util`](https://github.com/tsukiroku/tiny/blob/main/@std/util.tiny)
+    -   [`util`](https://github.com/tsukiroku/sesan/blob/main/@std/util.sesan)
         -   `funcTools -> object`
         -   `length(array) -> number`
         -   `match(value, [pattern], default) -> Any`
@@ -220,7 +220,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 # Options
 
-If `tiny.config.json` dose not exist in root (`./`), it extends Default.
+If `sesan.config.json` dose not exist in root (`./`), it extends Default.
 
 | Option                   | Description                        | Default |
 | ------------------------ | ---------------------------------- | ------- |
@@ -242,14 +242,14 @@ If `tiny.config.json` dose not exist in root (`./`), it extends Default.
 > when updating fatal errors, [npm package](#npm-package) is also updated immediately.
 
 ```sh
-npm i @tsukiroku/tiny
+npm i @tsukiroku/sesan
 ```
 
 ```ts
-import Tiny, { NULL } from '@tsukiroku/tiny'
+import sesan, { NULL } from '@tsukiroku/sesan'
 
 console.log(
-    new Tiny('let x = "World!"; println("Hello, " + x);', {
+    new sesan('let x = "World!"; println("Hello, " + x);', {
         useStdLibAutomatically: true,
     })
         .setBuiltins(new Map([['test', () => NULL]]))
@@ -261,30 +261,30 @@ console.log(
 `@std/` must exist in root (`./`).
 
 ```sh
-curl -O https://raw.githubusercontent.com/tsukiroku/tiny/main/scripts/dl-stds.sh && . ./dl-stds.sh && rm ./dl-stds.sh
+curl -O https://raw.githubusercontent.com/tsukiroku/sesan/main/scripts/dl-stds.sh && . ./dl-stds.sh && rm ./dl-stds.sh
 ```
 
 <br />
 
 # Examples
 
--   [**`./examples`**](https://github.com/tsukiroku/tiny/tree/main/examples)
-    -   [`Hello, World!`](https://github.com/tsukiroku/tiny/blob/main/examples/hello_world.tiny)
-    -   [`Fibonacci`](https://github.com/tsukiroku/tiny/blob/main/examples/fibonacci.tiny)
-    -   [`Function`](https://github.com/tsukiroku/tiny/blob/main/examples/function.tiny)
-    -   [`Object`](https://github.com/tsukiroku/tiny/blob/main/examples/object.tiny)
-    -   [`If`](https://github.com/tsukiroku/tiny/blob/main/examples/if.tiny)
-    -   [`While`](https://github.com/tsukiroku/tiny/blob/main/examples/while.tiny)
-    -   [`Import`](https://github.com/tsukiroku/tiny/blob/main/examples/import.tiny)
-    -   [`Variable`](https://github.com/tsukiroku/tiny/blob/main/examples/variable.tiny)
-    -   [`Operators`](https://github.com/tsukiroku/tiny/blob/main/examples/operators.tiny)
-    -   [`Built-in functions`](https://github.com/tsukiroku/tiny/blob/main/examples/builtin.tiny)
-    -   [`Decorators`](https://github.com/tsukiroku/tiny/blob/main/examples/decorators.tiny)
-    -   [`StdLib`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib)
-        -   [`Array`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/array.tiny)
-        -   [`IO`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/io.tiny)
-        -   [`String`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/string.tiny)
-        -   [`Utility`](https://github.com/tsukiroku/tiny/blob/main/examples/stdlib/util.tiny)
+-   [**`./examples`**](https://github.com/tsukiroku/sesan/tree/main/examples)
+    -   [`Hello, World!`](https://github.com/tsukiroku/sesan/blob/main/examples/hello_world.sesan)
+    -   [`Fibonacci`](https://github.com/tsukiroku/sesan/blob/main/examples/fibonacci.sesan)
+    -   [`Function`](https://github.com/tsukiroku/sesan/blob/main/examples/function.sesan)
+    -   [`Object`](https://github.com/tsukiroku/sesan/blob/main/examples/object.sesan)
+    -   [`If`](https://github.com/tsukiroku/sesan/blob/main/examples/if.sesan)
+    -   [`While`](https://github.com/tsukiroku/sesan/blob/main/examples/while.sesan)
+    -   [`Import`](https://github.com/tsukiroku/sesan/blob/main/examples/import.sesan)
+    -   [`Variable`](https://github.com/tsukiroku/sesan/blob/main/examples/variable.sesan)
+    -   [`Operators`](https://github.com/tsukiroku/sesan/blob/main/examples/operators.sesan)
+    -   [`Built-in functions`](https://github.com/tsukiroku/sesan/blob/main/examples/builtin.sesan)
+    -   [`Decorators`](https://github.com/tsukiroku/sesan/blob/main/examples/decorators.sesan)
+    -   [`StdLib`](https://github.com/tsukiroku/sesan/blob/main/examples/stdlib)
+        -   [`Array`](https://github.com/tsukiroku/sesan/blob/main/examples/stdlib/array.sesan)
+        -   [`IO`](https://github.com/tsukiroku/sesan/blob/main/examples/stdlib/io.sesan)
+        -   [`String`](https://github.com/tsukiroku/sesan/blob/main/examples/stdlib/string.sesan)
+        -   [`Utility`](https://github.com/tsukiroku/sesan/blob/main/examples/stdlib/util.sesan)
 
 <br />
 
@@ -660,7 +660,7 @@ Executes external source code and can import executed environments.
 
 path follows the project root (default `./`).
 
-if `.tiny` is not included in path, `.tiny` will be added automatically.
+if `.sesan` is not included in path, `.sesan` will be added automatically.
 
 <br />
 

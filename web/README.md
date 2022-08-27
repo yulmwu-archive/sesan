@@ -1,4 +1,4 @@
-# [Tiny web playground 🚀](https://tsukiroku.github.io/tiny)
+# [Sesan web playground 🚀](https://tsukiroku.github.io/sesan)
 
 with [`svelte`](https://svelte.dev), [`tailwindcss`](https://tailwindcss.com) and [`monaco editor`](https://microsoft.github.io/monaco-editor).
 

@@ -1,4 +1,4 @@
-import * as Tiny from '../../index'
+import * as Sesan from '../../index'
 
 export default class Lexer {
     public position: number = 0
@@ -9,15 +9,15 @@ export default class Lexer {
     public line: number = 1
     public lineStart: number = 1
 
-    public messages: Tiny.Errors
+    public messages: Sesan.Errors
 
-    constructor(public input: string, public options: Tiny.LexerOptions, public filename: string) {
-        this.messages = Tiny.localization(options)
+    constructor(public input: string, public options: Sesan.LexerOptions, public filename: string) {
+        this.messages = Sesan.localization(options)
 
         this.readChar()
     }
 
-    public curr(): Tiny.Position {
+    public curr(): Sesan.Position {
         return {
             line: this.line,
             column: this.column - this.lineStart,
@@ -34,7 +34,7 @@ export default class Lexer {
         this.column += 1
     }
 
-    public readIdentifier(): Tiny.Token {
+    public readIdentifier(): Sesan.Token {
         let position = this.position
 
         if (!this.isDigit(this.ch)) {
@@ -43,12 +43,12 @@ export default class Lexer {
             const literal = this.input.substring(position, this.position)
 
             return {
-                type: Tiny.fromLiteral(literal),
+                type: Sesan.fromLiteral(literal),
                 literal: literal,
                 ...this.curr(),
             }
         } else {
-            Tiny.printError(
+            Sesan.printError(
                 {
                     ...this.curr(),
                     message: this.messages.parseError.invalidIdentifier,
@@ -61,14 +61,14 @@ export default class Lexer {
             )
 
             return {
-                type: Tiny.TokenType.EOF,
+                type: Sesan.TokenType.EOF,
                 literal: 'EOF',
                 ...this.curr(),
             }
         }
     }
 
-    public readNumber(): Tiny.Token {
+    public readNumber(): Sesan.Token {
         const position = this.position
 
         let float = false
@@ -76,7 +76,7 @@ export default class Lexer {
         while (this.isDigit(this.ch)) {
             if (this.ch === '.') {
                 if (float) {
-                    Tiny.printError(
+                    Sesan.printError(
                         {
                             ...this.curr(),
                             message: this.messages.parseError.invalidNumber,
@@ -89,7 +89,7 @@ export default class Lexer {
                     )
 
                     return {
-                        type: Tiny.TokenType.EOF,
+                        type: Sesan.TokenType.EOF,
                         literal: 'EOF',
                         ...this.curr(),
                     }
@@ -101,7 +101,7 @@ export default class Lexer {
         }
 
         return {
-            type: Tiny.TokenType.NUMBER,
+            type: Sesan.TokenType.NUMBER,
             literal: this.input.substring(position, this.position),
             ...this.curr(),
         }
@@ -111,16 +111,16 @@ export default class Lexer {
         return args.reduce((acc, curr) => acc.replaceAll(curr.find, curr.replace), str)
     }
 
-    public readString(tok: Tiny.TokenType): Tiny.Token {
+    public readString(tok: Sesan.TokenType): Sesan.Token {
         let position = this.position + 1
 
         while (this.peekChar() !== tok && this.ch !== '\0') this.readChar()
 
         if (this.ch === '\0') {
-            Tiny.printError(
+            Sesan.printError(
                 {
                     ...this.curr(),
-                    message: Tiny.errorFormatter(this.messages.parseError.invalidString, this.input.substring(position - 1, this.position)),
+                    message: Sesan.errorFormatter(this.messages.parseError.invalidString, this.input.substring(position - 1, this.position)),
                 },
                 this.filename,
                 this.options.stderr,
@@ -130,7 +130,7 @@ export default class Lexer {
             )
 
             return {
-                type: Tiny.TokenType.EOF,
+                type: Sesan.TokenType.EOF,
                 literal: 'EOF',
                 ...this.curr(),
             }
@@ -139,7 +139,7 @@ export default class Lexer {
         this.readChar()
 
         return {
-            type: Tiny.TokenType.STRING,
+            type: Sesan.TokenType.STRING,
             literal: this.replaceAll(
                 this.input.substring(position, this.position),
                 { find: '\\"', replace: '"' },
@@ -175,7 +175,7 @@ export default class Lexer {
         return this.input[this.readPosition]
     }
 
-    public readComment(): Tiny.Token {
+    public readComment(): Sesan.Token {
         let position = this.position
 
         while (this.ch !== '\0' && this.ch !== '\n') this.readChar()
@@ -183,7 +183,7 @@ export default class Lexer {
         this.line += 1
 
         return {
-            type: Tiny.TokenType.COMMENT,
+            type: Sesan.TokenType.COMMENT,
             literal: this.input.substring(position, this.position).slice(1).trim(),
             ...this.curr(),
         }
@@ -201,11 +201,11 @@ export default class Lexer {
         return false
     }
 
-    public check(tests: Array<Readonly<Tiny.TokenCheck>>): Tiny.Token {
+    public check(tests: Array<Readonly<Sesan.TokenCheck>>): Sesan.Token {
         for (const test of tests) {
             if (this.checkToken(test.curr, test.next ?? null)) {
-                let token: Tiny.Token = {
-                    type: Tiny.TokenType.ILLEGAL,
+                let token: Sesan.Token = {
+                    type: Sesan.TokenType.ILLEGAL,
                     literal: this.ch,
                     ...this.curr(),
                 }
@@ -227,27 +227,27 @@ export default class Lexer {
         }
 
         return {
-            type: Tiny.TokenType.ILLEGAL,
+            type: Sesan.TokenType.ILLEGAL,
             literal: this.ch,
             ...this.curr(),
         }
     }
 
-    public nextToken(): Tiny.Token {
-        let token: Tiny.Token
+    public nextToken(): Sesan.Token {
+        let token: Sesan.Token
 
         this.skipWhitespace()
 
-        token = this.check(Tiny.tokens)
+        token = this.check(Sesan.tokens)
 
-        if (token.type === Tiny.TokenType.COMMENT) return this.nextToken()
+        if (token.type === Sesan.TokenType.COMMENT) return this.nextToken()
 
-        if (token.type === Tiny.TokenType.ILLEGAL) {
+        if (token.type === Sesan.TokenType.ILLEGAL) {
             if (this.isLetter(this.ch)) token = this.readIdentifier()
             else if (this.isDigit(this.ch)) token = this.readNumber()
             else {
                 token = {
-                    type: Tiny.TokenType.ILLEGAL,
+                    type: Sesan.TokenType.ILLEGAL,
                     literal: this.ch,
                     ...this.curr(),
                 }

@@ -14,13 +14,13 @@
             errors.update(() => 0)
 
             axios
-                .get(`https://tiny-tsukiroku.vercel.app/eval/${encodeURIComponent(editor.getValue())}`)
+                .get(`https://sesan-lang.vercel.app/eval/${encodeURIComponent(editor.getValue())}`)
                 .then((res) => {
                     console.log(res.data)
 
                     results.update(() => res.data)
 
-                    document.title = res.data.title ?? 'Tiny playground'
+                    document.title = res.data.title ?? 'Sesan Playground'
                 })
                 .catch((err) =>
                     results.update(() => ({
@@ -45,7 +45,7 @@
     const updateExample = () => {
         if (typeof selected === 'string') return
 
-        axios.get(`https://raw.githubusercontent.com/tsukiroku/tiny/main/examples/${selected.source}`).then((res) => editor.setValue(res.data))
+        axios.get(`https://raw.githubusercontent.com/tsukiroku/sesan/main/examples/${selected.source}`).then((res) => editor.setValue(res.data))
 
         selected = 'examples'
     }

@@ -1,15 +1,15 @@
-import * as Tiny from '../../index'
+import * as Sesan from '../../index'
 
-export interface LexerOptions extends Tiny.Options {
-    stderr: Tiny.Stdio
+export interface LexerOptions extends Sesan.Options {
+    stderr: Sesan.Stdio
 }
 
 export interface TokenCheck {
     curr: string
     next?: string
-    tokenType?: Tiny.TokenType
-    token?: Tiny.Token
+    tokenType?: Sesan.TokenType
+    token?: Sesan.Token
     readChar?: boolean
-    stringToken?: Tiny.TokenType.QUOTE | Tiny.TokenType.SINGLE_QUOTE
-    commentToken?: Tiny.TokenType.COMMENT
+    stringToken?: Sesan.TokenType.QUOTE | Sesan.TokenType.SINGLE_QUOTE
+    commentToken?: Sesan.TokenType.COMMENT
 }

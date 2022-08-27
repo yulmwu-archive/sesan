@@ -1,11 +1,11 @@
-import * as Tiny from '../../index'
+import * as Sesan from '../../index'
 
-const print: Tiny.Func = (parameters: Array<Tiny.LangObject>, enviroment: Tiny.Enviroment, evaluator: Tiny.Evaluator): Tiny.LangObject => {
-    if (parameters[0]?.kind !== Tiny.ObjectKind.ARRAY) return Tiny.NULL
+const print: Sesan.Func = (parameters: Array<Sesan.LangObject>, enviroment: Sesan.Enviroment, evaluator: Sesan.Evaluator): Sesan.LangObject => {
+    if (parameters[0]?.kind !== Sesan.ObjectKind.ARRAY) return Sesan.NULL
 
-    evaluator.option.stdio.stdout(`${parameters[0]?.value.map((arg) => Tiny.objectStringify(arg)).join(' ')}${Tiny.objectStringify(parameters[1])}`)
+    evaluator.option.stdio.stdout(`${parameters[0]?.value.map((arg) => Sesan.objectStringify(arg)).join(' ')}${Sesan.objectStringify(parameters[1])}`)
 
-    return Tiny.NULL
+    return Sesan.NULL
 }
 
-export const io: Map<string, Tiny.Func> = new Map([['__builtin_print', print]])
+export const io: Map<string, Sesan.Func> = new Map([['__builtin_print', print]])

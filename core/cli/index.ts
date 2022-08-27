@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'fs'
-import Tiny, { parseOptions, Enviroment } from '../../index'
+import Sesan, { parseOptions, Enviroment } from '../../index'
 import Repl from './repl'
 import prompt from 'prompt-sync'
 
@@ -7,14 +7,14 @@ const args = process.argv.slice(2)
 
 const env = new Enviroment()
 
-const option = existsSync('./tiny.config.json') ? parseOptions(readFileSync('./tiny.config.json').toString()) : parseOptions()
+const option = existsSync('./sesan.config.json') ? parseOptions(readFileSync('./sesan.config.json').toString()) : parseOptions()
 
 if (args.length <= 0) new Repl(env, option).start()
 else {
     try {
         const file = readFileSync(args[0], 'utf8')
 
-        new Tiny(file, { enviroment: env, ...option })
+        new Sesan(file, { enviroment: env, ...option })
             .setStdin((x) =>
                 prompt({
                     sigint: true,

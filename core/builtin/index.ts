@@ -1,26 +1,26 @@
-import * as Tiny from '../../index'
+import * as Sesan from '../../index'
 import { io } from './io'
 import { array } from './array'
 import { builtin } from './builtin'
 import { strings } from './string'
 
-type Func = Tiny.BuiltinFunctionType
+type Func = Sesan.BuiltinFunctionType
 
-const invalidArgument = (position: Tiny.Position, options: Tiny.Options): Tiny.LangObject => ({
-    kind: Tiny.ObjectKind.ERROR,
-    message: Tiny.localization(options).builtinError.invalidArgument,
+const invalidArgument = (position: Sesan.Position, options: Sesan.Options): Sesan.LangObject => ({
+    kind: Sesan.ObjectKind.ERROR,
+    message: Sesan.localization(options).builtinError.invalidArgument,
     ...position,
 })
 
 const builtinsEval: Map<string, Func> = new Map()
 
-const builtinFunction = (name: string): Tiny.LangObject | null => {
+const builtinFunction = (name: string): Sesan.LangObject | null => {
     const func: Func | undefined = new Map([...builtinsEval, ...builtin, ...array, ...io, ...strings]).get(name)
 
     if (!func) return null
 
     return {
-        kind: Tiny.ObjectKind.BUILTIN,
+        kind: Sesan.ObjectKind.BUILTIN,
         func,
     }
 }

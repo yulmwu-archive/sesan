@@ -1,5 +1,5 @@
 {
-    "name": "@tsukiroku/tiny",
+    "name": "@tsukiroku/sesan",
     "version": "0.3.7",
     "description": "Sesan interpreter",
     "main": "dist/index.js",
@@ -23,9 +23,9 @@
     "author": "tsukiroku",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/tsukiroku/sesan/tiny"
+        "url": "https://github.com/tsukiroku/sesan"
     },
-    "homepage": "https://github.com/tsukiroku/sesan/tiny",
+    "homepage": "https://github.com/tsukiroku/sesan",
     "types": "dist/index.d.ts",
     "files": [
         "dist/**/*"

@@ -1,4 +1,4 @@
-import * as Tiny from '../../index'
+import * as Sesan from '../../index'
 
 export type LangObject =
     | NumberObject
@@ -133,12 +133,12 @@ export interface ObjectObject {
 }
 
 export interface FunctionObject {
-    function: Tiny.Expression
-    parameters: Array<Tiny.Expression>
+    function: Sesan.Expression
+    parameters: Array<Sesan.Expression>
     decorator?: ObjectObject
-    body: Tiny.Expression
-    enviroment: Tiny.Enviroment
-    option: Tiny.Options
+    body: Sesan.Expression
+    enviroment: Sesan.Enviroment
+    option: Sesan.Options
     kind: ObjectKind.FUNCTION
 }
 
@@ -149,9 +149,9 @@ export interface BuiltinFunction {
 
 export type BuiltinFunctionType = (
     parameters: Array<LangObject>,
-    enviroment: Tiny.Enviroment,
-    evaluator: Tiny.Evaluator,
-    position: Tiny.Position
+    enviroment: Sesan.Enviroment,
+    evaluator: Sesan.Evaluator,
+    position: Sesan.Position
 ) => LangObject
 
 export interface ReturnValue {

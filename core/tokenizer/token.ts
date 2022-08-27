@@ -1,4 +1,4 @@
-import * as Tiny from '../../index'
+import * as Sesan from '../../index'
 
 enum TokenType {
     ILLEGAL = 'ILLEGAL',
@@ -71,7 +71,7 @@ interface Token {
     column: number
 }
 
-const tokens: Array<Tiny.TokenCheck> = [
+const tokens: Array<Sesan.TokenCheck> = [
     { curr: '=', next: '=', tokenType: TokenType.EQUAL },
     { curr: '/', next: '/', commentToken: TokenType.COMMENT },
     { curr: '!', next: '=', tokenType: TokenType.NOT_EQUAL },

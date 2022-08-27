@@ -1,61 +1,61 @@
-import * as Tiny from '../../index'
+import * as Sesan from '../../index'
 
-const importEnviroment: Tiny.Func = (
-    parameters: Array<Tiny.LangObject>,
-    enviroment: Tiny.Enviroment,
-    evaluator: Tiny.Evaluator,
-    position: Tiny.Position
-): Tiny.LangObject => {
-    if (parameters.length !== 1 || parameters[0]?.kind !== Tiny.ObjectKind.STRING) return Tiny.invalidArgument(position, evaluator.option)
+const importEnviroment: Sesan.Func = (
+    parameters: Array<Sesan.LangObject>,
+    enviroment: Sesan.Enviroment,
+    evaluator: Sesan.Evaluator,
+    position: Sesan.Position
+): Sesan.LangObject => {
+    if (parameters.length !== 1 || parameters[0]?.kind !== Sesan.ObjectKind.STRING) return Sesan.invalidArgument(position, evaluator.option)
 
-    return evaluator.importEnv((parameters[0] as Tiny.StringObject).value, enviroment, evaluator, position)
+    return evaluator.importEnv((parameters[0] as Sesan.StringObject).value, enviroment, evaluator, position)
 }
 
-const length: Tiny.Func = (parameters: Array<Tiny.LangObject>): Tiny.LangObject => {
+const length: Sesan.Func = (parameters: Array<Sesan.LangObject>): Sesan.LangObject => {
     if (
         parameters.length !== 1 ||
-        (parameters[0]?.kind !== Tiny.ObjectKind.ARRAY &&
-            parameters[0]?.kind !== Tiny.ObjectKind.OBJECT &&
-            parameters[0]?.kind !== Tiny.ObjectKind.STRING)
+        (parameters[0]?.kind !== Sesan.ObjectKind.ARRAY &&
+            parameters[0]?.kind !== Sesan.ObjectKind.OBJECT &&
+            parameters[0]?.kind !== Sesan.ObjectKind.STRING)
     )
-        return Tiny.NULL
+        return Sesan.NULL
 
-    if (parameters[0]?.kind === Tiny.ObjectKind.ARRAY)
+    if (parameters[0]?.kind === Sesan.ObjectKind.ARRAY)
         return {
-            kind: Tiny.ObjectKind.NUMBER,
-            value: (parameters[0] as Tiny.ArrayObject).value.length,
+            kind: Sesan.ObjectKind.NUMBER,
+            value: (parameters[0] as Sesan.ArrayObject).value.length,
         }
 
-    if (parameters[0]?.kind === Tiny.ObjectKind.STRING)
+    if (parameters[0]?.kind === Sesan.ObjectKind.STRING)
         return {
-            kind: Tiny.ObjectKind.NUMBER,
-            value: (parameters[0] as Tiny.StringObject).value.length,
+            kind: Sesan.ObjectKind.NUMBER,
+            value: (parameters[0] as Sesan.StringObject).value.length,
         }
 
     return {
-        kind: Tiny.ObjectKind.NUMBER,
-        value: (parameters[0] as Tiny.ObjectObject).pairs.size,
+        kind: Sesan.ObjectKind.NUMBER,
+        value: (parameters[0] as Sesan.ObjectObject).pairs.size,
     }
 }
 
-const evalCode: Tiny.Func = (
-    parameters: Array<Tiny.LangObject>,
-    enviroment: Tiny.Enviroment,
-    evaluator: Tiny.Evaluator,
-    position: Tiny.Position
-): Tiny.LangObject => {
-    if (parameters.length !== 1 || parameters[0]?.kind !== Tiny.ObjectKind.STRING) return Tiny.invalidArgument(position, evaluator.option)
+const evalCode: Sesan.Func = (
+    parameters: Array<Sesan.LangObject>,
+    enviroment: Sesan.Enviroment,
+    evaluator: Sesan.Evaluator,
+    position: Sesan.Position
+): Sesan.LangObject => {
+    if (parameters.length !== 1 || parameters[0]?.kind !== Sesan.ObjectKind.STRING) return Sesan.invalidArgument(position, evaluator.option)
 
     if (!evaluator.option.allowEval)
         return {
-            kind: Tiny.ObjectKind.ERROR,
-            message: Tiny.localization(evaluator.option).builtinError.disableAllowEval,
+            kind: Sesan.ObjectKind.ERROR,
+            message: Sesan.localization(evaluator.option).builtinError.disableAllowEval,
             ...position,
         }
 
-    return new Tiny.Evaluator(
-        new Tiny.Parser(
-            new Tiny.Lexer(
+    return new Sesan.Evaluator(
+        new Sesan.Parser(
+            new Sesan.Lexer(
                 parameters[0].value,
                 {
                     ...evaluator.option,
@@ -70,17 +70,17 @@ const evalCode: Tiny.Func = (
     ).eval()
 }
 
-const evalJSCode: Tiny.Func = (
-    parameters: Array<Tiny.LangObject>,
-    enviroment: Tiny.Enviroment,
-    evaluator: Tiny.Evaluator,
-    position: Tiny.Position
-): Tiny.LangObject => {
-    if (parameters.length !== 1 || parameters[0]?.kind !== Tiny.ObjectKind.STRING) return Tiny.invalidArgument(position, evaluator.option)
+const evalJSCode: Sesan.Func = (
+    parameters: Array<Sesan.LangObject>,
+    enviroment: Sesan.Enviroment,
+    evaluator: Sesan.Evaluator,
+    position: Sesan.Position
+): Sesan.LangObject => {
+    if (parameters.length !== 1 || parameters[0]?.kind !== Sesan.ObjectKind.STRING) return Sesan.invalidArgument(position, evaluator.option)
 
     if (!evaluator.option.allowJavaScript)
         return {
-            kind: Tiny.ObjectKind.ERROR,
+            kind: Sesan.ObjectKind.ERROR,
             message: evaluator.messages.builtinError.disableAllowJavaScript,
             ...position,
         }
@@ -90,140 +90,140 @@ const evalJSCode: Tiny.Func = (
     } catch (e) {
         if (e instanceof Error)
             return {
-                kind: Tiny.ObjectKind.ERROR,
-                message: Tiny.errorFormatter(evaluator.messages.builtinError.couldNotEval, e.message),
+                kind: Sesan.ObjectKind.ERROR,
+                message: Sesan.errorFormatter(evaluator.messages.builtinError.couldNotEval, e.message),
                 ...position,
             }
 
         return {
-            kind: Tiny.ObjectKind.ERROR,
-            message: Tiny.errorFormatter(evaluator.messages.builtinError.couldNotEval, `${e}`),
+            kind: Sesan.ObjectKind.ERROR,
+            message: Sesan.errorFormatter(evaluator.messages.builtinError.couldNotEval, `${e}`),
             ...position,
         }
     }
 }
 
-const toString: Tiny.Func = (
-    parameters: Array<Tiny.LangObject>,
-    enviroment: Tiny.Enviroment,
-    evaluator: Tiny.Evaluator,
-    position: Tiny.Position
-): Tiny.LangObject => {
-    if (parameters.length !== 1) return Tiny.invalidArgument(position, evaluator.option)
+const toString: Sesan.Func = (
+    parameters: Array<Sesan.LangObject>,
+    enviroment: Sesan.Enviroment,
+    evaluator: Sesan.Evaluator,
+    position: Sesan.Position
+): Sesan.LangObject => {
+    if (parameters.length !== 1) return Sesan.invalidArgument(position, evaluator.option)
 
     return {
-        kind: Tiny.ObjectKind.STRING,
-        value: Tiny.objectStringify(parameters[0]),
+        kind: Sesan.ObjectKind.STRING,
+        value: Sesan.objectStringify(parameters[0]),
     }
 }
 
-const toNumber: Tiny.Func = (
-    parameters: Array<Tiny.LangObject>,
-    enviroment: Tiny.Enviroment,
-    evaluator: Tiny.Evaluator,
-    position: Tiny.Position
-): Tiny.LangObject => {
-    if (parameters.length !== 1) return Tiny.invalidArgument(position, evaluator.option)
+const toNumber: Sesan.Func = (
+    parameters: Array<Sesan.LangObject>,
+    enviroment: Sesan.Enviroment,
+    evaluator: Sesan.Evaluator,
+    position: Sesan.Position
+): Sesan.LangObject => {
+    if (parameters.length !== 1) return Sesan.invalidArgument(position, evaluator.option)
 
     switch (parameters[0]?.kind) {
-        case Tiny.ObjectKind.NUMBER:
+        case Sesan.ObjectKind.NUMBER:
             return parameters[0]
 
-        case Tiny.ObjectKind.BOOLEAN:
+        case Sesan.ObjectKind.BOOLEAN:
             return {
-                kind: Tiny.ObjectKind.NUMBER,
+                kind: Sesan.ObjectKind.NUMBER,
                 value: parameters[0].value ? 1 : 0,
             }
 
-        case Tiny.ObjectKind.STRING:
+        case Sesan.ObjectKind.STRING:
             const num = Number(parameters[0]?.value)
-            return isNaN(num) ? Tiny.NULL : { kind: Tiny.ObjectKind.NUMBER, value: num }
+            return isNaN(num) ? Sesan.NULL : { kind: Sesan.ObjectKind.NUMBER, value: num }
 
         default:
-            return Tiny.NULL
+            return Sesan.NULL
     }
 }
 
-const toBoolean: Tiny.Func = (
-    parameters: Array<Tiny.LangObject>,
-    enviroment: Tiny.Enviroment,
-    evaluator: Tiny.Evaluator,
-    position: Tiny.Position
-): Tiny.LangObject => {
-    if (parameters.length !== 1) return Tiny.invalidArgument(position, evaluator.option)
+const toBoolean: Sesan.Func = (
+    parameters: Array<Sesan.LangObject>,
+    enviroment: Sesan.Enviroment,
+    evaluator: Sesan.Evaluator,
+    position: Sesan.Position
+): Sesan.LangObject => {
+    if (parameters.length !== 1) return Sesan.invalidArgument(position, evaluator.option)
 
     switch (parameters[0]?.kind) {
-        case Tiny.ObjectKind.BOOLEAN:
+        case Sesan.ObjectKind.BOOLEAN:
             return {
-                kind: Tiny.ObjectKind.BOOLEAN,
+                kind: Sesan.ObjectKind.BOOLEAN,
                 value: parameters[0].value,
             }
 
-        case Tiny.ObjectKind.NUMBER:
+        case Sesan.ObjectKind.NUMBER:
             return {
-                kind: Tiny.ObjectKind.BOOLEAN,
+                kind: Sesan.ObjectKind.BOOLEAN,
                 value: parameters[0].value !== 0,
             }
 
-        case Tiny.ObjectKind.STRING:
+        case Sesan.ObjectKind.STRING:
             return {
-                kind: Tiny.ObjectKind.BOOLEAN,
+                kind: Sesan.ObjectKind.BOOLEAN,
                 value: parameters[0].value !== '',
             }
 
         default:
-            return Tiny.NULL
+            return Sesan.NULL
     }
 }
 
-const toArray: Tiny.Func = (
-    parameters: Array<Tiny.LangObject>,
-    enviroment: Tiny.Enviroment,
-    evaluator: Tiny.Evaluator,
-    position: Tiny.Position
-): Tiny.LangObject => {
-    if (parameters.length !== 1) return Tiny.invalidArgument(position, evaluator.option)
+const toArray: Sesan.Func = (
+    parameters: Array<Sesan.LangObject>,
+    enviroment: Sesan.Enviroment,
+    evaluator: Sesan.Evaluator,
+    position: Sesan.Position
+): Sesan.LangObject => {
+    if (parameters.length !== 1) return Sesan.invalidArgument(position, evaluator.option)
 
     switch (parameters[0]?.kind) {
-        case Tiny.ObjectKind.ARRAY:
+        case Sesan.ObjectKind.ARRAY:
             return parameters[0]
 
-        case Tiny.ObjectKind.OBJECT:
+        case Sesan.ObjectKind.OBJECT:
             return {
-                kind: Tiny.ObjectKind.ARRAY,
-                value: [...(parameters[0] as Tiny.ObjectObject).pairs.values()],
+                kind: Sesan.ObjectKind.ARRAY,
+                value: [...(parameters[0] as Sesan.ObjectObject).pairs.values()],
             }
 
-        case Tiny.ObjectKind.STRING:
+        case Sesan.ObjectKind.STRING:
             return {
-                kind: Tiny.ObjectKind.ARRAY,
+                kind: Sesan.ObjectKind.ARRAY,
                 value: parameters[0].value.split('').map((v) => ({
-                    kind: Tiny.ObjectKind.STRING,
+                    kind: Sesan.ObjectKind.STRING,
                     value: v,
                 })),
             }
 
         default:
-            return Tiny.NULL
+            return Sesan.NULL
     }
 }
 
-const options: Tiny.Func = (parameters: Array<Tiny.LangObject>, enviroment: Tiny.Enviroment, evaluator: Tiny.Evaluator): Tiny.LangObject => {
+const options: Sesan.Func = (parameters: Array<Sesan.LangObject>, enviroment: Sesan.Enviroment, evaluator: Sesan.Evaluator): Sesan.LangObject => {
     return {
-        kind: Tiny.ObjectKind.OBJECT,
+        kind: Sesan.ObjectKind.OBJECT,
         pairs: new Map(
             Object.entries(evaluator.option).map(([key, value]) => [
                 {
-                    kind: Tiny.ObjectKind.STRING,
+                    kind: Sesan.ObjectKind.STRING,
                     value: key,
                 },
                 typeof value === 'string'
                     ? {
-                          kind: Tiny.ObjectKind.STRING,
+                          kind: Sesan.ObjectKind.STRING,
                           value: value,
                       }
                     : {
-                          kind: Tiny.ObjectKind.BOOLEAN,
+                          kind: Sesan.ObjectKind.BOOLEAN,
                           value: value,
                       },
             ])
@@ -231,41 +231,41 @@ const options: Tiny.Func = (parameters: Array<Tiny.LangObject>, enviroment: Tiny
     }
 }
 
-const rootDir: Tiny.Func = (parameters: Array<Tiny.LangObject>, enviroment: Tiny.Enviroment, evaluator: Tiny.Evaluator): Tiny.LangObject => ({
-    kind: Tiny.ObjectKind.STRING,
+const rootDir: Sesan.Func = (parameters: Array<Sesan.LangObject>, enviroment: Sesan.Enviroment, evaluator: Sesan.Evaluator): Sesan.LangObject => ({
+    kind: Sesan.ObjectKind.STRING,
     value: evaluator.option.root,
 })
 
-const curr: Tiny.Func = (
-    parameters: Array<Tiny.LangObject>,
-    enviroment: Tiny.Enviroment,
-    evaluator: Tiny.Evaluator,
-    position: Tiny.Position
-): Tiny.LangObject => ({
-    kind: Tiny.ObjectKind.OBJECT,
+const curr: Sesan.Func = (
+    parameters: Array<Sesan.LangObject>,
+    enviroment: Sesan.Enviroment,
+    evaluator: Sesan.Evaluator,
+    position: Sesan.Position
+): Sesan.LangObject => ({
+    kind: Sesan.ObjectKind.OBJECT,
     pairs: new Map([
         [
-            { kind: Tiny.ObjectKind.STRING, value: 'line' },
-            { kind: Tiny.ObjectKind.NUMBER, value: position.line },
+            { kind: Sesan.ObjectKind.STRING, value: 'line' },
+            { kind: Sesan.ObjectKind.NUMBER, value: position.line },
         ],
         [
-            { kind: Tiny.ObjectKind.STRING, value: 'column' },
-            { kind: Tiny.ObjectKind.NUMBER, value: position.column },
+            { kind: Sesan.ObjectKind.STRING, value: 'column' },
+            { kind: Sesan.ObjectKind.NUMBER, value: position.column },
         ],
     ]),
 })
 
-const filename: Tiny.Func = (parameters: Array<Tiny.LangObject>, enviroment: Tiny.Enviroment, evaluator: Tiny.Evaluator): Tiny.LangObject => ({
-    kind: Tiny.ObjectKind.STRING,
+const filename: Sesan.Func = (parameters: Array<Sesan.LangObject>, enviroment: Sesan.Enviroment, evaluator: Sesan.Evaluator): Sesan.LangObject => ({
+    kind: Sesan.ObjectKind.STRING,
     value: evaluator.option.filename,
 })
 
-const enviromentLength: Tiny.Func = (parameters: Array<Tiny.LangObject>, enviroment: Tiny.Enviroment): Tiny.LangObject => ({
-    kind: Tiny.ObjectKind.NUMBER,
+const enviromentLength: Sesan.Func = (parameters: Array<Sesan.LangObject>, enviroment: Sesan.Enviroment): Sesan.LangObject => ({
+    kind: Sesan.ObjectKind.NUMBER,
     value: enviroment.store.size,
 })
 
-export const builtin: Map<string, Tiny.Func> = new Map([
+export const builtin: Map<string, Sesan.Func> = new Map([
     ['import', importEnviroment],
     ['eval', evalCode],
     ['js', evalJSCode],

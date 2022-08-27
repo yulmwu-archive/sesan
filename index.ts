@@ -4,7 +4,7 @@ export * from './core'
 
 type Stdio = (...x: Array<any>) => any
 
-interface TinyOption extends Options {
+interface SesanOption extends Options {
     enviroment?: Enviroment
     root?: string
     filename?: string
@@ -20,14 +20,14 @@ const stdin: Stdio = (...x) => NULL
 const stdout: Stdio = (...x) => (process ? process.stdout.write(x.join(' ')) : console.log(x.join(' ')))
 const stderr: Stdio = (...x) => (process ? process.stderr.write(`${x.join(' ')}\n`) : console.error(x.join(' ')))
 
-const defaultFilename: string = '<Tiny>'
+const defaultFilename: string = '<Sesan>'
 
-export default class Tiny {
-    public option: TinyOption
+export default class Sesan {
+    public option: SesanOption
     public builtins: Map<string, Func> = new Map()
     public stdio: StdioOptions = { stdin, stdout, stderr }
 
-    constructor(public x: string, option?: TinyOption) {
+    constructor(public x: string, option?: SesanOption) {
         this.option = { ...option }
     }
 
@@ -109,47 +109,47 @@ export default class Tiny {
         return objectStringify(this.evaluate(program, env))
     }
 
-    public setBuiltin(name: string, func: Func): Tiny {
+    public setBuiltin(name: string, func: Func): Sesan {
         this.builtins.set(name, func)
 
         return this
     }
 
-    public setBuiltins(builtins: Map<string, Func>): Tiny {
+    public setBuiltins(builtins: Map<string, Func>): Sesan {
         builtins.forEach((func, name) => this.setBuiltin(name, func))
 
         return this
     }
 
-    public applyBuiltins(): Tiny {
+    public applyBuiltins(): Sesan {
         this.builtins.forEach((func, name) => builtinsEval.set(name, func))
 
         return this
     }
 
-    public setStdin(func: Stdio): Tiny {
+    public setStdin(func: Stdio): Sesan {
         this.stdio = { ...this.stdio, stdin: func }
 
         return this
     }
 
-    public setStdout(func: Stdio): Tiny {
+    public setStdout(func: Stdio): Sesan {
         this.stdio = { ...this.stdio, stdout: func }
 
         return this
     }
 
-    public setStderr(func: Stdio): Tiny {
+    public setStderr(func: Stdio): Sesan {
         this.stdio = { ...this.stdio, stderr: func }
 
         return this
     }
 
-    public setFileName(filename: string): Tiny {
+    public setFileName(filename: string): Sesan {
         this.option.filename = filename
 
         return this
     }
 }
 
-export { TinyOption, Stdio, StdioOptions, stdin, stdout, stderr }
+export { SesanOption, Stdio, StdioOptions, stdin, stdout, stderr }

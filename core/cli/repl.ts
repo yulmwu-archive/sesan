@@ -1,7 +1,7 @@
 import prompt from 'prompt-sync'
 import colors from 'colors'
 
-import * as Tiny from '../../index'
+import * as Sesan from '../../index'
 
 type Mode = 'repl' | 'parser' | 'lexer' | 'env'
 
@@ -11,18 +11,18 @@ export default class {
     public promptSync = prompt({ sigint: true })
     public mode: Mode = 'repl'
 
-    constructor(public env: Tiny.Enviroment, public option: Tiny.Options) {
+    constructor(public env: Sesan.Enviroment, public option: Sesan.Options) {
         colors.enabled = true
     }
 
     public executeCommand(
         input: string,
-        lexer: Tiny.Lexer,
-        parsed: Tiny.Program,
-        env: Tiny.Enviroment
-    ): Tiny.LangObject | Tiny.Program | Array<Tiny.Token> | Tiny.Enviroment | string {
+        lexer: Sesan.Lexer,
+        parsed: Sesan.Program,
+        env: Sesan.Enviroment
+    ): Sesan.LangObject | Sesan.Program | Array<Sesan.Token> | Sesan.Enviroment | string {
         const [command, ...args] = input.split(' ')
-        const commands: Map<string, (...args: Array<string>) => Tiny.LangObject | string> = new Map([
+        const commands: Map<string, (...args: Array<string>) => Sesan.LangObject | string> = new Map([
             [
                 '//mode',
                 (...args) => {
@@ -39,12 +39,12 @@ export default class {
 
         if (commands.has(command)) return commands.get(command)!(...args)
         else {
-            const result = new Tiny.Evaluator(parsed, env, {
+            const result = new Sesan.Evaluator(parsed, env, {
                 ...this.option,
                 stdio: {
                     stdin: this.promptSync,
-                    stdout: Tiny.stdout,
-                    stderr: Tiny.stderr,
+                    stdout: Sesan.stdout,
+                    stderr: Sesan.stderr,
                 },
                 filename: defaultFilename,
                 root: './',
@@ -52,17 +52,17 @@ export default class {
 
             switch (this.mode) {
                 case 'repl':
-                    return Tiny.objectStringify(result).gray
+                    return Sesan.objectStringify(result).gray
 
                 case 'parser':
                     return JSON.stringify(parsed, null, 2)
 
                 case 'lexer':
-                    const tokens: Array<Tiny.Token> = []
+                    const tokens: Array<Sesan.Token> = []
 
-                    let peekToken: Tiny.Token
+                    let peekToken: Sesan.Token
 
-                    while ((peekToken = lexer.nextToken()).type !== Tiny.TokenType.EOF) tokens.push(peekToken)
+                    while ((peekToken = lexer.nextToken()).type !== Sesan.TokenType.EOF) tokens.push(peekToken)
 
                     return tokens
 
@@ -74,13 +74,13 @@ export default class {
 
     public start() {
         if (this.option.useStdLibAutomatically)
-            new Tiny.Evaluator(
-                new Tiny.Parser(
-                    new Tiny.Lexer(
+            new Sesan.Evaluator(
+                new Sesan.Parser(
+                    new Sesan.Lexer(
                         `import('@std/lib');`,
                         {
                             ...this.option,
-                            stderr: Tiny.stderr,
+                            stderr: Sesan.stderr,
                         },
                         defaultFilename
                     ),
@@ -91,8 +91,8 @@ export default class {
                     ...this.option,
                     stdio: {
                         stdin: this.promptSync,
-                        stdout: Tiny.stdout,
-                        stderr: Tiny.stderr,
+                        stdout: Sesan.stdout,
+                        stderr: Sesan.stderr,
                     },
                     filename: defaultFilename,
                     root: './',
@@ -102,12 +102,12 @@ export default class {
         while (true) {
             const input = this.promptSync(`${`[${this.mode.toUpperCase()}]`.white.bgBlack} ${`${this.env.store.size} Env(s)`.gray} ${'➜'.red} `)
 
-            const parser = new Tiny.Parser(
-                new Tiny.Lexer(
+            const parser = new Sesan.Parser(
+                new Sesan.Lexer(
                     input,
                     {
                         ...this.option,
-                        stderr: Tiny.stderr,
+                        stderr: Sesan.stderr,
                     },
                     defaultFilename
                 ),
@@ -116,11 +116,11 @@ export default class {
 
             const executed = this.executeCommand(
                 input,
-                new Tiny.Lexer(
+                new Sesan.Lexer(
                     input,
                     {
                         ...this.option,
-                        stderr: Tiny.stderr,
+                        stderr: Sesan.stderr,
                     },
                     defaultFilename
                 ),
@@ -129,7 +129,7 @@ export default class {
             )
 
             if (executed && parser.errors.length > 0)
-                parser.errors.forEach((error) => Tiny.printError(error, defaultFilename, Tiny.stderr, this.option))
+                parser.errors.forEach((error) => Sesan.printError(error, defaultFilename, Sesan.stderr, this.option))
 
             console.log(executed, '\n')
         }
