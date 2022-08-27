@@ -3,7 +3,7 @@
     "public": true,
     "builds": [
         {
-            "src": "/core/api.ts",
+            "src": "./core/api.ts",
             "use": "@vercel/node",
             "config": {
                 "includeFiles": ["@std/**", "examples/function.tiny"]
@@ -13,7 +13,7 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "/core/api.ts"
+            "dest": "./core/api.ts"
         }
     ]
 }
