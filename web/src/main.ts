@@ -240,8 +240,8 @@ require(['vs/editor/editor.main'], () => {
 let someVariable = 'Hello, World!';
 println(someVariable);
 `,
-        language: 'tiny',
-        theme: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'tinyTheme' : 'tinyTheme-light',
+        language: 'sesan',
+        theme: window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'sesanTheme' : 'sesanTheme-light',
         automaticLayout: true,
         fontSize: 17,
         fontFamily: 'Fira Code',
