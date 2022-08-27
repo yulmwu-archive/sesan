@@ -390,12 +390,7 @@ export default class Evaluator {
 
         const name = functionObject.function ? (functionObject.function as unknown as Tiny.StringLiteral).value ?? null : null
 
-        if (
-            expression.function &&
-            name &&
-            name !== '_'
-        )
-            enviroment.set(name, functionObject)
+        if (expression.function && name && name !== '_') enviroment.set(name, functionObject)
 
         return functionObject
     }
@@ -413,30 +408,15 @@ export default class Evaluator {
             (expression.function as unknown as Tiny.StringLiteral).value,
             args,
             enviroment,
-            {
-                line: expression.line,
-                column: expression.column,
-            },
+            { line: expression.line, column: expression.column },
             {
                 kind: Tiny.ObjectKind.OBJECT,
                 pairs: new Map<Tiny.StringObject | Tiny.NumberObject, Tiny.LangObject>([
                     [
-                        {
-                            kind: Tiny.ObjectKind.STRING,
-                            value: 'arguments',
-                        },
-                        {
-                            kind: Tiny.ObjectKind.ARRAY,
-                            value: args,
-                        },
+                        { kind: Tiny.ObjectKind.STRING, value: 'arguments' },
+                        { kind: Tiny.ObjectKind.ARRAY, value: args },
                     ],
-                    [
-                        {
-                            kind: Tiny.ObjectKind.STRING,
-                            value: 'decorator',
-                        },
-                        (functionObject as Tiny.FunctionObject).decorator ?? NULL,
-                    ],
+                    [{ kind: Tiny.ObjectKind.STRING, value: 'decorator' }, (functionObject as Tiny.FunctionObject).decorator ?? NULL],
                 ]),
             }
         )
@@ -479,18 +459,19 @@ export default class Evaluator {
 
     public applyFunction(
         functionObject: Tiny.FunctionObject,
-        name: string,
+        callName: string,
         parameters: Array<Tiny.LangObject>,
         enviroment: Tiny.Enviroment,
         position: Tiny.Position,
         thisObject: Tiny.LangObject
     ): Tiny.LangObject {
+        console.log(functionObject.function, callName)
         if (functionObject?.kind === Tiny.ObjectKind.FUNCTION) {
             if (!this.getDecorator('skipCheckArguments', functionObject) && functionObject.parameters.length !== parameters.length)
                 return Tiny.error(
                     Tiny.errorFormatter(
                         this.messages.runtimeError.invalidArgument,
-                        name ?? '<Anonymous>',
+                        callName ?? '<Anonymous>',
                         functionObject.parameters.length,
                         parameters.length
                     ),
@@ -518,7 +499,7 @@ export default class Evaluator {
         if (functionObject?.kind === Tiny.ObjectKind.BUILTIN)
             return (functionObject as unknown as Tiny.BuiltinFunction).func(parameters, enviroment, this, position)
 
-        return Tiny.error(Tiny.errorFormatter(this.messages.runtimeError.invalidFunction, name ?? '<unknown>'), position.line, position.column)
+        return Tiny.error(Tiny.errorFormatter(this.messages.runtimeError.invalidFunction, callName ?? '<unknown>'), position.line, position.column)
     }
 
     private extendFunctionEnv(
@@ -964,7 +945,8 @@ export default class Evaluator {
 
                         if (value?.kind !== Tiny.ObjectKind.NUMBER)
                             return Tiny.error(this.messages.runtimeError.typeMismatch_2, position.line, position.column)
-                        ;(left as unknown as Tiny.ArrayObject).value[resultIdx.value] = value
+
+                        left.value[resultIdx.value] = value
 
                         return value
                     } else {

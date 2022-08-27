@@ -14,7 +14,7 @@ if [ ! -d $STD_PATH ]; then
     echo "Downloading standard library... ($STD_PATH)"
 
     for file in ${FILES[@]}; do
-        curl -o $STD_PATH/$file https://raw.githubusercontent.com/tsukiroku/tiny/main/%40std/$file >/dev/null 2>&1
+        curl -o $STD_PATH/$file https://raw.githubusercontent.com/sesan-lang/sesan/main/%40std/$file >/dev/null 2>&1
         echo "Downloading $file"
     done
 
