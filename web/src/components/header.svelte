@@ -76,12 +76,14 @@
     <p
         class="cursor-pointer inline pl-3 dark:text-white text-black"
         on:click={() =>
-            navigator.clipboard.writeText(`https://tsukiroku.github.io/tiny/${(window.location.href = `#${encodeURIComponent(editor.getValue())}`)}`)}
+            navigator.clipboard.writeText(
+                `https://tsukiroku.github.io/sesan/${(window.location.href = `#${encodeURIComponent(editor.getValue())}`)}`
+            )}
     >
         Share
     </p>
 
-    <p class="cursor-pointer inline pl-3 dark:text-white text-black" on:click={() => window.open('https://github.com/tsukiroku/tiny#documentation')}>
+    <p class="cursor-pointer inline pl-3 dark:text-white text-black" on:click={() => window.open('https://github.com/tsukiroku/sesan#documentation')}>
         Docs
     </p>
 
