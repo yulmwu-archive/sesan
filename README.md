@@ -1178,5 +1178,4 @@ Returns a value.
 ## Features
 
 -   Compiling to JavaScript
-    -   Supporting `ES6` syntax
 -   CLI, Repl refectoring

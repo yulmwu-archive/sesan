@@ -26,7 +26,6 @@ export type Expression =
     | PrefixExpression
     | InfixExpression
     | IfExpression
-    | MatchExpression
     | FunctionExpression
     | CallExpression
     | IdentExpression
@@ -47,7 +46,6 @@ export enum ExpressionKind {
     Prefix,
     Infix,
     If,
-    Match,
     Function,
     Call,
     Ident,
@@ -145,17 +143,6 @@ export interface IfExpression extends Debug, Position {
     consequence: Expression
     alternative: Expression | null
     kind: ExpressionKind.If
-}
-
-export interface MatchExpression extends Debug, Position {
-    condition: Expression
-    cases: Array<MatchCase>
-    kind: ExpressionKind.Match
-}
-
-export interface MatchCase extends Debug, Position {
-    pattern: Expression
-    body: Expression
 }
 
 export interface FunctionExpression extends Debug, Position {

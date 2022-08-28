@@ -465,7 +465,6 @@ export default class Evaluator {
         position: Sesan.Position,
         thisObject: Sesan.LangObject
     ): Sesan.LangObject {
-        console.log(functionObject.function, callName)
         if (functionObject?.kind === Sesan.ObjectKind.FUNCTION) {
             if (!this.getDecorator('skipCheckArguments', functionObject) && functionObject.parameters.length !== parameters.length)
                 return Sesan.error(
