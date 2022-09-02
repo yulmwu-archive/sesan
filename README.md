@@ -1,4 +1,4 @@
-`Sesan` Interpreter offical repository.
+Sesan Interpreter offical repository.
 
 It can be used directly as a [Web Playground](#web-playground), and can be built according to the [build instructions](#start-repl).
 
