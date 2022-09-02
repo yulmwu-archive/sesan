@@ -45,7 +45,7 @@
     const updateExample = () => {
         if (typeof selected === 'string') return
 
-        axios.get(`https://raw.githubusercontent.com/tsukiroku/sesan/main/examples/${selected.source}`).then((res) => editor.setValue(res.data))
+        axios.get(`https://raw.githubusercontent.com/ky0422/sesan/main/examples/${selected.source}`).then((res) => editor.setValue(res.data))
 
         selected = 'examples'
     }
@@ -77,13 +77,13 @@
         class="cursor-pointer inline pl-3 dark:text-white text-black"
         on:click={() =>
             navigator.clipboard.writeText(
-                `https://tsukiroku.github.io/sesan/${(window.location.href = `#${encodeURIComponent(editor.getValue())}`)}`
+                `https://ky0422.github.io/sesan/${(window.location.href = `#${encodeURIComponent(editor.getValue())}`)}`
             )}
     >
         Share
     </p>
 
-    <p class="cursor-pointer inline pl-3 dark:text-white text-black" on:click={() => window.open('https://github.com/tsukiroku/sesan#documentation')}>
+    <p class="cursor-pointer inline pl-3 dark:text-white text-black" on:click={() => window.open('https://github.com/ky0422/sesan#documentation')}>
         Docs
     </p>
 

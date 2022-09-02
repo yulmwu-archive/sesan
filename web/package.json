@@ -1,7 +1,7 @@
 {
     "name": "web",
     "version": "0.0.0",
-    "homepage": "https://github.com/tsukiroku/sesan",
+    "homepage": "https://github.com/ky0422/sesan",
     "scripts": {
         "build": "rollup -c",
         "dev": "rollup -c -w",

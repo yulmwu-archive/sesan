@@ -1,5 +1,5 @@
 {
-    "name": "@tsukiroku/sesan",
+    "name": "@ky0422/sesan",
     "version": "0.3.7",
     "description": "Sesan interpreter",
     "main": "dist/index.js",
@@ -15,17 +15,17 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/tsukiroku/sesan.git"
+        "url": "git+https://github.com/ky0422/sesan.git"
     },
     "keywords": [
         "typescript"
     ],
-    "author": "tsukiroku",
+    "author": "ky0422",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/tsukiroku/sesan"
+        "url": "https://github.com/ky0422/sesan"
     },
-    "homepage": "https://github.com/tsukiroku/sesan",
+    "homepage": "https://github.com/ky0422/sesan",
     "types": "dist/index.d.ts",
     "files": [
         "dist/**/*"

@@ -32,7 +32,7 @@ It can be used directly as a [Web Playground](#web-playground), and can be built
 ### Download
 
 ```sh
-git clone https://github.com/tsukiroku/sesan.git
+git clone https://github.com/ky0422/sesan.git
 cd sesan
 ```
 
@@ -62,7 +62,7 @@ npm run start:repl [file]
 
 # Web Playground
 
-[README](./web) | [Playground](https://tsukiroku.github.io/sesan)
+[README](./web) | [Playground](https://ky0422.github.io/sesan)
 
 <br />
 
@@ -188,12 +188,12 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
 
 # Standard library
 
--   [**`@std/`**](https://github.com/tsukiroku/sesan/blob/main/@std/)
-    -   [`lib`](https://github.com/tsukiroku/sesan/blob/main/@std/lib.sesan)
-    -   [`io`](https://github.com/tsukiroku/sesan/blob/main/@std/io.sesan)
+-   [**`@std/`**](https://github.com/ky0422/sesan/blob/main/@std/)
+    -   [`lib`](https://github.com/ky0422/sesan/blob/main/@std/lib.sesan)
+    -   [`io`](https://github.com/ky0422/sesan/blob/main/@std/io.sesan)
         -   `print(args*) -> NULL`
         -   `println(args*) -> NULL`
-    -   [`array`](https://github.com/tsukiroku/sesan/blob/main/@std/array.sesan)
+    -   [`array`](https://github.com/ky0422/sesan/blob/main/@std/array.sesan)
         -   `push(array, value) -> array`
         -   `pop(array) -> array`
         -   `shift(array) -> array`
@@ -207,7 +207,7 @@ Except for `If`, `Function` Expression, all expressions must be preceded by a se
             -   `callback(previous, current)`
         -   `map(array, callback) -> array`
             -   `callback(value, index)`
-    -   [`util`](https://github.com/tsukiroku/sesan/blob/main/@std/util.sesan)
+    -   [`util`](https://github.com/ky0422/sesan/blob/main/@std/util.sesan)
         -   `funcTools -> object`
         -   `length(array) -> number`
         -   `match(value, [pattern], default) -> Any`
@@ -256,11 +256,11 @@ If `sesan.config.json` dose not exist in root (`./`), it extends Default.
 > when updating fatal errors, [npm package](#npm-package) is also updated immediately.
 
 ```sh
-npm i @tsukiroku/sesan
+npm i @ky0422/sesan
 ```
 
 ```ts
-import sesan, { NULL } from '@tsukiroku/sesan'
+import sesan, { NULL } from '@ky0422/sesan'
 
 console.log(
     new sesan('let x = "World!"; println("Hello, " + x);', {
@@ -275,30 +275,30 @@ console.log(
 `@std/` must exist in root (`./`).
 
 ```sh
-curl -O https://raw.githubusercontent.com/tsukiroku/sesan/main/scripts/dl-stds.sh && . ./dl-stds.sh && rm ./dl-stds.sh
+curl -O https://raw.githubusercontent.com/ky0422/sesan/main/scripts/dl-stds.sh && . ./dl-stds.sh && rm ./dl-stds.sh
 ```
 
 <br />
 
 # Examples
 
--   [**`./examples`**](https://github.com/tsukiroku/sesan/tree/main/examples)
-    -   [`Hello, World!`](https://github.com/tsukiroku/sesan/blob/main/examples/hello_world.sesan)
-    -   [`Fibonacci`](https://github.com/tsukiroku/sesan/blob/main/examples/fibonacci.sesan)
-    -   [`Function`](https://github.com/tsukiroku/sesan/blob/main/examples/function.sesan)
-    -   [`Object`](https://github.com/tsukiroku/sesan/blob/main/examples/object.sesan)
-    -   [`If`](https://github.com/tsukiroku/sesan/blob/main/examples/if.sesan)
-    -   [`While`](https://github.com/tsukiroku/sesan/blob/main/examples/while.sesan)
-    -   [`Import`](https://github.com/tsukiroku/sesan/blob/main/examples/import.sesan)
-    -   [`Variable`](https://github.com/tsukiroku/sesan/blob/main/examples/variable.sesan)
-    -   [`Operators`](https://github.com/tsukiroku/sesan/blob/main/examples/operators.sesan)
-    -   [`Built-in functions`](https://github.com/tsukiroku/sesan/blob/main/examples/builtin.sesan)
-    -   [`Decorators`](https://github.com/tsukiroku/sesan/blob/main/examples/decorators.sesan)
-    -   [`StdLib`](https://github.com/tsukiroku/sesan/blob/main/examples/stdlib)
-        -   [`Array`](https://github.com/tsukiroku/sesan/blob/main/examples/stdlib/array.sesan)
-        -   [`IO`](https://github.com/tsukiroku/sesan/blob/main/examples/stdlib/io.sesan)
-        -   [`String`](https://github.com/tsukiroku/sesan/blob/main/examples/stdlib/string.sesan)
-        -   [`Utility`](https://github.com/tsukiroku/sesan/blob/main/examples/stdlib/util.sesan)
+-   [**`./examples`**](https://github.com/ky0422/sesan/tree/main/examples)
+    -   [`Hello, World!`](https://github.com/ky0422/sesan/blob/main/examples/hello_world.sesan)
+    -   [`Fibonacci`](https://github.com/ky0422/sesan/blob/main/examples/fibonacci.sesan)
+    -   [`Function`](https://github.com/ky0422/sesan/blob/main/examples/function.sesan)
+    -   [`Object`](https://github.com/ky0422/sesan/blob/main/examples/object.sesan)
+    -   [`If`](https://github.com/ky0422/sesan/blob/main/examples/if.sesan)
+    -   [`While`](https://github.com/ky0422/sesan/blob/main/examples/while.sesan)
+    -   [`Import`](https://github.com/ky0422/sesan/blob/main/examples/import.sesan)
+    -   [`Variable`](https://github.com/ky0422/sesan/blob/main/examples/variable.sesan)
+    -   [`Operators`](https://github.com/ky0422/sesan/blob/main/examples/operators.sesan)
+    -   [`Built-in functions`](https://github.com/ky0422/sesan/blob/main/examples/builtin.sesan)
+    -   [`Decorators`](https://github.com/ky0422/sesan/blob/main/examples/decorators.sesan)
+    -   [`StdLib`](https://github.com/ky0422/sesan/blob/main/examples/stdlib)
+        -   [`Array`](https://github.com/ky0422/sesan/blob/main/examples/stdlib/array.sesan)
+        -   [`IO`](https://github.com/ky0422/sesan/blob/main/examples/stdlib/io.sesan)
+        -   [`String`](https://github.com/ky0422/sesan/blob/main/examples/stdlib/string.sesan)
+        -   [`Utility`](https://github.com/ky0422/sesan/blob/main/examples/stdlib/util.sesan)
 
 <br />
 
