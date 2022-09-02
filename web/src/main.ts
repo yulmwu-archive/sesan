@@ -232,7 +232,7 @@ require(['vs/editor/editor.main'], () => {
 
 // Try it
 // - Share    : you can share your code by url.
-// - Docs     : https://github.com/tsukiroku/sesan/tree/main/docs
+// - Docs     : https://github.com/ky0422/sesan/tree/main/docs
 // - Examples : you can find some examples here.
 
 // Enjoy!
