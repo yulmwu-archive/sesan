@@ -1,6 +1,6 @@
 {
     "name": "@ky0422/sesan",
-    "version": "0.3.7",
+    "version": "0.3.71",
     "description": "Sesan interpreter",
     "main": "dist/index.js",
     "scripts": {

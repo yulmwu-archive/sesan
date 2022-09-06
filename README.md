@@ -1,3 +1,9 @@
+> **Note**
+>
+> Language maintanance has ended after `09/06/2022`.
+> 
+> thank you for using this language.
+
 Sesan Interpreter offical repository.
 
 It can be used directly as a [Web Playground](#web-playground), and can be built according to the [build instructions](#start-repl).
@@ -21,7 +27,7 @@ It can be used directly as a [Web Playground](#web-playground), and can be built
 -   [Npm package](#npm-package)
 -   [Examples](#examples)
 -   [Documentation](#documentation)
--   [Todo](#todo)
+-   [~~Todo~~](#todo)
 
 <br />
 
@@ -1143,11 +1149,13 @@ Returns a value.
 
 <br>
 
-# Todo
+# ~~Todo~~
 
 > **Warning**
 >
-> This plan is subject to change at any time.
+> ~~This plan is subject to change at any time.~~
+> 
+> Language maintanance has ended after `09/06/2022`.
 
 ## Syntax
 
